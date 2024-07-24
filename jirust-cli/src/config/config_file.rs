@@ -11,11 +11,17 @@ pub struct ConfigData {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ConfigFile {
     auth: AuthSection,
+    jira: JiraSection,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AuthSection {
     auth_token: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct JiraSection {
+    jira_url: String,
 }
 
 impl ConfigData {
@@ -33,14 +39,15 @@ impl ConfigData {
 
     /// Encode the username and api_key to base64 to be used in the Authorization header of the request.
     pub fn to_base64(&self) -> String {
-        BASE64_STANDARD.encode(format!("{}:{}", self.username, self.api_key))
+        BASE64_STANDARD.encode(format!("{}:{}", self.username, self.api_key).replace("\n", ""))
     }
 }
 
 impl ConfigFile {
-    pub fn new(auth_token: String) -> ConfigFile {
+    pub fn new(auth_token: String, jira_url: String) -> ConfigFile {
         ConfigFile {
             auth: AuthSection { auth_token },
+            jira: JiraSection { jira_url },
         }
     }
 
@@ -52,11 +59,20 @@ impl ConfigFile {
         &self.auth.auth_token
     }
 
+    pub fn set_jira_url(&mut self, jira_url: String) {
+        self.jira.jira_url = jira_url;
+    }
+
+    pub fn get_jira_url(&self) -> &str {
+        &self.jira.jira_url
+    }
+
     /// Stores the configuration to a file.
     pub fn write_to_file(&self, file_path: &str) -> Result<(), std::io::Error> {
         let file = std::fs::OpenOptions::new()
             .write(true)
             .create(true)
+            .truncate(true)
             .open(file_path)
             .expect("Failed to open file");
         serde_yaml::to_writer(file, self).expect("Failed to write to file");
