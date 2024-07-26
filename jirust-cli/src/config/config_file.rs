@@ -1,6 +1,5 @@
 use base64::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::fmt::Display;
 use std::{fs, io::Write};
 use toml;
 
