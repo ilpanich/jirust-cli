@@ -14,7 +14,7 @@ pub enum Commands {
 
 #[derive(Args, Debug)]
 pub struct ConfigArgs {
-    #[arg(value_name = "auth|init", help_heading = "Authentication")]
+    #[arg(value_name = "auth|jira|setup|show", help_heading = "Authentication")]
     pub cfg_arg: ConfigArgValues,
 }
 
@@ -22,5 +22,7 @@ pub struct ConfigArgs {
 #[value(rename_all = "kebab-case")]
 pub enum ConfigArgValues {
     Auth,
-    Init,
+    Jira,
+    Setup,
+    Show,
 }

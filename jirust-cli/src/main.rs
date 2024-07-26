@@ -17,9 +17,6 @@ fn main() {
         None => ".jirust-cli/jirust-cli.conf".to_string(),
     };
     let config_cmd_runner = ConfigCmdRunner::new(config_file_path.clone());
-    config_cmd_runner
-        .init_file()
-        .expect("Cannot init config file");
     let opts = match JirustCliArgs::try_parse_from(std::env::args()) {
         Ok(opts) => opts,
         Err(err) => {
@@ -29,28 +26,42 @@ fn main() {
     };
     match opts.subcmd {
         Commands::Config(arg) => match arg.cfg_arg {
-            cfg_arg => {
-                let cfg_data = ConfigFile::read_from_file(config_file_path.as_str())
-                    .unwrap_or(ConfigFile::new("".to_string(), "".to_string()));
+            mut cfg_arg => {
+                let cfg_data = match ConfigFile::read_from_file(config_file_path.as_str()) {
+                    Ok(cfg) => cfg,
+                    Err(_) => {
+                        eprintln!("Error: Missing config file, setup mandatory!");
+                        cfg_arg = ConfigArgValues::Setup;
+                        ConfigFile::new("".to_string(), "".to_string())
+                    }
+                };
                 match cfg_arg {
                     ConfigArgValues::Auth => {
-                        let cfg_res = match config_cmd_runner.set_cfg_auth(cfg_data) {
+                        let _cfg_res = match config_cmd_runner.set_cfg_auth(cfg_data) {
                             Ok(_) => println!("Authentication configuration stored successfully"),
                             Err(err) => {
                                 eprintln!("Error storing authentication configuration: {}", err);
                             }
                         };
                     }
-                    ConfigArgValues::Init => {
-                        let cfg_res = match config_cmd_runner.set_cfg_init(cfg_data) {
+                    ConfigArgValues::Jira => {
+                        let _cfg_res = match config_cmd_runner.set_cfg_jira(cfg_data) {
                             Ok(_) => println!("Initialization configuration stored successfully"),
                             Err(err) => {
                                 eprintln!("Error storing initialization configuration: {}", err);
                             }
                         };
                     }
-                    _ => {
-                        eprintln!("Invalid configuration argument provided");
+                    ConfigArgValues::Setup => {
+                        let _cfg_res = match config_cmd_runner.setup_cfg(cfg_data) {
+                            Ok(_) => println!("Configuration setup successfully"),
+                            Err(err) => {
+                                eprintln!("Error setting up configuration: {}", err);
+                            }
+                        };
+                    }
+                    ConfigArgValues::Show => {
+                        config_cmd_runner.show_cfg(cfg_data);
                     }
                 }
             }
