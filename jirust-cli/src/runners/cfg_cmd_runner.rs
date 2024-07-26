@@ -22,11 +22,10 @@ impl ConfigCmdRunner {
     pub fn set_cfg_auth(&self, mut cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
         let input = std::io::stdin();
         let mut user = String::new();
-        let apikey;
         println!("Your username: ");
         input.read_line(&mut user)?;
         println!("Your apikey: ");
-        apikey = read_password()?;
+        let apikey = read_password()?;
         let config_data = AuthData::new(user, apikey);
         cfg.set_auth_key(config_data.to_base64());
         cfg.write_to_file(&self.cfg_file.as_str())?;
