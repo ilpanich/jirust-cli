@@ -3,7 +3,7 @@ use std::env;
 use crate::args::commands::{Commands, JirustCliArgs};
 use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
 
-use args::commands::ConfigArgValues;
+use args::commands::{ConfigActionValues, ConfigArgs};
 use clap::Parser;
 use config::config_file::ConfigFile;
 
@@ -29,7 +29,7 @@ fn main() {
         Err(_) => {
             eprintln!("Error: Missing config file, setup mandatory!");
             opts.subcmd = Commands::Config(args::commands::ConfigArgs {
-                cfg_arg: ConfigArgValues::Setup,
+                cfg_act: ConfigActionValues::Setup,
             });
             ConfigFile::default()
         }
@@ -37,13 +37,13 @@ fn main() {
     if (cfg_data.get_auth_key().is_empty() || cfg_data.get_jira_url().is_empty()) {
         eprintln!("Error: Missing basic configuration, setup mandatory!");
         opts.subcmd = Commands::Config(args::commands::ConfigArgs {
-            cfg_arg: ConfigArgValues::Setup,
+            cfg_act: ConfigActionValues::Setup,
         });
     }
     match opts.subcmd {
-        Commands::Config(arg) => match arg.cfg_arg {
+        Commands::Config(arg) => match arg.cfg_act {
             cfg_arg => match cfg_arg {
-                ConfigArgValues::Auth => {
+                ConfigActionValues::Auth => {
                     let _cfg_res = match config_cmd_runner.set_cfg_auth(cfg_data) {
                         Ok(_) => println!("Authentication configuration stored successfully"),
                         Err(err) => {
@@ -51,7 +51,7 @@ fn main() {
                         }
                     };
                 }
-                ConfigArgValues::Jira => {
+                ConfigActionValues::Jira => {
                     let _cfg_res = match config_cmd_runner.set_cfg_jira(cfg_data) {
                         Ok(_) => println!("Initialization configuration stored successfully"),
                         Err(err) => {
@@ -59,7 +59,7 @@ fn main() {
                         }
                     };
                 }
-                ConfigArgValues::Setup => {
+                ConfigActionValues::Setup => {
                     let _cfg_res = match config_cmd_runner.setup_cfg(cfg_data) {
                         Ok(_) => println!("Configuration setup successfully"),
                         Err(err) => {
@@ -67,8 +67,24 @@ fn main() {
                         }
                     };
                 }
-                ConfigArgValues::Show => {
+                ConfigActionValues::Show => {
                     config_cmd_runner.show_cfg(cfg_data);
+                }
+            },
+        },
+        Commands::Version(arg) => match arg.version_act {
+            version_arg => match version_arg {
+                args::commands::VersionActionValues::Create => {
+                    println!("Create version");
+                }
+                args::commands::VersionActionValues::Update => {
+                    println!("Update version");
+                }
+                args::commands::VersionActionValues::Delete => {
+                    println!("Delete version");
+                }
+                args::commands::VersionActionValues::Release => {
+                    println!("Release version");
                 }
             },
         },
