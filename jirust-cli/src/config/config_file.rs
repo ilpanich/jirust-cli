@@ -42,6 +42,15 @@ impl AuthData {
     pub fn to_base64(&self) -> String {
         BASE64_STANDARD.encode(format!("{}:{}", self.username, self.api_key).replace("\n", ""))
     }
+
+    pub fn from_base64(encoded: &str) -> (String, String) {
+        let decoded = BASE64_STANDARD
+            .decode(encoded)
+            .expect("Failed to decode base64");
+        let decoded_str = String::from_utf8(decoded).expect("Failed to convert to string");
+        let parts: Vec<&str> = decoded_str.split(':').collect();
+        (parts[0].to_string(), parts[1].to_string())
+    }
 }
 
 impl ConfigFile {

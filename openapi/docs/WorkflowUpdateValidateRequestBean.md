@@ -1,0 +1,12 @@
+# WorkflowUpdateValidateRequestBean
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**payload** | [**models::WorkflowUpdateRequest**](WorkflowUpdateRequest.md) |  | 
+**validation_options** | Option<[**models::ValidationOptionsForUpdate**](ValidationOptionsForUpdate.md)> |  | [optional]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

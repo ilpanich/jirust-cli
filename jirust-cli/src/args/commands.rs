@@ -31,16 +31,18 @@ pub enum ConfigActionValues {
 #[derive(Args, Debug)]
 pub struct VersionArgs {
     #[arg(
-        value_name = "create|update|delete|release",
+        value_name = "create|list|update|delete|release",
         help_heading = "Jira Project version management"
     )]
     pub version_act: VersionActionValues,
     #[clap(long)]
     pub project: String,
     #[clap(long)]
-    pub version_name: String,
+    pub version_id: Option<String>,
     #[clap(long)]
-    pub version_description: String,
+    pub version_name: Option<String>,
+    #[clap(long)]
+    pub version_description: Option<String>,
     #[clap(long)]
     pub version_start_date: Option<String>,
     #[clap(long)]
@@ -49,12 +51,17 @@ pub struct VersionArgs {
     pub version_archived: Option<bool>,
     #[clap(long)]
     pub version_released: Option<bool>,
+    #[clap(long)]
+    pub version_page_size: Option<i32>,
+    #[clap(long)]
+    pub version_page_offset: Option<i64>,
 }
 
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum VersionActionValues {
     Create,
+    List,
     Update,
     Delete,
     Release,

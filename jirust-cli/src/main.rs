@@ -1,9 +1,14 @@
+use prettytable::{Cell, Row, Table};
+
 use std::env;
 
 use crate::args::commands::{Commands, JirustCliArgs};
-use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
+use crate::runners::{
+    cfg_cmd_runner::ConfigCmdRunner,
+    jira_cmd_runners::version_cmd_runner::{VersionCmdParams, VersionCmdRunner},
+};
 
-use args::commands::{ConfigActionValues, ConfigArgs};
+use args::commands::ConfigActionValues;
 use clap::Parser;
 use config::config_file::ConfigFile;
 
@@ -11,7 +16,8 @@ pub mod args;
 pub mod config;
 pub mod runners;
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
     let config_file_path = match env::var_os("HOME") {
         Some(home) => format!("{}/.jirust-cli/jirust-cli.conf", home.to_string_lossy()),
         None => ".jirust-cli/jirust-cli.conf".to_string(),
@@ -34,7 +40,7 @@ fn main() {
             ConfigFile::default()
         }
     };
-    if (cfg_data.get_auth_key().is_empty() || cfg_data.get_jira_url().is_empty()) {
+    if cfg_data.get_auth_key().is_empty() || cfg_data.get_jira_url().is_empty() {
         eprintln!("Error: Missing basic configuration, setup mandatory!");
         opts.subcmd = Commands::Config(args::commands::ConfigArgs {
             cfg_act: ConfigActionValues::Setup,
@@ -72,10 +78,44 @@ fn main() {
                 }
             },
         },
-        Commands::Version(arg) => match arg.version_act {
-            version_arg => match version_arg {
+        Commands::Version(arg) => match arg {
+            version_arg => match version_arg.version_act {
                 args::commands::VersionActionValues::Create => {
                     println!("Create version");
+                }
+                args::commands::VersionActionValues::List => {
+                    let version_cmd_runner = VersionCmdRunner::new(cfg_data);
+                    let res = version_cmd_runner
+                        .list_jira_versions(VersionCmdParams::from(&version_arg))
+                        .await?;
+                    let mut res_table = Table::new();
+                    res_table.add_row(Row::new(vec![
+                        Cell::new("ID"),
+                        Cell::new("Name"),
+                        Cell::new("Start"),
+                        Cell::new("End"),
+                        Cell::new("Archived"),
+                        Cell::new("Released"),
+                    ]));
+                    res.iter().for_each(|v| {
+                        res_table.add_row(Row::new(vec![
+                            Cell::new(&v.id.clone().unwrap_or("".to_string())),
+                            Cell::new(&v.name.clone().unwrap_or("".to_string())),
+                            Cell::new(&v.user_start_date.clone().unwrap_or("".to_string())),
+                            Cell::new(&v.user_release_date.clone().unwrap_or("".to_string())),
+                            Cell::new(if v.archived.clone().unwrap_or(false) {
+                                "T"
+                            } else {
+                                "F"
+                            }),
+                            Cell::new(if v.released.clone().unwrap_or(false) {
+                                "T"
+                            } else {
+                                "F"
+                            }),
+                        ]));
+                    });
+                    res_table.printstd();
                 }
                 args::commands::VersionActionValues::Update => {
                     println!("Update version");
@@ -89,4 +129,5 @@ fn main() {
             },
         },
     }
+    Ok(())
 }
