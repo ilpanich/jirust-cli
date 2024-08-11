@@ -1,11 +1,14 @@
-use prettytable::{Cell, Row, Table};
+#[macro_use]
+extern crate prettytable;
 
 use std::env;
 
 use crate::args::commands::{Commands, JirustCliArgs};
 use crate::runners::{
     cfg_cmd_runner::ConfigCmdRunner,
-    jira_cmd_runners::version_cmd_runner::{VersionCmdParams, VersionCmdRunner},
+    jira_cmd_runners::version_cmd_runner::{
+        print_table_full, print_table_single, VersionCmdParams, VersionCmdRunner,
+    },
 };
 
 use args::commands::ConfigActionValues;
@@ -81,47 +84,31 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
         Commands::Version(arg) => match arg {
             version_arg => match version_arg.version_act {
                 args::commands::VersionActionValues::Create => {
-                    println!("Create version");
+                    let version_cmd_runner = VersionCmdRunner::new(cfg_data);
+                    let res = version_cmd_runner
+                        .create_jira_version(VersionCmdParams::from(&version_arg))
+                        .await?;
+                    print_table_single(res);
                 }
                 args::commands::VersionActionValues::List => {
                     let version_cmd_runner = VersionCmdRunner::new(cfg_data);
                     let res = version_cmd_runner
                         .list_jira_versions(VersionCmdParams::from(&version_arg))
                         .await?;
-                    let mut res_table = Table::new();
-                    res_table.add_row(Row::new(vec![
-                        Cell::new("ID"),
-                        Cell::new("Name"),
-                        Cell::new("Start"),
-                        Cell::new("End"),
-                        Cell::new("Archived"),
-                        Cell::new("Released"),
-                    ]));
-                    res.iter().for_each(|v| {
-                        res_table.add_row(Row::new(vec![
-                            Cell::new(&v.id.clone().unwrap_or("".to_string())),
-                            Cell::new(&v.name.clone().unwrap_or("".to_string())),
-                            Cell::new(&v.user_start_date.clone().unwrap_or("".to_string())),
-                            Cell::new(&v.user_release_date.clone().unwrap_or("".to_string())),
-                            Cell::new(if v.archived.clone().unwrap_or(false) {
-                                "T"
-                            } else {
-                                "F"
-                            }),
-                            Cell::new(if v.released.clone().unwrap_or(false) {
-                                "T"
-                            } else {
-                                "F"
-                            }),
-                        ]));
-                    });
-                    res_table.printstd();
+                    print_table_full(res);
                 }
                 args::commands::VersionActionValues::Update => {
                     println!("Update version");
                 }
                 args::commands::VersionActionValues::Delete => {
-                    println!("Delete version");
+                    let version_cmd_runner = VersionCmdRunner::new(cfg_data);
+                    let res = version_cmd_runner
+                        .delete_jira_version(VersionCmdParams::from(&version_arg))
+                        .await;
+                    match res {
+                        Ok(_) => println!("Version deleted successfully"),
+                        Err(err) => eprintln!("Error deleting version: {}", err),
+                    }
                 }
                 args::commands::VersionActionValues::Release => {
                     println!("Release version");

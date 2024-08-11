@@ -1,5 +1,6 @@
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
+use chrono::{DateTime, Utc};
 use openapi::apis::configuration::Configuration;
 use openapi::apis::project_versions_api::*;
 use openapi::models::{DeleteAndReplaceVersionBean, Version};
@@ -22,6 +23,7 @@ impl VersionCmdRunner {
         params: VersionCmdParams,
     ) -> Result<Version, Box<dyn std::error::Error>> {
         let version = Version {
+            project: Some(params.project_id),
             name: Some(
                 params
                     .version_name
@@ -135,12 +137,17 @@ pub struct VersionCmdParams {
 
 impl From<&VersionArgs> for VersionCmdParams {
     fn from(args: &VersionArgs) -> Self {
+        let now: DateTime<Utc> = Utc::now();
         VersionCmdParams {
             project_id: args.project.clone(),
             version_name: args.version_name.clone(),
             version_id: args.version_id.clone(),
             version_description: args.version_description.clone(),
-            version_start_date: args.version_start_date.clone(),
+            version_start_date: Some(
+                args.version_start_date
+                    .clone()
+                    .unwrap_or(now.format("%Y-%m-%d").to_string()),
+            ),
             version_release_date: args.version_release_date.clone(),
             version_archived: args.version_archived.clone(),
             version_released: args.version_released.clone(),
@@ -148,4 +155,77 @@ impl From<&VersionArgs> for VersionCmdParams {
             version_page_offset: args.version_page_offset.clone(),
         }
     }
+}
+
+pub fn print_table_full(versions: Vec<Version>) {
+    let mut table = prettytable::Table::new();
+    table.add_row(row![
+        bFc->"ID",
+        bFm->"Name",
+        bFw->"Description",
+        bFy->"Start Date",
+        bFr->"Release Date",
+        bFb->"Archived",
+        bFg->"Released"
+    ]);
+    for version in versions {
+        table.add_row(row![
+            Fc->version.id.unwrap_or_default(),
+            Fm->version.name.unwrap_or_default(),
+            Fw->version.description.unwrap_or_default(),
+            Fy->version.start_date.unwrap_or_default(),
+            Fr->version.release_date.unwrap_or_default(),
+            Fb->version.archived.unwrap_or_default(),
+            Fg->version.released.unwrap_or_default()
+        ]);
+    }
+    table.printstd();
+}
+
+pub fn print_table_basic(versions: Vec<Version>) {
+    let mut table = prettytable::Table::new();
+    table.add_row(row![
+        bFc->"ID",
+        bFm->"Name",
+        bFy->"Start Date",
+        bFr->"Release Date",
+        bFb->"Archived",
+        bFg->"Released"
+    ]);
+    for version in versions {
+        table.add_row(row![
+            Fc->version.id.unwrap_or_default(),
+            Fm->version.name.unwrap_or_default(),
+            Fy->version.start_date.unwrap_or_default(),
+            Fr->version.release_date.unwrap_or_default(),
+            Fb->version.archived.unwrap_or_default(),
+            Fg->version.released.unwrap_or_default()
+        ]);
+    }
+    table.printstd();
+}
+
+pub fn print_table_single(version: Version) {
+    let mut table = prettytable::Table::new();
+    table.add_row(row![
+        bFc->"ID",
+        bFm->"Name",
+        bFw->"Description",
+        bFy->"Start Date",
+        bFr->"Release Date",
+        bFb->"Archived",
+        bFg->"Released"
+    ]);
+
+    table.add_row(row![
+        Fc->version.id.unwrap_or_default(),
+        Fm->version.name.unwrap_or_default(),
+        Fw->version.description.unwrap_or_default(),
+        Fy->version.start_date.unwrap_or_default(),
+        Fr->version.release_date.unwrap_or_default(),
+        Fb->version.archived.unwrap_or_default(),
+        Fg->version.released.unwrap_or_default()
+    ]);
+
+    table.printstd();
 }
