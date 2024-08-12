@@ -38,6 +38,8 @@ pub struct VersionArgs {
     #[clap(long)]
     pub project: String,
     #[clap(long)]
+    pub project_id: Option<i64>,
+    #[clap(long)]
     pub version_id: Option<String>,
     #[clap(long)]
     pub version_name: Option<String>,
@@ -65,4 +67,5 @@ pub enum VersionActionValues {
     Update,
     Delete,
     Release,
+    Archive,
 }

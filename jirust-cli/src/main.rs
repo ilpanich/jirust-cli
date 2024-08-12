@@ -50,8 +50,8 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
         });
     }
     match opts.subcmd {
-        Commands::Config(arg) => match arg.cfg_act {
-            cfg_arg => match cfg_arg {
+        Commands::Config(arg) => match arg {
+            cfg_arg => match cfg_arg.cfg_act {
                 ConfigActionValues::Auth => {
                     let _cfg_res = match config_cmd_runner.set_cfg_auth(cfg_data) {
                         Ok(_) => println!("Authentication configuration stored successfully"),
@@ -98,7 +98,28 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
                     print_table_full(res);
                 }
                 args::commands::VersionActionValues::Update => {
-                    println!("Update version");
+                    let version_cmd_runner = VersionCmdRunner::new(cfg_data);
+                    match version_cmd_runner
+                        .get_jira_version(VersionCmdParams::from(&version_arg))
+                        .await
+                    {
+                        Ok(res_version) => {
+                            let res = version_cmd_runner
+                                .update_jira_version(VersionCmdParams::merge_args(
+                                    res_version,
+                                    Some(&version_arg),
+                                ))
+                                .await;
+                            match res {
+                                Ok(res) => {
+                                    println!("Version updated successfully");
+                                    print_table_single(res);
+                                }
+                                Err(err) => eprintln!("Error updating version: {}", err),
+                            }
+                        }
+                        Err(err) => eprintln!("Error retrieving version: {}", err),
+                    }
                 }
                 args::commands::VersionActionValues::Delete => {
                     let version_cmd_runner = VersionCmdRunner::new(cfg_data);
@@ -111,7 +132,46 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
                     }
                 }
                 args::commands::VersionActionValues::Release => {
-                    println!("Release version");
+                    let version_cmd_runner = VersionCmdRunner::new(cfg_data);
+                    match version_cmd_runner
+                        .get_jira_version(VersionCmdParams::from(&version_arg))
+                        .await
+                    {
+                        Ok(res_version) => {
+                            let res = version_cmd_runner
+                                .update_jira_version(VersionCmdParams::mark_released(res_version))
+                                .await;
+                            match res {
+                                Ok(res) => {
+                                    println!("Version released successfully");
+                                    print_table_single(res);
+                                }
+                                Err(err) => eprintln!("Error releasing version: {}", err),
+                            }
+                        }
+                        Err(err) => eprintln!("Error retrieving version: {}", err),
+                    }
+                }
+                args::commands::VersionActionValues::Archive => {
+                    let version_cmd_runner = VersionCmdRunner::new(cfg_data);
+                    match version_cmd_runner
+                        .get_jira_version(VersionCmdParams::from(&version_arg))
+                        .await
+                    {
+                        Ok(res_version) => {
+                            let res = version_cmd_runner
+                                .update_jira_version(VersionCmdParams::mark_archived(res_version))
+                                .await;
+                            match res {
+                                Ok(res) => {
+                                    println!("Version archived successfully");
+                                    print_table_single(res);
+                                }
+                                Err(err) => eprintln!("Error archiving version: {}", err),
+                            }
+                        }
+                        Err(err) => eprintln!("Error retrieving version: {}", err),
+                    }
                 }
             },
         },
