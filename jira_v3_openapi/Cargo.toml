@@ -7,7 +7,7 @@ authors = [
 ]
 description = "Jira Cloud platform REST API Client (v3) generated from OpenAPI spec)"
 keywords = ["jira", "openapi"]
-repository = "https://github.com/ilpanich/jirust-cli/jira_v3_openapi"
+repository = "https://github.com/ilpanich/jirust-cli"
 license = "Apache-2.0"
 edition = "2021"
 
