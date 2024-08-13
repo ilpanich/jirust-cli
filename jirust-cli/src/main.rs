@@ -1,21 +1,10 @@
-#[macro_use]
 extern crate prettytable;
 
 use std::env;
 
-use crate::args::commands::{Commands, JirustCliArgs};
-
-use crate::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
-use args::commands::ConfigActionValues;
-use clap::Parser;
-use config::config_file::ConfigFile;
-use executors::config_executor::ConfigExecutor;
-use executors::jira_commands_executors::ExecJiraCommand;
-
-mod args;
-pub mod config;
-mod executors;
-pub mod runners;
+use jirust_cli::args::commands::{Commands, ConfigActionValues, ConfigArgs};
+use jirust_cli::config::config_file::ConfigFile;
+use jirust_cli::{manage_config, process_command};
 
 /// Jirust CLI main function
 /// Run without arguments to see the help message
@@ -25,38 +14,25 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
         Some(home) => format!("{}/.jirust-cli/jirust-cli.conf", home.to_string_lossy()),
         None => ".jirust-cli/jirust-cli.conf".to_string(),
     };
-    let mut opts = match JirustCliArgs::try_parse_from(std::env::args()) {
-        Ok(opts) => opts,
-        Err(err) => {
-            eprintln!("Error: {}", err);
-            err.exit();
-        }
+    let (cfg_data, opts) = match manage_config(config_file_path.clone(), std::env::args()) {
+        Ok((cfg, opts)) => (cfg, opts),
+        Err(err) => match err.kind() {
+            std::io::ErrorKind::NotFound => {
+                eprintln!("Error: Missing config file, setup mandatory!");
+                let subcmd = Commands::Config(ConfigArgs {
+                    cfg_act: ConfigActionValues::Setup,
+                });
+                (ConfigFile::default(), subcmd)
+            }
+            _ => {
+                eprintln!("Error: Missing config file, setup mandatory!");
+                let subcmd = Commands::Config(ConfigArgs {
+                    cfg_act: ConfigActionValues::Setup,
+                });
+                (ConfigFile::default(), subcmd)
+            }
+        },
     };
-    let cfg_data = match ConfigFile::read_from_file(config_file_path.as_str()) {
-        Ok(cfg) => cfg,
-        Err(_) => {
-            eprintln!("Error: Missing config file, setup mandatory!");
-            opts.subcmd = Commands::Config(args::commands::ConfigArgs {
-                cfg_act: ConfigActionValues::Setup,
-            });
-            ConfigFile::default()
-        }
-    };
-    if cfg_data.get_auth_key().is_empty() || cfg_data.get_jira_url().is_empty() {
-        eprintln!("Error: Missing basic configuration, setup mandatory!");
-        opts.subcmd = Commands::Config(args::commands::ConfigArgs {
-            cfg_act: ConfigActionValues::Setup,
-        });
-    }
-    match opts.subcmd {
-        Commands::Config(args) => {
-            let config_executor = ConfigExecutor::new(config_file_path, args.cfg_act);
-            config_executor.exec_config_command(cfg_data).await?
-        }
-        Commands::Version(args) => {
-            let version_executor = VersionExecutor::new(cfg_data, args.version_act, args);
-            version_executor.exec_jira_command().await?
-        }
-    }
+    let _res = process_command(opts, config_file_path, cfg_data).await;
     Ok(())
 }

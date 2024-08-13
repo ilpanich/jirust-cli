@@ -1,5 +1,5 @@
 [package]
-name = "jirust-cli"
+name = "jirust_cli"
 version = "0.5.0"
 edition = "2021"
 authors = ["Emanuele Panigati <ilpanich@gmail.com>"]
@@ -8,6 +8,9 @@ keywords = ["jira", "cli"]
 repository = "https://github.com/ilpanich/jirust-cli/jirust-cli"
 license = "Apache-2.0"
 readme = "../README.md"
+
+[lib]
+crate-type = ["rlib"]
 
 [dependencies]
 tokio = { version = "1.39.2", features = ["full"] }
