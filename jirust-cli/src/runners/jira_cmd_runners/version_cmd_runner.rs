@@ -1,10 +1,10 @@
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
 use chrono::{DateTime, Utc};
-use openapi::apis::configuration::Configuration;
-use openapi::apis::project_versions_api::*;
-use openapi::apis::Error;
-use openapi::models::{DeleteAndReplaceVersionBean, Version};
+use jira_v3_openapi::apis::configuration::Configuration;
+use jira_v3_openapi::apis::project_versions_api::*;
+use jira_v3_openapi::apis::Error;
+use jira_v3_openapi::models::{DeleteAndReplaceVersionBean, Version};
 
 /// Version command runner struct
 /// This struct is responsible for running the version related command
@@ -184,7 +184,7 @@ impl VersionCmdRunner {
         &self,
         params: VersionCmdParams,
     ) -> Result<Version, Error<UpdateVersionError>> {
-        let version = openapi::models::Version {
+        let version = Version {
             id: Some(params.version_id.clone().expect("VersionID is mandatory!")),
             name: params.version_name,
             description: params.version_description,

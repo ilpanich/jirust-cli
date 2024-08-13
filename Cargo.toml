@@ -1,4 +1,4 @@
 [workspace]
 
-members = ["openapi", "jirust-cli"]
+members = ["jira_v3_openapi", "jirust-cli"]
 resolver = "2"

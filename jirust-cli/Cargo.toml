@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["Emanuele Panigati <ilpanich@gmail.com>"]
 description = "A CLI tool to interact with Jira"
 keywords = ["jira", "cli"]
-repository = "https://github.com/ilpanich/jirust-cli"
+repository = "https://github.com/ilpanich/jirust-cli/jirust-cli"
 license = "Apache-2.0"
 readme = "README.md"
 
@@ -18,7 +18,7 @@ toml = "0.8"
 clap = { version = "4.5", features = ["derive"] }
 clap_derive = "4.5"
 rpassword = "7.3.1"
-openapi = { path = "../openapi" }
+jira_v3_openapi = { path = "../jira_v3_openapi" }
 prettytable-rs = "0.10.0"
 chrono = "0.4.38"
 
