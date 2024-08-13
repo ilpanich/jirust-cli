@@ -7,7 +7,7 @@ description = "A CLI tool to interact with Jira"
 keywords = ["jira", "cli"]
 repository = "https://github.com/ilpanich/jirust-cli/jirust-cli"
 license = "Apache-2.0"
-readme = "README.md"
+readme = "../README.md"
 
 [dependencies]
 tokio = { version = "1.39.2", features = ["full"] }
