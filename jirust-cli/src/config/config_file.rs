@@ -54,10 +54,9 @@ impl AuthData {
     /// # Examples
     ///
     /// ```
-    /// let auth_data = AuthData::new("username".to_string(), "api_key".to_string());
+    /// use jirust_cli::config::config_file::AuthData;
     ///
-    /// assert_eq!(auth_data.username, "username");
-    /// assert_eq!(auth_data.api_key, "api_key");
+    /// let auth_data = AuthData::new("username".to_string(), "api_key".to_string());
     /// ```
     pub fn new(username: String, api_key: String) -> AuthData {
         AuthData { username, api_key }
@@ -71,10 +70,10 @@ impl AuthData {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::AuthData;
+    ///
     /// let mut auth_data = AuthData::new("username".to_string(), "api_key".to_string());
     /// auth_data.set_username("new_username".to_string());
-    ///
-    /// assert_eq!(auth_data.get_username, "new_username");
     /// ```
     pub fn set_username(&mut self, username: String) {
         self.username = username.replace("\n", "");
@@ -88,10 +87,10 @@ impl AuthData {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::AuthData;
+    ///
     /// let mut auth_data = AuthData::new("username".to_string(), "api_key".to_string());
     /// auth_data.set_api_key("new_api_key".to_string());
-    ///
-    /// assert_eq!(auth_data.get_api_key, "new_api_key");
     /// ```
     pub fn set_api_key(&mut self, api_key: String) {
         self.api_key = api_key.replace("\n", "");
@@ -105,6 +104,8 @@ impl AuthData {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::AuthData;
+    ///
     /// let auth_data = AuthData::new("username".to_string(), "api_key".to_string());
     /// let base64_encoded = auth_data.to_base64();
     ///
@@ -125,6 +126,8 @@ impl AuthData {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::AuthData;
+    ///
     /// let (username, api_key) = AuthData::from_base64("dXNlcm5hbWU6YXBpX2tleQ==");
     ///
     /// assert_eq!(username, "username");
@@ -164,10 +167,12 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
     /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string());
     ///
-    /// assert_eq!(config.auth.auth_token, "auth_token");
-    /// assert_eq!(config.jira.jira_url, "jira_url");
+    /// assert_eq!(config.get_auth_key(), "auth_token");
+    /// assert_eq!(config.get_jira_url(), "jira_url");
     /// ```
     pub fn new(auth_token: String, jira_url: String) -> ConfigFile {
         ConfigFile {
@@ -189,10 +194,12 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
     /// let config = ConfigFile::default();
     ///
-    /// assert_eq!(config.auth.auth_token, "");
-    /// assert_eq!(config.jira.jira_url, "");
+    /// assert_eq!(config.get_auth_key(), "");
+    /// assert_eq!(config.get_jira_url(), "");
     /// ```
     pub fn default() -> ConfigFile {
         ConfigFile {
@@ -214,10 +221,12 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
     /// let mut config = ConfigFile::default();
     /// config.set_auth_key("auth_key".to_string());
     ///
-    /// assert_eq!(config.auth.get_auth_key, "auth_key");
+    /// assert_eq!(config.get_auth_key(), "auth_key");
     /// ```
     pub fn set_auth_key(&mut self, auth_token: String) {
         self.auth.auth_token = auth_token.replace("\n", "");
@@ -233,6 +242,8 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
     /// let config = ConfigFile::new("auth_key".to_string(), "jira_url".to_string());
     /// let auth_key = config.get_auth_key();
     ///
@@ -251,10 +262,12 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
     /// let mut config = ConfigFile::default();
     /// config.set_jira_url("jira_url".to_string());
     ///
-    /// assert_eq!(config.jira.get_jira_url(), "jira_url");
+    /// assert_eq!(config.get_jira_url(), "jira_url");
     /// ```
     pub fn set_jira_url(&mut self, jira_url: String) {
         self.jira.jira_url = jira_url.replace("\n", "");
@@ -269,6 +282,8 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
     /// let config = ConfigFile::new("auth_key".to_string(), "jira_url".to_string());
     /// let jira_url = config.get_jira_url();
     ///
@@ -290,6 +305,8 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
     /// let config = ConfigFile::new("auth_key".to_string(), "jira_url".to_string());
     /// let result = config.write_to_file("config.toml");
     ///
@@ -320,11 +337,13 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
     /// let config = ConfigFile::read_from_file("config.toml");
     ///
-    /// assert!(config.is_ok());
-    /// assert_eq!(config.unwrap().get_auth_key(), "auth_key");
-    /// assert_eq!(config.unwrap().get_jira_url(), "jira_url");
+    /// assert!(config.clone().is_ok());
+    /// assert_eq!(config.clone().unwrap().get_auth_key(), "auth_key");
+    /// assert_eq!(config.clone().unwrap().get_jira_url(), "jira_url");
     /// ```
     pub fn read_from_file(file_path: &str) -> Result<ConfigFile, toml::de::Error> {
         let config_file_str = fs::read_to_string(file_path)

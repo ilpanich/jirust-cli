@@ -35,6 +35,15 @@ impl VersionExecutor {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
+    /// let cfg_data = ConfigFile::default();
+    /// let version_action = VersionActionValues::List;
+    /// let version_args = VersionArgs {
+    ///    project: Some("project_key".to_string()),
+    /// };
+    ///
     /// let version_executor = VersionExecutor::new(cfg_data, version_action, version_args);
     /// ```
     pub fn new(

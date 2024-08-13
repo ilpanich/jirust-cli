@@ -29,7 +29,14 @@ impl ConfigExecutor {
     /// # Examples
     ///
     /// ```
-    /// let config_executor = ConfigExecutor::new(config_file_path, args.cfg_act);
+    /// use jirust_cli::executors::config_executor::ConfigExecutor;
+    /// use jirust_cli::args::commands::ConfigArgs;
+    ///
+    /// let args = ConfigArgs {
+    ///    cfg_act: ConfigActionValues::Setup,
+    /// };
+    ///
+    /// let config_executor = ConfigExecutor::new("config_file_path".to_string(), args.cfg_act);
     /// ```
     pub fn new(cfg_file: String, config_action: ConfigActionValues) -> Self {
         let config_cmd_runner = ConfigCmdRunner::new(cfg_file.clone());
@@ -52,7 +59,12 @@ impl ConfigExecutor {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::executors::config_executor::ConfigExecutor;
+    ///
+    /// # tokio_test::block_on(async {
+    /// let config_executor = ConfigExecutor::new(config_file_path, args.cfg_act);
     /// config_executor.exec_config_command(cfg_data).await?;
+    /// # })
     /// ```
     pub async fn exec_config_command(
         &self,

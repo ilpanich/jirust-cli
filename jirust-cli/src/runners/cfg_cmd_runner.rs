@@ -71,8 +71,12 @@ impl ConfigCmdRunner {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::cfg_cmd_runner::ConfigCmdRunner;
+    ///
     /// let cfg_runner = ConfigCmdRunner::new("path/to/config/file".to_string());
-    /// let cfg = ConfigFile::new();
+    /// let cfg = ConfigFile::default();
+    ///
     /// cfg_runner.set_cfg_auth(cfg);
     /// ```
     pub fn set_cfg_auth(&self, mut cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
