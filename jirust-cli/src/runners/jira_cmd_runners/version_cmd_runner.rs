@@ -6,11 +6,42 @@ use openapi::apis::project_versions_api::*;
 use openapi::apis::Error;
 use openapi::models::{DeleteAndReplaceVersionBean, Version};
 
+/// Version command runner struct
+/// This struct is responsible for running the version related command
 pub struct VersionCmdRunner {
     cfg: Configuration,
 }
 
+/// Version command parameters struct
+/// This struct is responsible for holding the version command runner parameters
+/// and it is used to pass the parameters to the version command runner
+///
+/// # Methods
+///
+/// * `new` - This method creates a new instance of the VersionCmdRunner struct
+/// * `create_jira_version` - This method creates a new Jira version
+/// * `get_jira_version` - This method gets a Jira version
+/// * `list_jira_versions` - This method lists Jira versions
+/// * `update_jira_version` - This method updates a Jira version
+/// * `delete_jira_version` - This method deletes a Jira version
+/// * `release_jira_version` - This method releases a Jira version
+/// `archive_jira_version` - This method archives a Jira version
 impl VersionCmdRunner {
+    /// This method creates a new instance of the VersionCmdRunner struct
+    ///
+    /// # Arguments
+    ///
+    /// * `cfg_file` - A ConfigFile struct
+    ///
+    /// # Returns
+    ///
+    /// * A VersionCmdRunner struct
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// ```
     pub fn new(cfg_file: ConfigFile) -> VersionCmdRunner {
         let mut config = Configuration::new();
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
@@ -19,6 +50,22 @@ impl VersionCmdRunner {
         VersionCmdRunner { cfg: config }
     }
 
+    /// This method creates a new Jira version with the given parameters
+    /// and returns the created version
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - A VersionCmdParams struct
+    ///
+    /// # Returns
+    ///
+    /// * A Result containing a Version struct or a Box<dyn std::error::Error>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let version = version_cmd_runner.create_jira_version(params).await?;
+    /// ```
     pub async fn create_jira_version(
         &self,
         params: VersionCmdParams,
@@ -40,6 +87,23 @@ impl VersionCmdRunner {
         Ok(create_version(&self.cfg, version).await?)
     }
 
+    /// This method gets a Jira version with the given parameters
+    /// and returns the version
+    /// If the version is not found, it returns an error
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - A VersionCmdParams struct
+    ///
+    /// # Returns
+    ///
+    /// * A Result containing a Version struct or an Error<GetVersionError>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let version = version_cmd_runner.get_jira_version(params).await?;
+    /// ```
     pub async fn get_jira_version(
         &self,
         params: VersionCmdParams,
@@ -52,6 +116,26 @@ impl VersionCmdRunner {
         .await?)
     }
 
+    /// This method lists Jira versions with the given parameters
+    /// and returns the versions
+    /// If there are no versions, it returns an empty vector
+    /// If the version is not found, it returns an error
+    /// If the version page size is given, it returns the paginated versions
+    /// Otherwise, it returns all versions
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - A VersionCmdParams struct
+    ///
+    /// # Returns
+    ///
+    /// * A Result containing a vector of Version structs or a Box<dyn std::error::Error>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let versions = version_cmd_runner.list_jira_versions(params).await?;
+    /// ```
     pub async fn list_jira_versions(
         &self,
         params: VersionCmdParams,
@@ -78,6 +162,24 @@ impl VersionCmdRunner {
         }
     }
 
+    /// This method updates a Jira version with the given parameters
+    /// and returns the updated version
+    /// If the version is not found, it returns an error
+    /// If the version ID is not given, it returns an error
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - A VersionCmdParams struct
+    ///
+    /// # Returns
+    ///
+    /// * A Result containing a Version struct or an Error<UpdateVersionError>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let version = version_cmd_runner.update_jira_version(params).await?;
+    /// ```
     pub async fn update_jira_version(
         &self,
         params: VersionCmdParams,
@@ -100,6 +202,22 @@ impl VersionCmdRunner {
         .await?)
     }
 
+    /// This method deletes a Jira version with the given parameters
+    /// and returns the status of the deletion
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - A VersionCmdParams struct
+    ///
+    /// # Returns
+    ///
+    /// * A Result containing a serde_json::Value or an Error<DeleteAndReplaceVersionError>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let status = version_cmd_runner.delete_jira_version(params).await?;
+    /// ```
     pub async fn delete_jira_version(
         &self,
         params: VersionCmdParams,
@@ -122,6 +240,7 @@ impl VersionCmdRunner {
     }
 }
 
+/// This struct defines the parameters for the Version commands
 pub struct VersionCmdParams {
     pub project: String,
     pub project_id: Option<i64>,
@@ -136,7 +255,26 @@ pub struct VersionCmdParams {
     pub version_page_offset: Option<i64>,
 }
 
+/// Implementation of the VersionCmdParams struct
+///
+/// # Methods
+///
+/// * `new` - returns a new VersionCmdParams struct
+/// * `merge_args` - merges the current version with the optional arguments
+/// * `mark_released` - marks the version as released
+/// * `mark_archived` - marks the version as archived
 impl VersionCmdParams {
+    /// This method returns a new VersionCmdParams struct
+    ///
+    /// # Returns
+    ///
+    /// * A VersionCmdParams struct
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let params = VersionCmdParams::new();
+    /// ```
     pub fn new() -> VersionCmdParams {
         VersionCmdParams {
             project: "".to_string(),
@@ -153,6 +291,24 @@ impl VersionCmdParams {
         }
     }
 
+    /// This method merges the current version with the optional arguments
+    /// and returns a VersionCmdParams struct
+    /// If the optional arguments are not given, it uses the current version values
+    ///
+    /// # Arguments
+    ///
+    /// * `current_version` - A Version struct
+    /// * `opt_args` - An Option<&VersionArgs> struct
+    ///
+    /// # Returns
+    ///
+    /// * A VersionCmdParams struct
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let params = VersionCmdParams::merge_args(current_version, opt_args);
+    /// ```
     pub fn merge_args(
         current_version: Version,
         opt_args: Option<&VersionArgs>,
@@ -211,6 +367,24 @@ impl VersionCmdParams {
         }
     }
 
+    /// This method marks the version as released
+    /// and returns a VersionCmdParams struct
+    /// It sets the version_released and version_release_date fields
+    /// with the current date
+    ///
+    /// # Arguments
+    ///
+    /// * `version` - A Version struct
+    ///
+    /// # Returns
+    ///
+    /// * A VersionCmdParams struct
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let params = VersionCmdParams::mark_released(version);
+    /// ```
     pub fn mark_released(version: Version) -> VersionCmdParams {
         let mut version_to_release = Self::merge_args(version, None);
         version_to_release.version_released = Some(true);
@@ -218,6 +392,23 @@ impl VersionCmdParams {
         version_to_release
     }
 
+    /// This method marks the version as archived
+    /// and returns a VersionCmdParams struct
+    ///
+    /// # Arguments
+    ///
+    /// * `version` - A Version struct
+    ///
+    /// # Returns
+    ///
+    /// * A VersionCmdParams struct
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let params = VersionCmdParams::mark_archived(version);
+    /// ```
+    ///
     pub fn mark_archived(version: Version) -> VersionCmdParams {
         let mut version_to_archive = Self::merge_args(version, None);
         version_to_archive.version_archived = Some(true);
@@ -225,7 +416,24 @@ impl VersionCmdParams {
     }
 }
 
+/// This trait defines the methods from for the Version command to VersionCmdParams struct
 impl From<&VersionArgs> for VersionCmdParams {
+    /// This method converts the VersionArgs struct to a VersionCmdParams struct
+    /// and returns a VersionCmdParams struct
+    ///
+    /// # Arguments
+    ///
+    /// * `args` - A VersionArgs struct
+    ///
+    /// # Returns
+    ///
+    /// * A VersionCmdParams struct
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let params = VersionCmdParams::from(args);
+    /// ```
     fn from(args: &VersionArgs) -> Self {
         let now: DateTime<Utc> = Utc::now();
         VersionCmdParams {
@@ -248,6 +456,19 @@ impl From<&VersionArgs> for VersionCmdParams {
     }
 }
 
+/// This function allows to print the version details in a pretty way (full data)
+/// It uses the prettytable library to print the version details
+///
+/// # Arguments
+///
+/// * `versions` - A Vector of Version structs
+///
+/// # Examples
+///
+/// ```
+/// print_table_full(versions);
+/// ```
+///
 pub fn print_table_full(versions: Vec<Version>) {
     let mut table = prettytable::Table::new();
     table.add_row(row![
@@ -275,6 +496,18 @@ pub fn print_table_full(versions: Vec<Version>) {
     table.printstd();
 }
 
+/// This function allows to print the version details in a pretty way (basic data)
+/// It uses the prettytable library to print the version details
+///
+/// # Arguments
+///
+/// * `versions` - A Vector of Version structs
+///
+/// # Examples
+///
+/// ```
+/// print_table_basic(versions);
+/// ```
 pub fn print_table_basic(versions: Vec<Version>) {
     let mut table = prettytable::Table::new();
     table.add_row(row![
@@ -300,6 +533,18 @@ pub fn print_table_basic(versions: Vec<Version>) {
     table.printstd();
 }
 
+/// This function allows to print the version details in a pretty way (single data)
+/// It uses the prettytable library to print the version details
+///
+/// # Arguments
+///
+/// * `version` - A Version struct
+///
+/// # Examples
+///
+/// ```
+/// print_table_single(version);
+/// ```
 pub fn print_table_single(version: Version) {
     let mut table = prettytable::Table::new();
     table.add_row(row![

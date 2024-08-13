@@ -5,16 +5,20 @@ use std::env;
 
 use crate::args::commands::{Commands, JirustCliArgs};
 
-use crate::executors::version_executor::VersionExecutor;
+use crate::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
 use args::commands::ConfigActionValues;
 use clap::Parser;
 use config::config_file::ConfigFile;
+use executors::config_executor::ConfigExecutor;
+use executors::jira_commands_executors::ExecJiraCommand;
 
 mod args;
 pub mod config;
 mod executors;
 pub mod runners;
 
+/// Jirust CLI main function
+/// Run without arguments to see the help message
 #[tokio::main]
 async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
     let config_file_path = match env::var_os("HOME") {
@@ -46,13 +50,12 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
     }
     match opts.subcmd {
         Commands::Config(args) => {
-            let config_executor =
-                executors::config_executor::ConfigExecutor::new(config_file_path, args.cfg_act);
-            config_executor.exec_command(cfg_data).await?
+            let config_executor = ConfigExecutor::new(config_file_path, args.cfg_act);
+            config_executor.exec_config_command(cfg_data).await?
         }
         Commands::Version(args) => {
             let version_executor = VersionExecutor::new(cfg_data, args.version_act, args);
-            version_executor.exec_command().await?
+            version_executor.exec_jira_command().await?
         }
     }
     Ok(())

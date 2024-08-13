@@ -4,13 +4,39 @@ use crate::runners::jira_cmd_runners::version_cmd_runner::{
     print_table_full, print_table_single, VersionCmdParams, VersionCmdRunner,
 };
 
+use super::ExecJiraCommand;
+
+/// VersionExecutor struct
 pub struct VersionExecutor {
     version_cmd_runner: VersionCmdRunner,
     version_action: VersionActionValues,
     version_args: VersionArgs,
 }
 
+/// VersionExecutor implementation
+///
+/// #Methods
+///
+/// * `nef(cfg_data: ConfigFile, version_action: VersionActionValues, version_args: VersionArgs) -> Self` - creates a new VersionExecutor instance
+/// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
 impl VersionExecutor {
+    /// Creates a new VersionExecutor instance
+    ///
+    /// # Arguments
+    ///
+    /// * `cfg_data: ConfigFile` - configuration file data
+    /// * `version_action: VersionActionValues` - version action
+    /// * `version_args: VersionArgs` - version arguments
+    ///
+    /// # Returns
+    ///
+    /// * `Self` - a new VersionExecutor instance
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let version_executor = VersionExecutor::new(cfg_data, version_action, version_args);
+    /// ```
     pub fn new(
         cfg_data: ConfigFile,
         version_action: VersionActionValues,
@@ -23,8 +49,22 @@ impl VersionExecutor {
             version_args,
         }
     }
+}
 
-    pub async fn exec_command(&self) -> Result<(), Box<dyn std::error::Error>> {
+/// Implements the `ExecJiraCommand` trait for `VersionExecutor`
+impl ExecJiraCommand for VersionExecutor {
+    /// Executes the Jira command
+    ///
+    /// # Returns
+    ///
+    /// * `Result<(), Box<dyn std::error::Error>>` - Result with the execution status
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// version_executor.exec_jira_command().await?;
+    /// ```
+    async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
         match self.version_action {
             VersionActionValues::Create => {
                 let res = self
