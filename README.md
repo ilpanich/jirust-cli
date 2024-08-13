@@ -37,7 +37,7 @@ Use in production at your own risk.
 The content of the openapi Jira lib is automatically generated from the Jira API openapi file:
 
 ```bash
-openapi-generator-cli generate -g rust -o ~/git/priv/jirust-cli/openapi -i openapi-spec/jira-v3.v3.json --additional-properties=bestFitInt=true,preferUnsignedInt=true,supportMiddleware=true
+openapi-generator-cli generate -g rust -o ~/git/priv/jirust-cli/jira_v3_openapi -i jira-v3-openapi-spec/swagger.v3.json --additional-properties=bestFitInt=true,preferUnsignedInt=true,supportMiddleware=true
 ```
 
 ## License
