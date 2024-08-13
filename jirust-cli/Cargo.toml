@@ -1,6 +1,6 @@
 [package]
 name = "jirust-cli"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 authors = ["Emanuele Panigati <ilpanich@gmail.com>"]
 description = "A CLI tool to interact with Jira"
@@ -18,7 +18,7 @@ toml = "0.8"
 clap = { version = "4.5", features = ["derive"] }
 clap_derive = "4.5"
 rpassword = "7.3.1"
-jira_v3_openapi = { path = "../jira_v3_openapi" }
+jira_v3_openapi = "1.0.0"
 prettytable-rs = "0.10.0"
 chrono = "0.4.38"
 
