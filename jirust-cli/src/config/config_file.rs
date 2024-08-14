@@ -339,7 +339,7 @@ impl ConfigFile {
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
     ///
-    /// let config = ConfigFile::read_from_file("config.toml");
+    /// let config = ConfigFile::read_from_file("config_example.toml");
     ///
     /// assert!(config.clone().is_ok());
     /// assert_eq!(config.clone().unwrap().get_auth_key(), "auth_key");

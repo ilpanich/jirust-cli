@@ -1,0 +1,5 @@
+[auth]
+auth_token = "auth_key"
+
+[jira]
+jira_url = "jira_url"
