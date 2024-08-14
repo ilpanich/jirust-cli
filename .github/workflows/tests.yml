@@ -16,4 +16,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run tests
-        run: cargo test -p jirust-cli --verbose
+        run: cargo test
