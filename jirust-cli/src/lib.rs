@@ -16,6 +16,33 @@ pub mod config;
 pub mod executors;
 pub mod runners;
 
+/// Manages the loading of the CLI configuration
+///
+/// # Arguments
+/// * `config_file_path` - The path to the configuration file
+/// * `args` - The arguments passed to the CLI
+///
+/// # Returns
+/// * A tuple containing the configuration file and the command to execute
+///
+/// # Errors
+/// * If the configuration file is not found
+/// * If the configuration file is missing mandatory fields
+///
+/// # Examples
+///
+/// ```no_run
+/// use jirust_cli::manage_config;
+/// use jirust_cli::config::config_file::ConfigFile;
+/// use jirust_cli::args::commands::Commands;
+///
+/// # fn main() -> Result<(), std::io::Error> {
+/// let config_file_path = String::from("config.json");
+/// let args = std::env::args();
+/// let (cfg_data, command) = manage_config(config_file_path, args)?;
+/// # Ok(())
+/// # }
+/// ```
 pub fn manage_config(
     config_file_path: String,
     args: Args,
@@ -46,6 +73,47 @@ pub fn manage_config(
     }
 }
 
+/// Processes the command passed to the CLI
+///
+/// # Arguments
+/// * `command` - The command to execute
+/// * `config_file_path` - The path to the configuration file
+/// * `cfg_data` - The configuration file data
+///
+/// # Returns
+/// * A Result containing the result of the command execution
+///
+/// # Errors
+/// * If the command execution fails
+///
+/// # Examples
+///
+/// ```no_run
+/// use jirust_cli::process_command;
+/// use jirust_cli::config::config_file::ConfigFile;
+/// use jirust_cli::args::commands::{Commands, VersionArgs, VersionActionValues};
+///
+/// # fn main() -> Result<(), std::io::Error> {
+/// let config_file_path = String::from("config.json");
+/// let args = VersionArgs {
+///   version_act: VersionActionValues::List,
+///   project: "project_key".to_string(),
+///   project_id: None,
+///   version_id: Some("97531".to_string()),
+///   version_name: Some("version_name".to_string()),
+///   version_description: Some("version_description".to_string()),
+///   version_start_date: None,
+///   version_release_date: None,
+///   version_archived: None,
+///   version_released: Some(true),
+///   version_page_size: None,
+///   version_page_offset: None,
+/// };
+///
+/// let result = process_command(Commands::Version(args), config_file_path, ConfigFile::default());
+/// # Ok(())
+/// # }
+/// ```
 pub async fn process_command(
     command: Commands,
     config_file_path: String,

@@ -68,8 +68,22 @@ impl VersionCmdRunner {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
+    /// use jira_v3_openapi::models::Version;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let params = VersionCmdParams::new();
+    ///
     /// let version = version_cmd_runner.create_jira_version(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
     /// ```
     pub async fn create_jira_version(
         &self,
@@ -106,8 +120,22 @@ impl VersionCmdRunner {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
+    /// use jira_v3_openapi::models::Version;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let params = VersionCmdParams::new();
+    ///
     /// let version = version_cmd_runner.get_jira_version(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
     /// ```
     pub async fn get_jira_version(
         &self,
@@ -138,8 +166,22 @@ impl VersionCmdRunner {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
+    /// use jira_v3_openapi::models::Version;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let params = VersionCmdParams::new();
+    ///
     /// let versions = version_cmd_runner.list_jira_versions(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
     /// ```
     pub async fn list_jira_versions(
         &self,
@@ -182,8 +224,22 @@ impl VersionCmdRunner {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
+    /// use jira_v3_openapi::models::Version;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let params = VersionCmdParams::new();
+    ///
     /// let version = version_cmd_runner.update_jira_version(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
     /// ```
     pub async fn update_jira_version(
         &self,
@@ -220,8 +276,21 @@ impl VersionCmdRunner {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let params = VersionCmdParams::new();
+    ///
     /// let status = version_cmd_runner.delete_jira_version(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
     /// ```
     pub async fn delete_jira_version(
         &self,
@@ -314,7 +383,40 @@ impl VersionCmdParams {
     /// # Examples
     ///
     /// ```
-    /// let params = VersionCmdParams::merge_args(current_version, opt_args);
+    /// use jira_v3_openapi::models::Version;
+    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues};
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    ///
+    /// let mut current_version: Version = Version::new();
+    /// current_version.id = Some("12345".to_string());
+    /// current_version.project_id = Some(9876);
+    /// current_version.project = Some("TEST_PROJECT".to_string());
+    /// current_version.name = Some("v1.0".to_string());
+    /// current_version.description = Some("This is the first version".to_string());
+    ///
+    /// let opt_args = VersionArgs {
+    ///   version_act: VersionActionValues::List,
+    ///   project: "project_key".to_string(),
+    ///   project_id: None,
+    ///   version_id: Some("97531".to_string()),
+    ///   version_name: Some("version_name".to_string()),
+    ///   version_description: Some("version_description".to_string()),
+    ///   version_start_date: None,
+    ///   version_release_date: None,
+    ///   version_archived: None,
+    ///   version_released: Some(true),
+    ///   version_page_size: None,
+    ///   version_page_offset: None,
+    /// };
+    ///
+    /// let params = VersionCmdParams::merge_args(current_version, Some(&opt_args));
+    ///
+    /// assert_eq!(params.project, "TEST_PROJECT".to_string());
+    /// assert_eq!(params.project_id, Some(9876));
+    /// assert_eq!(params.version_id, Some("12345".to_string()));
+    /// assert_eq!(params.version_name, Some("version_name".to_string()));
+    /// assert_eq!(params.version_description, Some("version_description".to_string()));
+    /// assert_eq!(params.version_released, Some(true));
     /// ```
     pub fn merge_args(
         current_version: Version,
