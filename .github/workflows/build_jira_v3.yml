@@ -1,0 +1,36 @@
+name: build and release jira_v3_openapi
+
+on:
+  push:
+    tags:
+      - 'jira_v3_openapi:[0-9]+\.[0-9]+\.[0-9]+'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Run tests
+        run: cargo test --verbose
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install gcc-mingw-w64-x86-64 gcc-mingw-w64-i686
+          rustup target add x86_64-pc-windows-gnu
+          rustup target add i686-pc-windows-gnu
+          rustup target add x86_64-unknown-linux-gnu
+          rustup target add x86_64-apple-darwin
+          mkdir dist
+          mkdir builds
+
+      - name: Publish cargo package
+        env:
+          CARGO_ACCESS_TOKEN: ${{ secrets.CARGO_ACCESS_TOKEN }}
+        run: |
+          cargo login "$CARGO_ACCESS_TOKEN"
+          cargo publish -p jira_v3_openapi
