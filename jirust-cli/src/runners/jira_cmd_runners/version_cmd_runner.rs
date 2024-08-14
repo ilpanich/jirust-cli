@@ -43,7 +43,7 @@ impl VersionCmdRunner {
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     ///
-    /// let cfg_file = ConfigFile::default();
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
     ///
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// ```
@@ -278,6 +278,8 @@ impl VersionCmdParams {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    ///
     /// let params = VersionCmdParams::new();
     /// ```
     pub fn new() -> VersionCmdParams {
@@ -388,7 +390,21 @@ impl VersionCmdParams {
     /// # Examples
     ///
     /// ```
+    /// use jira_v3_openapi::models::Version;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    ///
+    /// let mut version: Version = Version::new();
+    /// version.id = Some("12345".to_string());
+    /// version.project_id = Some(9876);
+    /// version.project = Some("TEST_PROJECT".to_string());
+    /// version.name = Some("v1.0".to_string());
+    /// version.description = Some("This is the first version".to_string());
+    ///
+    /// assert_eq!(version.released, None);
+    ///
     /// let params = VersionCmdParams::mark_released(version);
+    ///
+    /// assert_eq!(params.version_released, Some(true));
     /// ```
     pub fn mark_released(version: Version) -> VersionCmdParams {
         let mut version_to_release = Self::merge_args(version, None);
@@ -411,7 +427,21 @@ impl VersionCmdParams {
     /// # Examples
     ///
     /// ```
+    /// use jira_v3_openapi::models::Version;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    ///
+    /// let mut version: Version = Version::new();
+    /// version.id = Some("12345".to_string());
+    /// version.project_id = Some(9876);
+    /// version.project = Some("TEST_PROJECT".to_string());
+    /// version.name = Some("v1.0".to_string());
+    /// version.description = Some("This is the first version".to_string());
+    ///
+    /// assert_eq!(version.archived, None);
+    ///
     /// let params = VersionCmdParams::mark_archived(version);
+    ///
+    /// assert_eq!(params.version_archived, Some(true));
     /// ```
     ///
     pub fn mark_archived(version: Version) -> VersionCmdParams {
@@ -437,7 +467,29 @@ impl From<&VersionArgs> for VersionCmdParams {
     /// # Examples
     ///
     /// ```
-    /// let params = VersionCmdParams::from(args);
+    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs};
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    ///
+    /// let version_args = VersionArgs {
+    ///   version_act: VersionActionValues::List,
+    ///   project: "project_key".to_string(),
+    ///   project_id: None,
+    ///   version_id: None,
+    ///   version_name: Some("version_name".to_string()),
+    ///   version_description: Some("version_description".to_string()),
+    ///   version_start_date: None,
+    ///   version_release_date: None,
+    ///   version_archived: None,
+    ///   version_released: None,
+    ///   version_page_size: None,
+    ///   version_page_offset: None,
+    /// };
+    ///
+    /// let params = VersionCmdParams::from(&version_args);
+    ///
+    /// assert_eq!(params.project, "project_key".to_string());
+    /// assert_eq!(params.version_name, Some("version_name".to_string()));
+    /// assert_eq!(params.version_description, Some("version_description".to_string()));
     /// ```
     fn from(args: &VersionArgs) -> Self {
         let now: DateTime<Utc> = Utc::now();
@@ -471,6 +523,11 @@ impl From<&VersionArgs> for VersionCmdParams {
 /// # Examples
 ///
 /// ```
+/// use jira_v3_openapi::models::Version;
+/// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::print_table_full;
+///
+/// let versions: Vec<Version> = vec![Version::new()];
+///
 /// print_table_full(versions);
 /// ```
 ///
@@ -511,6 +568,10 @@ pub fn print_table_full(versions: Vec<Version>) {
 /// # Examples
 ///
 /// ```
+/// use jira_v3_openapi::models::Version;
+/// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::print_table_basic;
+///
+/// let versions: Vec<Version> = vec![Version::new()];
 /// print_table_basic(versions);
 /// ```
 pub fn print_table_basic(versions: Vec<Version>) {
@@ -548,6 +609,10 @@ pub fn print_table_basic(versions: Vec<Version>) {
 /// # Examples
 ///
 /// ```
+/// use jira_v3_openapi::models::Version;
+/// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::print_table_single;
+///
+/// let version: Version = Version::new();
 /// print_table_single(version);
 /// ```
 pub fn print_table_single(version: Version) {
