@@ -40,6 +40,11 @@ impl VersionCmdRunner {
     /// # Examples
     ///
     /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    ///
+    /// let cfg_file = ConfigFile::default();
+    ///
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// ```
     pub fn new(cfg_file: ConfigFile) -> VersionCmdRunner {

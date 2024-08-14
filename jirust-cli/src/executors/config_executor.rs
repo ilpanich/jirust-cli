@@ -31,6 +31,7 @@ impl ConfigExecutor {
     /// ```
     /// use jirust_cli::executors::config_executor::ConfigExecutor;
     /// use jirust_cli::args::commands::ConfigArgs;
+    /// use jirust_cli::args::commands::ConfigActionValues;
     ///
     /// let args = ConfigArgs {
     ///    cfg_act: ConfigActionValues::Setup,
@@ -58,13 +59,26 @@ impl ConfigExecutor {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use jirust_cli::executors::config_executor::ConfigExecutor;
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::args::commands::ConfigArgs;
+    /// use jirust_cli::args::commands::ConfigActionValues;
+    /// # use std::error::Error;
     ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let config_executor = ConfigExecutor::new(config_file_path, args.cfg_act);
+    /// let args = ConfigArgs {
+    ///    cfg_act: ConfigActionValues::Setup,
+    /// };
+    /// let cfg_data = ConfigFile::default();
+    /// let config_executor = ConfigExecutor::new("config_file_path".to_string(), args.cfg_act);
+    ///
+    ///
     /// config_executor.exec_config_command(cfg_data).await?;
+    /// # Ok(())
     /// # })
+    /// # }
     /// ```
     pub async fn exec_config_command(
         &self,

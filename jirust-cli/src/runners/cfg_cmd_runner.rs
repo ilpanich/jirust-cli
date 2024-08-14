@@ -33,7 +33,9 @@ impl ConfigCmdRunner {
     /// # Examples
     ///
     /// ```
-    /// let cfg_runner = ConfigCmdRunner::new("path/to/config/file".to_string());
+    /// use jirust_cli::runners::cfg_cmd_runner::ConfigCmdRunner;
+    ///
+    /// let cfg_runner = ConfigCmdRunner::new("test_path/to/config/file".to_string());
     /// ```
     pub fn new(cfg_file: String) -> ConfigCmdRunner {
         ConfigCmdRunner { cfg_file }
@@ -48,7 +50,9 @@ impl ConfigCmdRunner {
     /// # Examples
     ///
     /// ```
-    /// let cfg_runner = ConfigCmdRunner::new("path/to/config/file".to_string());
+    /// use jirust_cli::runners::cfg_cmd_runner::ConfigCmdRunner;
+    ///
+    /// let cfg_runner = ConfigCmdRunner::new("test_path/to/config/file".to_string());
     /// cfg_runner.init_file();
     /// ```
     pub fn init_file(&self) -> Result<(), std::io::Error> {
@@ -70,11 +74,11 @@ impl ConfigCmdRunner {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::cfg_cmd_runner::ConfigCmdRunner;
     ///
-    /// let cfg_runner = ConfigCmdRunner::new("path/to/config/file".to_string());
+    /// let cfg_runner = ConfigCmdRunner::new("test_path/to/config/file".to_string());
     /// let cfg = ConfigFile::default();
     ///
     /// cfg_runner.set_cfg_auth(cfg);
@@ -104,9 +108,12 @@ impl ConfigCmdRunner {
     ///
     /// # Examples
     ///
-    /// ```
-    /// let cfg_runner = ConfigCmdRunner::new("path/to/config/file".to_string());
-    /// let cfg = ConfigFile::new();
+    /// ```no_run
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::cfg_cmd_runner::ConfigCmdRunner;
+    ///
+    /// let cfg_runner = ConfigCmdRunner::new("test_path/to/config/file".to_string());
+    /// let cfg = ConfigFile::default();
     /// cfg_runner.set_cfg_jira(cfg);
     /// ```
     pub fn set_cfg_jira(&self, mut cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
@@ -131,9 +138,12 @@ impl ConfigCmdRunner {
     ///
     /// # Examples
     ///
-    /// ```
-    /// let cfg_runner = ConfigCmdRunner::new("path/to/config/file".to_string());
-    /// let cfg = ConfigFile::new();
+    /// ```no_run
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::cfg_cmd_runner::ConfigCmdRunner;
+    ///
+    /// let cfg_runner = ConfigCmdRunner::new("test_path/to/config/file".to_string());
+    /// let cfg = ConfigFile::default();
     /// cfg_runner.setup_cfg(cfg);
     /// ```
     pub fn setup_cfg(&self, mut cfg: ConfigFile) -> Result<(), std::io::Error> {
@@ -152,8 +162,12 @@ impl ConfigCmdRunner {
     /// # Examples
     ///
     /// ```
-    /// let cfg_runner = ConfigCmdRunner::new("path/to/config/file".to_string());
-    /// let cfg = ConfigFile::new();
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::cfg_cmd_runner::ConfigCmdRunner;
+    ///
+    /// let cfg = ConfigFile::default();
+    ///
+    /// let cfg_runner = ConfigCmdRunner::new("test_path/to/config/file".to_string());
     /// cfg_runner.show_cfg(cfg);
     /// ```
     pub fn show_cfg(&self, cfg: ConfigFile) {

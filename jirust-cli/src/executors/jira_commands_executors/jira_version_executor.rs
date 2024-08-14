@@ -34,14 +34,26 @@ impl VersionExecutor {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use jirust_cli::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs};
     ///
     /// let cfg_data = ConfigFile::default();
     /// let version_action = VersionActionValues::List;
     /// let version_args = VersionArgs {
-    ///    project: Some("project_key".to_string()),
+    ///   version_act: version_action.clone(),
+    ///   project: "project_key".to_string(),
+    ///   project_id: None,
+    ///   version_id: None,
+    ///   version_name: None,
+    ///   version_description: None,
+    ///   version_start_date: None,
+    ///   version_release_date: None,
+    ///   version_archived: None,
+    ///   version_released: None,
+    ///   version_page_size: None,
+    ///   version_page_offset: None,
     /// };
     ///
     /// let version_executor = VersionExecutor::new(cfg_data, version_action, version_args);
@@ -70,8 +82,38 @@ impl ExecJiraCommand for VersionExecutor {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
+    /// use jirust_cli::executors::jira_commands_executors::ExecJiraCommand;
+    /// use jirust_cli::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues};
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let version_action = VersionActionValues::List;
+    /// let version_args = VersionArgs {
+    ///   version_act: version_action.clone(),
+    ///   project: "project_key".to_string(),
+    ///   project_id: None,
+    ///   version_id: None,
+    ///   version_name: None,
+    ///   version_description: None,
+    ///   version_start_date: None,
+    ///   version_release_date: None,
+    ///   version_archived: None,
+    ///   version_released: None,
+    ///   version_page_size: None,
+    ///   version_page_offset: None,
+    /// };
+    ///
+    /// let cfg_data = ConfigFile::default();
+    /// let version_executor = VersionExecutor::new(cfg_data, version_action, version_args);
+    ///
     /// version_executor.exec_jira_command().await?;
+    /// # Ok(())
+    /// # })
+    /// # }
     /// ```
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
         match self.version_action {
