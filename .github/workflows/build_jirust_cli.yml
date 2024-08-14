@@ -32,7 +32,7 @@ jobs:
           cargo rustc --bin jirust-cli --release --target=x86_64-pc-windows-gnu -- -C linker=x86_64-w64-mingw32-gcc
           mkdir builds/jirust-cli-win64
           cp target/x86_64-pc-windows-gnu/release/jirust-cli.exe builds/jirust-cli-win64
-          tar -C builds -czvf dist/jirust-cli-win64.tar.gz panrelease-win64
+          tar -C builds -czvf dist/jirust-cli-win64.tar.gz jirust-cli-win64
       - name: Build Linux
         run: |
           cargo rustc --bin jirust-cli --release --target=x86_64-unknown-linux-gnu
