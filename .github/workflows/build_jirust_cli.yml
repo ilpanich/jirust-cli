@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    environment: build_release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -39,10 +40,19 @@ jobs:
           mkdir builds/jirust-cli-linux
           cp target/x86_64-unknown-linux-gnu/release/jirust-cli builds/jirust-cli-linux
           tar -C builds -czvf dist/jirust-cli-linux.tar.gz jirust-cli-linux
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v2
+      - name: Set output
+        id: vars
+        run: |
+          TAG=$(echo ${{ github.ref_name }} | cut -d '_' -f 2)
+          echo "final_tag=$TAG" >> $GITHUB_OUTPUT
       - name: Upload release
         uses: softprops/action-gh-release@v1
         with:
-          # body_path: CHANGELOG.md # TBD
+          name: ${{ steps.vars.outputs.final_tag }}
+          body: "${{ steps.extract-release-notes.outputs.release_notes }}"
           files: |
             dist/jirust-cli-win64.tar.gz
             dist/jirust-cli-linux.tar.gz
