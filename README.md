@@ -1,4 +1,8 @@
 # JiRust-CLI
+[![Tests](https://github.com/ilpanich/jirust-cli/actions/workflows/tests.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/tests.yml)
+[![build and release jirust-cli](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml)
+[![Crate](https://img.shields.io/crates/v/jirust-cli.svg)](https://crates.io/crates/jirust-cli)
+[![API](https://docs.rs/jirust-cli/badge.svg)](https://docs.rs/jirust-cli)
 JiRust-CLI will be a simple Jira CLI developed in rust languages.
 The main goals are
 * to provide a simple and easy way to interact with Jira using the terminal
