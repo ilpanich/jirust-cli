@@ -3,7 +3,7 @@ name: build and release jirust-cli
 on:
   push:
     tags:
-      - "jirust_cli_*.*.*"
+      - "jirust-cli_*.*.*"
 
 jobs:
   build:
