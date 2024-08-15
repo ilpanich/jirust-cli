@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
 
+## [0.7.4] 2024-08-14
+### Changed
+- github actions improvements
+- Added some useful badges to README.md
+- Updated dependencies
+
 ## [0.7.3] 2024-08-14
 ### Fixed
 - github actions for CI/CD issues
