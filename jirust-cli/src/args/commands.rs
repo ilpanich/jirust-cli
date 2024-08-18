@@ -10,10 +10,11 @@ pub struct JirustCliArgs {
 }
 
 /// Available CLI commands
-/// Config, Version
+/// Config, Project, Version
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     Config(ConfigArgs),
+    Project(ProjectArgs),
     Version(VersionArgs),
 }
 
@@ -73,14 +74,44 @@ pub struct VersionArgs {
 }
 
 /// Available version action values
-/// Create, List, Update, Delete, Release, Archive
+/// Archive, Create, Delete, List, Release, Update
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum VersionActionValues {
-    Create,
-    List,
-    Update,
-    Delete,
-    Release,
     Archive,
+    Create,
+    Delete,
+    List,
+    Release,
+    Update,
+}
+
+/// Available project command line arguments
+/// version_act: ProjectActionValues
+/// GetIssueTypes, GetIssueTypeFields, List
+#[derive(Args, Debug)]
+pub struct ProjectArgs {
+    #[arg(
+        value_name = "get-issue-types|get-issue-type-fields|list",
+        help_heading = "Jira Project management"
+    )]
+    pub project_act: ProjectActionValues,
+    #[clap(long)]
+    pub project_key: Option<String>,
+    #[clap(long)]
+    pub project_issue_type: Option<String>,
+    #[clap(long)]
+    pub projects_page_size: Option<i32>,
+    #[clap(long)]
+    pub projects_page_offset: Option<i32>,
+}
+
+/// Available project action values
+/// GetIssueTypes, GetIssueTypeFields, List
+#[derive(ValueEnum, Debug, Clone, Copy)]
+#[value(rename_all = "kebab-case")]
+pub enum ProjectActionValues {
+    GetIssueTypes,
+    GetIssueTypeFields,
+    List,
 }
