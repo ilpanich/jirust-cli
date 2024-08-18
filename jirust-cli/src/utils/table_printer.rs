@@ -4,22 +4,27 @@ use jira_v3_openapi::models::{
 
 use super::TablePrintable;
 
-/// This function allows to print the version details in a pretty way (full data)
-/// It uses the prettytable library to print the version details
+/// This function allows to print the objects details in a pretty way (full data).
+///
+/// It uses the prettytable library to print the version details.
 ///
 /// # Arguments
 ///
-/// * `versions` - A Vector of Version structs
+/// * `data` - A TablePrintable enum
+///     * Project: A vector of Project structs
+///     * Version: A vector of Version structs
+///     * IssueType: A vector of IssueType structs
+///     * IssueTypeFields: A vector of IssueTypeFields structs
 ///
 /// # Examples
 ///
 /// ```
 /// use jira_v3_openapi::models::Version;
-/// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::print_table_full;
+/// use jirust_cli::utils::{TablePrintable, table_printer::print_table_full};
 ///
 /// let versions: Vec<Version> = vec![Version::new()];
 ///
-/// print_table_full(versions);
+/// print_table_full(TablePrintable::Version{ versions });
 /// ```
 ///
 pub fn print_table_full(data: TablePrintable) {
@@ -86,7 +91,7 @@ pub fn print_table_full(data: TablePrintable) {
                 ]);
             }
         }
-        TablePrintable::IssueTypeFields { issue_type_fields } => {
+        TablePrintable::IssueTypeField { issue_type_fields } => {
             table.add_row(row![
                 bFC->"Field ID",
                 bFc->"Field Key",
@@ -106,21 +111,26 @@ pub fn print_table_full(data: TablePrintable) {
     table.printstd();
 }
 
-/// This function allows to print the version details in a pretty way (basic data)
-/// It uses the prettytable library to print the version details
+/// This function allows to print the objects details in a pretty way (basic data).
+///
+/// It uses the prettytable library to print the version details.
 ///
 /// # Arguments
 ///
-/// * `versions` - A Vector of Version structs
+/// * `data` - A TablePrintable enum
+///     * Project: A vector of Project structs
+///     * Version: A vector of Version structs
+///     * IssueType: A vector of IssueType structs
+///     * IssueTypeFields: A vector of IssueTypeFields structs
 ///
 /// # Examples
 ///
 /// ```
 /// use jira_v3_openapi::models::Version;
-/// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::print_table_basic;
+/// use jirust_cli::utils::{TablePrintable, table_printer::print_table_basic};
 ///
 /// let versions: Vec<Version> = vec![Version::new()];
-/// print_table_basic(versions);
+/// print_table_basic(TablePrintable::Version { versions });
 /// ```
 pub fn print_table_basic(data: TablePrintable) {
     let mut table = prettytable::Table::new();
@@ -184,7 +194,7 @@ pub fn print_table_basic(data: TablePrintable) {
                 ]);
             }
         }
-        TablePrintable::IssueTypeFields { issue_type_fields } => {
+        TablePrintable::IssueTypeField { issue_type_fields } => {
             table.add_row(row![
                 bFC->"Field ID",
                 bFc->"Field Key",
@@ -204,21 +214,27 @@ pub fn print_table_basic(data: TablePrintable) {
     table.printstd();
 }
 
-/// This function allows to print the version details in a pretty way (single data)
-/// It uses the prettytable library to print the version details
+/// This function allows to print the objects details in a pretty way (single data).
+///
+/// It uses the prettytable library to print the version details.
+///
 ///
 /// # Arguments
 ///
-/// * `version` - A Version struct
+/// * `data` - A TablePrintable enum
+///     * Project: A vector of Project structs
+///     * Version: A vector of Version structs
+///     * IssueType: A vector of IssueType structs
+///     * IssueTypeFields: A vector of IssueTypeFields structs
 ///
 /// # Examples
 ///
 /// ```
 /// use jira_v3_openapi::models::Version;
-/// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::print_table_single;
+/// use jirust_cli::utils::{TablePrintable, table_printer::print_table_single};
 ///
 /// let version: Version = Version::new();
-/// print_table_single(version);
+/// print_table_single(TablePrintable::Version { versions: vec![version] });
 /// ```
 pub fn print_table_single(data: TablePrintable) {
     let mut table = prettytable::Table::new();
@@ -286,7 +302,7 @@ pub fn print_table_single(data: TablePrintable) {
                 Fb->issue_type.subtask.unwrap_or(false),
             ]);
         }
-        TablePrintable::IssueTypeFields { issue_type_fields } => {
+        TablePrintable::IssueTypeField { issue_type_fields } => {
             let field = issue_type_fields
                 .first()
                 .unwrap_or(&FieldCreateMetadata::default())

@@ -7,14 +7,15 @@ use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::models::{DeleteAndReplaceVersionBean, Version};
 
 /// Version command runner struct
-/// This struct is responsible for running the version related command
+///
+/// This struct is responsible for holding the version command runner parameters
+/// and it is used to pass the parameters to the version commands runner
 pub struct VersionCmdRunner {
     cfg: Configuration,
 }
 
-/// Version command parameters struct
-/// This struct is responsible for holding the version command runner parameters
-/// and it is used to pass the parameters to the version command runner
+/// Version command runner implementation.
+///
 ///
 /// # Methods
 ///
@@ -35,7 +36,7 @@ impl VersionCmdRunner {
     ///
     /// # Returns
     ///
-    /// * A VersionCmdRunner struct
+    /// * A new instance of the VersionCmdRunner struct
     ///
     /// # Examples
     ///
@@ -187,12 +188,12 @@ impl VersionCmdRunner {
         &self,
         params: VersionCmdParams,
     ) -> Result<Vec<Version>, Box<dyn std::error::Error>> {
-        if Option::is_some(&params.version_page_size) {
+        if Option::is_some(&params.versions_page_size) {
             match get_project_versions_paginated(
                 &self.cfg,
                 params.project.as_str(),
-                params.version_page_offset,
-                params.version_page_size,
+                params.versions_page_offset,
+                params.versions_page_size,
                 None,
                 None,
                 None,
@@ -315,6 +316,20 @@ impl VersionCmdRunner {
 }
 
 /// This struct defines the parameters for the Version commands
+///
+/// # Fields
+///
+/// * `project` - The project key, always **required**.
+/// * `project_id` - The project ID, optional.
+/// * `version_name` - The version name, optional.
+/// * `version_id` - The version ID, **required** for archive, delete, release and update.
+/// * `version_description` - The version description, optional.
+/// * `version_start_date` - The version start date, optional.
+/// * `version_release_date` - The version release date, optional (default: today on release command).
+/// * `version_archived` - The version archived status, optional.
+/// * `version_released` - The version released status, optional.
+/// * `versions_page_size` - The page size for the version, optional.
+/// * `versions_page_offset` - The page offset for the version, optional.
 pub struct VersionCmdParams {
     pub project: String,
     pub project_id: Option<i64>,
@@ -325,8 +340,8 @@ pub struct VersionCmdParams {
     pub version_release_date: Option<String>,
     pub version_archived: Option<bool>,
     pub version_released: Option<bool>,
-    pub version_page_size: Option<i32>,
-    pub version_page_offset: Option<i64>,
+    pub versions_page_size: Option<i32>,
+    pub versions_page_offset: Option<i64>,
 }
 
 /// Implementation of the VersionCmdParams struct
@@ -362,8 +377,8 @@ impl VersionCmdParams {
             version_release_date: None,
             version_archived: None,
             version_released: None,
-            version_page_size: None,
-            version_page_offset: None,
+            versions_page_size: None,
+            versions_page_offset: None,
         }
     }
 
@@ -457,8 +472,8 @@ impl VersionCmdParams {
                 } else {
                     current_version.released
                 },
-                version_page_size: None,
-                version_page_offset: None,
+                versions_page_size: None,
+                versions_page_offset: None,
             },
             None => VersionCmdParams {
                 project: current_version.project.clone().unwrap_or("".to_string()),
@@ -470,8 +485,8 @@ impl VersionCmdParams {
                 version_release_date: current_version.release_date,
                 version_archived: current_version.archived,
                 version_released: current_version.released,
-                version_page_size: None,
-                version_page_offset: None,
+                versions_page_size: None,
+                versions_page_offset: None,
             },
         }
     }
@@ -553,7 +568,8 @@ impl VersionCmdParams {
     }
 }
 
-/// This trait defines the methods from for the Version command to VersionCmdParams struct
+/// Implementation of the From trait for the VersionArgs struct
+/// This implementation allows the conversion of a VersionArgs struct to a VersionCmdParams struct.
 impl From<&VersionArgs> for VersionCmdParams {
     /// This method converts the VersionArgs struct to a VersionCmdParams struct
     /// and returns a VersionCmdParams struct
@@ -609,8 +625,8 @@ impl From<&VersionArgs> for VersionCmdParams {
             version_release_date: args.version_release_date.clone(),
             version_archived: args.version_archived.clone(),
             version_released: args.version_released.clone(),
-            version_page_size: args.version_page_size.clone(),
-            version_page_offset: args.version_page_offset.clone(),
+            versions_page_size: args.version_page_size.clone(),
+            versions_page_offset: args.version_page_offset.clone(),
         }
     }
 }

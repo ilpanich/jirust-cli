@@ -10,12 +10,12 @@ pub struct JirustCliArgs {
 }
 
 /// Available CLI commands
-/// Config, Version
+/// Config, Project, Version
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     Config(ConfigArgs),
-    Version(VersionArgs),
     Project(ProjectArgs),
+    Version(VersionArgs),
 }
 
 /// Available configuration command line arguments
@@ -74,16 +74,16 @@ pub struct VersionArgs {
 }
 
 /// Available version action values
-/// Create, List, Update, Delete, Release, Archive
+/// Archive, Create, Delete, List, Release, Update
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum VersionActionValues {
-    Create,
-    List,
-    Update,
-    Delete,
-    Release,
     Archive,
+    Create,
+    Delete,
+    List,
+    Release,
+    Update,
 }
 
 /// Available project command line arguments

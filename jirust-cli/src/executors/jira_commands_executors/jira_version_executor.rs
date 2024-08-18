@@ -5,7 +5,7 @@ use crate::utils::{table_printer::*, TablePrintable};
 
 use super::ExecJiraCommand;
 
-/// VersionExecutor struct
+/// VersionExecutor is responsible for executing the Jira version-related commands
 pub struct VersionExecutor {
     version_cmd_runner: VersionCmdRunner,
     version_action: VersionActionValues,
@@ -16,7 +16,7 @@ pub struct VersionExecutor {
 ///
 /// #Methods
 ///
-/// * `nef(cfg_data: ConfigFile, version_action: VersionActionValues, version_args: VersionArgs) -> Self` - creates a new VersionExecutor instance
+/// * `new(cfg_data: ConfigFile, version_action: VersionActionValues, version_args: VersionArgs) -> Self` - creates a new VersionExecutor instance
 /// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
 impl VersionExecutor {
     /// Creates a new VersionExecutor instance
