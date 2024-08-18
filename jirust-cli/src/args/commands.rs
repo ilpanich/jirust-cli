@@ -15,6 +15,7 @@ pub struct JirustCliArgs {
 pub enum Commands {
     Config(ConfigArgs),
     Version(VersionArgs),
+    Project(ProjectArgs),
 }
 
 /// Available configuration command line arguments
@@ -102,7 +103,7 @@ pub struct ProjectArgs {
     #[clap(long)]
     pub projects_page_size: Option<i32>,
     #[clap(long)]
-    pub projects_page_offset: Option<i64>,
+    pub projects_page_offset: Option<i32>,
 }
 
 /// Available project action values
