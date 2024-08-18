@@ -2,8 +2,6 @@ name: build and release jira_v3_openapi
 
 on:
   push:
-    branches:
-      - main
     tags:
       - "jira-v3-openapi_*.*.*"
 
