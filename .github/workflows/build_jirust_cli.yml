@@ -2,6 +2,8 @@ name: build and release jirust-cli
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "jirust-cli_*.*.*"
 
@@ -28,6 +30,10 @@ jobs:
           rustup target add x86_64-apple-darwin
           mkdir dist
           mkdir builds
+      - name: Cargo deny check
+        run: |
+          cargo install cargo-deny
+          cargo deny check
       - name: Build Win64
         run: |
           cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-pc-windows-gnu -- -C linker=x86_64-w64-mingw32-gcc

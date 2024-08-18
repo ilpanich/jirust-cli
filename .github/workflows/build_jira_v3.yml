@@ -2,8 +2,10 @@ name: build and release jira_v3_openapi
 
 on:
   push:
+    branches:
+      - main
     tags:
-      - 'jira_v3_openapi:[0-9]+\.[0-9]+\.[0-9]+'
+      - "jira-v3-openapi_*.*.*"
 
 jobs:
   build:
