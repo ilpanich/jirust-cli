@@ -84,3 +84,33 @@ pub enum VersionActionValues {
     Release,
     Archive,
 }
+
+/// Available project command line arguments
+/// version_act: ProjectActionValues
+/// GetIssueTypes, GetIssueTypeFields, List
+#[derive(Args, Debug)]
+pub struct ProjectArgs {
+    #[arg(
+        value_name = "get-issue-types|get-issue-type-fields|list",
+        help_heading = "Jira Project management"
+    )]
+    pub project_act: ProjectActionValues,
+    #[clap(long)]
+    pub project_key: Option<String>,
+    #[clap(long)]
+    pub project_issue_type: Option<String>,
+    #[clap(long)]
+    pub projects_page_size: Option<i32>,
+    #[clap(long)]
+    pub projects_page_offset: Option<i64>,
+}
+
+/// Available project action values
+/// GetIssueTypes, GetIssueTypeFields, List
+#[derive(ValueEnum, Debug, Clone, Copy)]
+#[value(rename_all = "kebab-case")]
+pub enum ProjectActionValues {
+    GetIssueTypes,
+    GetIssueTypeFields,
+    List,
+}
