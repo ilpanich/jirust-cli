@@ -1,8 +1,7 @@
 use crate::args::commands::{VersionActionValues, VersionArgs};
 use crate::config::config_file::ConfigFile;
-use crate::runners::jira_cmd_runners::version_cmd_runner::{
-    print_table_full, print_table_single, VersionCmdParams, VersionCmdRunner,
-};
+use crate::runners::jira_cmd_runners::version_cmd_runner::{VersionCmdParams, VersionCmdRunner};
+use crate::utils::{table_printer::*, TablePrintable};
 
 use super::ExecJiraCommand;
 
@@ -122,14 +121,16 @@ impl ExecJiraCommand for VersionExecutor {
                     .version_cmd_runner
                     .create_jira_version(VersionCmdParams::from(&self.version_args))
                     .await?;
-                print_table_single(res);
+                print_table_single(TablePrintable::Version {
+                    versions: vec![res],
+                });
             }
             VersionActionValues::List => {
                 let res = self
                     .version_cmd_runner
                     .list_jira_versions(VersionCmdParams::from(&self.version_args))
                     .await?;
-                print_table_full(res);
+                print_table_full(TablePrintable::Version { versions: res });
             }
             VersionActionValues::Update => {
                 match self
@@ -148,7 +149,9 @@ impl ExecJiraCommand for VersionExecutor {
                         match res {
                             Ok(res) => {
                                 println!("Version updated successfully");
-                                print_table_single(res);
+                                print_table_single(TablePrintable::Version {
+                                    versions: vec![res],
+                                });
                             }
                             Err(err) => eprintln!("Error updating version: {}", err),
                         }
@@ -180,7 +183,9 @@ impl ExecJiraCommand for VersionExecutor {
                         match res {
                             Ok(res) => {
                                 println!("Version released successfully");
-                                print_table_single(res);
+                                print_table_single(TablePrintable::Version {
+                                    versions: vec![res],
+                                });
                             }
                             Err(err) => eprintln!("Error releasing version: {}", err),
                         }
@@ -202,7 +207,9 @@ impl ExecJiraCommand for VersionExecutor {
                         match res {
                             Ok(res) => {
                                 println!("Version archived successfully");
-                                print_table_single(res);
+                                print_table_single(TablePrintable::Version {
+                                    versions: vec![res],
+                                });
                             }
                             Err(err) => eprintln!("Error archiving version: {}", err),
                         }
