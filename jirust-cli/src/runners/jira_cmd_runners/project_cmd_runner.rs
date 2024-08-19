@@ -268,14 +268,13 @@ impl From<&ProjectArgs> for ProjectCmdParams {
     ///
     /// ```
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::ProjectCmdParams;
-    /// use jirust_cli::args::commands::{ProjectArgs, ProjectActionValues};
+    /// use jirust_cli::args::commands::{ProjectArgs, ProjectActionValues, PaginationArgs};
     ///
     /// let project_args = ProjectArgs {
     ///     project_act: ProjectActionValues::List,
     ///     project_key: Some("project_key".to_string()),
     ///     project_issue_type: Some("project_issue_type".to_string()),
-    ///     projects_page_size: Some(10),
-    ///     projects_page_offset: Some(0),
+    ///     pagination: PaginationArgs { page_size: Some(10), page_offset: None },
     /// };
     ///
     /// let params = ProjectCmdParams::from(&project_args);
@@ -289,8 +288,11 @@ impl From<&ProjectArgs> for ProjectCmdParams {
         ProjectCmdParams {
             project_key: value.project_key.clone(),
             project_issue_type: value.project_issue_type.clone(),
-            projects_page_size: value.projects_page_size,
-            projects_page_offset: value.projects_page_offset,
+            projects_page_size: value.pagination.page_size.clone(),
+            projects_page_offset: Some(
+                i32::try_from(value.pagination.page_offset.clone().unwrap_or(0))
+                    .expect("Invalid page offset, should fit an i32!"),
+            ),
         }
     }
 }

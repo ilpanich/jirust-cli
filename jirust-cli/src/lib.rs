@@ -93,13 +93,13 @@ pub fn manage_config(
 /// ```no_run
 /// use jirust_cli::process_command;
 /// use jirust_cli::config::config_file::ConfigFile;
-/// use jirust_cli::args::commands::{Commands, VersionArgs, VersionActionValues};
+/// use jirust_cli::args::commands::{Commands, VersionArgs, VersionActionValues, PaginationArgs};
 ///
 /// # fn main() -> Result<(), std::io::Error> {
 /// let config_file_path = String::from("config.json");
 /// let args = VersionArgs {
 ///   version_act: VersionActionValues::List,
-///   project: "project_key".to_string(),
+///   project_key: "project_key".to_string(),
 ///   project_id: None,
 ///   version_id: Some("97531".to_string()),
 ///   version_name: Some("version_name".to_string()),
@@ -108,8 +108,7 @@ pub fn manage_config(
 ///   version_release_date: None,
 ///   version_archived: None,
 ///   version_released: Some(true),
-///   version_page_size: None,
-///   version_page_offset: None,
+///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
 /// };
 ///
 /// let result = process_command(Commands::Version(args), config_file_path, ConfigFile::default());

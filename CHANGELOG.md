@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
+### Changed
+- Refactored CLI args management (better help, moved some common args, better syntax)
+- Improved docs and tests according to the new CLI args management
 
 ## [0.8.0] 2024-08-18
 ### Added

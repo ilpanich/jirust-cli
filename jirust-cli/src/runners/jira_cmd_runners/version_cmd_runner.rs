@@ -324,7 +324,7 @@ impl VersionCmdRunner {
 /// * `version_name` - The version name, optional.
 /// * `version_id` - The version ID, **required** for archive, delete, release and update.
 /// * `version_description` - The version description, optional.
-/// * `version_start_date` - The version start date, optional.
+/// * `version_start_date` - The version start date, optional (default: today on create command).
 /// * `version_release_date` - The version release date, optional (default: today on release command).
 /// * `version_archived` - The version archived status, optional.
 /// * `version_released` - The version released status, optional.
@@ -399,7 +399,7 @@ impl VersionCmdParams {
     ///
     /// ```
     /// use jira_v3_openapi::models::Version;
-    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues};
+    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     ///
     /// let mut current_version: Version = Version::new();
@@ -411,7 +411,7 @@ impl VersionCmdParams {
     ///
     /// let opt_args = VersionArgs {
     ///   version_act: VersionActionValues::List,
-    ///   project: "project_key".to_string(),
+    ///   project_key: "project_key".to_string(),
     ///   project_id: None,
     ///   version_id: Some("97531".to_string()),
     ///   version_name: Some("version_name".to_string()),
@@ -420,8 +420,7 @@ impl VersionCmdParams {
     ///   version_release_date: None,
     ///   version_archived: None,
     ///   version_released: Some(true),
-    ///   version_page_size: None,
-    ///   version_page_offset: None,
+    ///   pagination: PaginationArgs { page_size: None, page_offset: None },
     /// };
     ///
     /// let params = VersionCmdParams::merge_args(current_version, Some(&opt_args));
@@ -585,12 +584,12 @@ impl From<&VersionArgs> for VersionCmdParams {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs};
+    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     ///
     /// let version_args = VersionArgs {
     ///   version_act: VersionActionValues::List,
-    ///   project: "project_key".to_string(),
+    ///   project_key: "project_key".to_string(),
     ///   project_id: None,
     ///   version_id: None,
     ///   version_name: Some("version_name".to_string()),
@@ -599,8 +598,7 @@ impl From<&VersionArgs> for VersionCmdParams {
     ///   version_release_date: None,
     ///   version_archived: None,
     ///   version_released: None,
-    ///   version_page_size: None,
-    ///   version_page_offset: None,
+    ///   pagination: PaginationArgs { page_size: Some(10), page_offset: Some(0) },
     /// };
     ///
     /// let params = VersionCmdParams::from(&version_args);
@@ -608,11 +606,13 @@ impl From<&VersionArgs> for VersionCmdParams {
     /// assert_eq!(params.project, "project_key".to_string());
     /// assert_eq!(params.version_name, Some("version_name".to_string()));
     /// assert_eq!(params.version_description, Some("version_description".to_string()));
+    /// assert_eq!(params.versions_page_size, Some(10));
+    /// assert_eq!(params.versions_page_offset, Some(0));
     /// ```
     fn from(args: &VersionArgs) -> Self {
         let now: DateTime<Utc> = Utc::now();
         VersionCmdParams {
-            project: args.project.clone(),
+            project: args.project_key.clone(),
             project_id: args.project_id.clone(),
             version_name: args.version_name.clone(),
             version_id: args.version_id.clone(),
@@ -625,8 +625,8 @@ impl From<&VersionArgs> for VersionCmdParams {
             version_release_date: args.version_release_date.clone(),
             version_archived: args.version_archived.clone(),
             version_released: args.version_released.clone(),
-            versions_page_size: args.version_page_size.clone(),
-            versions_page_offset: args.version_page_offset.clone(),
+            versions_page_size: args.pagination.page_size.clone(),
+            versions_page_offset: args.pagination.page_offset.clone(),
         }
     }
 }
