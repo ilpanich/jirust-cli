@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
 
+## [0.8.2] 2024-08-19
+### Changed
+- Improved github actions (build also for macOS)
+- Updated dependencies
+
 ## [0.8.1] 2024-08-19
 ### Changed
 - Refactored CLI args management (better help, moved some common args, better syntax)
