@@ -20,17 +20,6 @@ jobs:
       - name: Run tests
         run: cargo test -p jira_v3_openapi
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install gcc-mingw-w64-x86-64 gcc-mingw-w64-i686
-          rustup target add x86_64-pc-windows-gnu
-          rustup target add i686-pc-windows-gnu
-          rustup target add x86_64-unknown-linux-gnu
-          rustup target add x86_64-apple-darwin
-          mkdir dist
-          mkdir builds
-
       - name: Publish cargo package
         env:
           CARGO_ACCESS_TOKEN: ${{ secrets.CARGO_ACCESS_TOKEN }}
