@@ -26,10 +26,7 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install gcc-mingw-w64-x86-64 gcc-mingw-w64-i686
           rustup target add x86_64-pc-windows-gnu
-          rustup target add i686-pc-windows-gnu
           rustup target add x86_64-unknown-linux-gnu
-          rustup target add x86_64-apple-darwin
-          rustup target add aarch64-apple-darwin
           mkdir dist
           mkdir builds
       - name: Cargo deny check
@@ -48,18 +45,6 @@ jobs:
           mkdir builds/jirust-cli-linux
           cp target/x86_64-unknown-linux-gnu/release/jirust-cli builds/jirust-cli-linux
           tar -C builds -czvf dist/jirust-cli-linux.tar.gz jirust-cli-linux
-      - name: Build macOS (x86_64)
-        run: |
-          cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-apple-darwin
-          mkdir builds/jirust-cli-linux
-          cp target/x86_64-apple-darwin/release/jirust-cli builds/jirust-cli-linux
-          tar -C builds -czvf dist/jirust-cli-macOS-x86_64.tar.gz jirust-cli-linux
-      - name: Build macOS (aarch64)
-        run: |
-          cargo rustc -p jirust-cli --bin jirust-cli --release --target=aarch64-apple-darwin
-          mkdir builds/jirust-cli-linux
-          cp target/aarch64-apple-darwin/release/jirust-cli builds/jirust-cli-linux
-          tar -C builds -czvf dist/jirust-cli-macOS-aarch64.tar.gz jirust-cli-linux
       - name: Extract release notes
         id: extract-release-notes
         uses: ffurrer2/extract-release-notes@v2
@@ -76,8 +61,6 @@ jobs:
           files: |
             dist/jirust-cli-win64.tar.gz
             dist/jirust-cli-linux.tar.gz
-            dist/jirust-cli-macOS-x86_64.tar.gz
-            dist/jirust-cli-macOS-aarch64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
 
