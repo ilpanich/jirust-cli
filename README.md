@@ -46,6 +46,9 @@ Currently the basic version management is implemented and you can:
 * update a version
 * release a version
 * archive a version
+* list all the projects
+* list all the issue types available in a given project
+* list all the fields available in a given project for a given issue type
 
 ## Development
 The project is still under heavy development and I will prioritize the features I need the most for my daily programmer life.
