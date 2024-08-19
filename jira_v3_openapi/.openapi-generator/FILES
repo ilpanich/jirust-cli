@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 .travis.yml
 Cargo.toml
 README.md
@@ -344,6 +343,7 @@ docs/JiraDateField.md
 docs/JiraDateInput.md
 docs/JiraDateTimeField.md
 docs/JiraDateTimeInput.md
+docs/JiraDurationField.md
 docs/JiraExpressionAnalysis.md
 docs/JiraExpressionComplexity.md
 docs/JiraExpressionEvalContextBean.md
@@ -378,6 +378,7 @@ docs/JiraSingleSelectField.md
 docs/JiraSingleSelectUserPickerField.md
 docs/JiraSingleVersionPickerField.md
 docs/JiraStatus.md
+docs/JiraTimeTrackingField.md
 docs/JiraUrlField.md
 docs/JiraUserField.md
 docs/JiraVersionField.md
@@ -816,6 +817,7 @@ docs/WorkflowsApi.md
 docs/WorkflowsWithTransitionRulesDetails.md
 docs/Worklog.md
 docs/WorklogIdsRequestBean.md
+docs/WorklogsMoveRequestBean.md
 docs/WorkspaceDataPolicy.md
 git_push.sh
 src/apis/announcement_banner_api.rs
@@ -1208,6 +1210,7 @@ src/models/jira_date_field.rs
 src/models/jira_date_input.rs
 src/models/jira_date_time_field.rs
 src/models/jira_date_time_input.rs
+src/models/jira_duration_field.rs
 src/models/jira_expression_analysis.rs
 src/models/jira_expression_complexity.rs
 src/models/jira_expression_eval_context_bean.rs
@@ -1240,6 +1243,7 @@ src/models/jira_single_select_field.rs
 src/models/jira_single_select_user_picker_field.rs
 src/models/jira_single_version_picker_field.rs
 src/models/jira_status.rs
+src/models/jira_time_tracking_field.rs
 src/models/jira_url_field.rs
 src/models/jira_user_field.rs
 src/models/jira_version_field.rs
@@ -1635,4 +1639,5 @@ src/models/workflow_validation_error_list.rs
 src/models/workflows_with_transition_rules_details.rs
 src/models/worklog.rs
 src/models/worklog_ids_request_bean.rs
+src/models/worklogs_move_request_bean.rs
 src/models/workspace_data_policy.rs

@@ -5,6 +5,8 @@ All URIs are relative to *https://your-domain.atlassian.net*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**add_worklog**](IssueWorklogsApi.md#add_worklog) | **POST** /rest/api/3/issue/{issueIdOrKey}/worklog | Add worklog
+[**bulk_delete_worklogs**](IssueWorklogsApi.md#bulk_delete_worklogs) | **DELETE** /rest/api/3/issue/{issueIdOrKey}/worklog | Bulk delete worklogs
+[**bulk_move_worklogs**](IssueWorklogsApi.md#bulk_move_worklogs) | **POST** /rest/api/3/issue/{issueIdOrKey}/worklog/move | Bulk move worklogs
 [**delete_worklog**](IssueWorklogsApi.md#delete_worklog) | **DELETE** /rest/api/3/issue/{issueIdOrKey}/worklog/{id} | Delete worklog
 [**get_ids_of_worklogs_deleted_since**](IssueWorklogsApi.md#get_ids_of_worklogs_deleted_since) | **GET** /rest/api/3/worklog/deleted | Get IDs of deleted worklogs
 [**get_ids_of_worklogs_modified_since**](IssueWorklogsApi.md#get_ids_of_worklogs_modified_since) | **GET** /rest/api/3/worklog/updated | Get IDs of updated worklogs
@@ -48,6 +50,71 @@ Name | Type | Description  | Required | Notes
 
 - **Content-Type**: application/json
 - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## bulk_delete_worklogs
+
+> bulk_delete_worklogs(issue_id_or_key, worklog_ids_request_bean, adjust_estimate, override_editable_flag)
+Bulk delete worklogs
+
+Deletes a list of worklogs from an issue. This is an experimental API with limitations:   *  You can't delete more than 5000 worklogs at once.  *  No notifications will be sent for deleted worklogs.  Time tracking must be enabled in Jira, otherwise this operation returns an error. For more information, see [Configuring time tracking](https://confluence.atlassian.com/x/qoXKM).  **[Permissions](#permissions) required:**   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.  *  *Delete all worklogs*[ project permission](https://confluence.atlassian.com/x/yodKLg) to delete any worklog.  *  If any worklog has visibility restrictions, belongs to the group or has the role visibility is restricted to.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**issue_id_or_key** | **String** | The ID or key of the issue. | [required] |
+**worklog_ids_request_bean** | [**WorklogIdsRequestBean**](WorklogIdsRequestBean.md) | A JSON object containing a list of worklog IDs. | [required] |
+**adjust_estimate** | Option<**String**> | Defines how to update the issue's time estimate, the options are:   *  `leave` Leaves the estimate unchanged.  *  `auto` Reduces the estimate by the aggregate value of `timeSpent` across all worklogs being deleted. |  |[default to auto]
+**override_editable_flag** | Option<**bool**> | Whether the work log entries should be removed to the issue even if the issue is not editable, because jira.issue.editable set to false or missing. For example, the issue is closed. Connect and Forge app users with admin permission can use this flag. |  |[default to false]
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## bulk_move_worklogs
+
+> bulk_move_worklogs(issue_id_or_key, worklogs_move_request_bean, override_editable_flag)
+Bulk move worklogs
+
+Moves a list of worklogs from one issue to another. This is an experimental API with several limitations:   *  You can't move more than 5000 worklogs at once.  *  You can't move worklogs containing an attachment.  *  You can't move worklogs restricted by project roles.  *  No notifications will be sent for moved worklogs.  *  No issue history will be recorded for moved worklogs.  *  Time tracking will not be updated for the source and destination issues.  Time tracking must be enabled in Jira, otherwise this operation returns an error. For more information, see [Configuring time tracking](https://confluence.atlassian.com/x/qoXKM).  **[Permissions](#permissions) required:**   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the projects containing the source and destination issues.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.  *  *Delete all worklogs*[ and *Edit all worklogs*](https://confluence.atlassian.com/x/yodKLg)[project permission](https://confluence.atlassian.com/x/yodKLg)  *  If the worklog has visibility restrictions, belongs to the group or has the role visibility is restricted to.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**issue_id_or_key** | **String** |  | [required] |
+**worklogs_move_request_bean** | [**WorklogsMoveRequestBean**](WorklogsMoveRequestBean.md) | A JSON object containing a list of worklog IDs and the ID or key of the destination issue. | [required] |
+**override_editable_flag** | Option<**bool**> | Whether the work log entry should be added to the issue even if the issue is not editable, because jira.issue.editable set to false or missing. For example, the issue is closed. Connect and Forge app users with admin permission can use this flag. |  |[default to false]
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: Not defined
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

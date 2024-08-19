@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **build_number** | Option<**i32**> | The build number of the Jira version. | [optional]
 **deployment_type** | Option<**String**> | The type of server deployment. This is always returned as *Cloud*. | [optional]
 **display_url** | Option<**String**> | The display URL of the Jira instance. | [optional]
+**display_url_confluence** | Option<**String**> | The display URL of Confluence. | [optional]
 **display_url_servicedesk_help_center** | Option<**String**> | The display URL of the Servicedesk Help Center. | [optional]
 **health_checks** | Option<[**Vec<models::HealthCheckResult>**](HealthCheckResult.md)> | Jira instance health check results. Deprecated and no longer returned. | [optional]
 **scm_info** | Option<**String**> | The unique identifier of the Jira version. | [optional]
