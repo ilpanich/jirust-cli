@@ -10,7 +10,7 @@ license = "Apache-2.0"
 readme = "../README.md"
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+crate-type = ["rlib"]
 
 [dependencies]
 tokio = { version = "1.39.2", features = ["full"] }
