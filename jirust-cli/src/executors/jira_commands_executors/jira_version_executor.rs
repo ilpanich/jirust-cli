@@ -36,13 +36,13 @@ impl VersionExecutor {
     /// ```no_run
     /// use jirust_cli::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
     /// use jirust_cli::config::config_file::ConfigFile;
-    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs};
+    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs};
     ///
     /// let cfg_data = ConfigFile::default();
     /// let version_action = VersionActionValues::List;
     /// let version_args = VersionArgs {
     ///   version_act: version_action.clone(),
-    ///   project: "project_key".to_string(),
+    ///   project_key: "project_key".to_string(),
     ///   project_id: None,
     ///   version_id: None,
     ///   version_name: None,
@@ -51,8 +51,7 @@ impl VersionExecutor {
     ///   version_release_date: None,
     ///   version_archived: None,
     ///   version_released: None,
-    ///   version_page_size: None,
-    ///   version_page_offset: None,
+    ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     /// };
     ///
     /// let version_executor = VersionExecutor::new(cfg_data, version_action, version_args);
@@ -85,7 +84,7 @@ impl ExecJiraCommand for VersionExecutor {
     /// use jirust_cli::executors::jira_commands_executors::ExecJiraCommand;
     /// use jirust_cli::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
     /// use jirust_cli::config::config_file::ConfigFile;
-    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues};
+    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -93,7 +92,7 @@ impl ExecJiraCommand for VersionExecutor {
     /// let version_action = VersionActionValues::List;
     /// let version_args = VersionArgs {
     ///   version_act: version_action.clone(),
-    ///   project: "project_key".to_string(),
+    ///   project_key: "project_key".to_string(),
     ///   project_id: None,
     ///   version_id: None,
     ///   version_name: None,
@@ -102,8 +101,7 @@ impl ExecJiraCommand for VersionExecutor {
     ///   version_release_date: None,
     ///   version_archived: None,
     ///   version_released: None,
-    ///   version_page_size: None,
-    ///   version_page_offset: None,
+    ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     /// };
     ///
     /// let cfg_data = ConfigFile::default();
