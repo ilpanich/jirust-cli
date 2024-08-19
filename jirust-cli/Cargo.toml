@@ -1,6 +1,6 @@
 [package]
 name = "jirust-cli"
-version = "0.8.2"
+version = "0.8.3"
 edition = "2021"
 rust-version = "1.80.1"
 authors = ["Emanuele Panigati <ilpanich@gmail.com>"]
@@ -12,7 +12,7 @@ license = "Apache-2.0"
 readme = "../README.md"
 
 [lib]
-crate-type = ["rlib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 tokio = { version = "1.39.2", features = ["full"] }

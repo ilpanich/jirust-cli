@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
 
+## [0.8.3] 2024-08-19
+### Removed
+- Removed macOS from github actions (I can find no way to make it work, and I don't want to spend more time on it)
+
+### Changed
+- Updated dependencies
+- Due to the macOS build issue related tests, you might have lost some changes since version "0.8.0"; Please look at the complete changelog at [CHANGELOG.md](https://github.com/ilpanich/jirust-cli/blob/main/CHANGELOG.md)
+
 ## [0.8.2] 2024-08-19
 ### Changed
 - Improved github actions (build also for macOS)
