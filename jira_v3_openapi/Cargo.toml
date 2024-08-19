@@ -12,7 +12,7 @@ license = "Apache-2.0"
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+crate-type = ["rlib"]
 
 [dependencies]
 serde = { version = "^1.0", features = ["derive"] }
