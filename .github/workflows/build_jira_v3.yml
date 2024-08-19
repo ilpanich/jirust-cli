@@ -5,6 +5,9 @@ on:
     tags:
       - "jira-v3-openapi_*.*.*"
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
   build:
     runs-on: ubuntu-latest
