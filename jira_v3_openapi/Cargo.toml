@@ -1,6 +1,6 @@
 [package]
 name = "jira_v3_openapi"
-version = "1.0.5"
+version = "1.0.6"
 authors = [
     "Atlassian OpenAPI <ecosystem@atlassian.com>",
     "Emanuele Panigati <ilpanich@gmail.com>",
@@ -12,7 +12,7 @@ license = "Apache-2.0"
 edition = "2021"
 
 [lib]
-crate-type = ["rlib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 serde = { version = "^1.0", features = ["derive"] }
