@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
 
+## [0.8.4] 2024-08-21
+### Added
+- Added automatic version description extraction from a "keepachangelog" markdown formatted changelog file
+
 ## [0.8.3] 2024-08-19
 ### Removed
 - Removed macOS from github actions (I can find no way to make it work, and I don't want to spend more time on it)
