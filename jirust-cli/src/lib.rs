@@ -108,6 +108,7 @@ pub fn manage_config(
 ///   version_release_date: None,
 ///   version_archived: None,
 ///   version_released: Some(true),
+///   changelog_file: None,
 ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
 /// };
 ///

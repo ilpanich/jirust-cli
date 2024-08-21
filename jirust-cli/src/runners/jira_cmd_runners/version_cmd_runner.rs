@@ -1,5 +1,6 @@
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
+use crate::utils::changelog_extractor::ChangelogExtractor;
 use chrono::{DateTime, Utc};
 use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::project_versions_api::*;
@@ -90,6 +91,19 @@ impl VersionCmdRunner {
         &self,
         params: VersionCmdParams,
     ) -> Result<Version, Box<dyn std::error::Error>> {
+        let version_description;
+        if Option::is_some(&params.changelog_file) {
+            let changelog_extractor = ChangelogExtractor::new(params.changelog_file.unwrap());
+            version_description = Some(changelog_extractor.extract_version_changelog().unwrap_or(
+                if Option::is_some(&params.version_description) {
+                    params.version_description.unwrap()
+                } else {
+                    "No changelog found for this version".to_string()
+                },
+            ));
+        } else {
+            version_description = params.version_description;
+        }
         let version = Version {
             project: Some(params.project),
             name: Some(
@@ -97,7 +111,7 @@ impl VersionCmdRunner {
                     .version_name
                     .expect("VersionName is mandatory on cretion!"),
             ),
-            description: params.version_description,
+            description: version_description,
             start_date: params.version_start_date,
             release_date: params.version_release_date,
             archived: params.version_archived,
@@ -328,6 +342,7 @@ impl VersionCmdRunner {
 /// * `version_release_date` - The version release date, optional (default: today on release command).
 /// * `version_archived` - The version archived status, optional.
 /// * `version_released` - The version released status, optional.
+/// * `changelog_file` - The changelog file path, to be used for automatic description generation (changelog-based), optional: if set the script detects automatically the first tagged block in the changelog and use it as description
 /// * `versions_page_size` - The page size for the version, optional.
 /// * `versions_page_offset` - The page offset for the version, optional.
 pub struct VersionCmdParams {
@@ -340,6 +355,7 @@ pub struct VersionCmdParams {
     pub version_release_date: Option<String>,
     pub version_archived: Option<bool>,
     pub version_released: Option<bool>,
+    pub changelog_file: Option<String>,
     pub versions_page_size: Option<i32>,
     pub versions_page_offset: Option<i64>,
 }
@@ -377,6 +393,7 @@ impl VersionCmdParams {
             version_release_date: None,
             version_archived: None,
             version_released: None,
+            changelog_file: None,
             versions_page_size: None,
             versions_page_offset: None,
         }
@@ -420,6 +437,7 @@ impl VersionCmdParams {
     ///   version_release_date: None,
     ///   version_archived: None,
     ///   version_released: Some(true),
+    ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: None, page_offset: None },
     /// };
     ///
@@ -471,6 +489,7 @@ impl VersionCmdParams {
                 } else {
                     current_version.released
                 },
+                changelog_file: None,
                 versions_page_size: None,
                 versions_page_offset: None,
             },
@@ -484,6 +503,7 @@ impl VersionCmdParams {
                 version_release_date: current_version.release_date,
                 version_archived: current_version.archived,
                 version_released: current_version.released,
+                changelog_file: None,
                 versions_page_size: None,
                 versions_page_offset: None,
             },
@@ -598,6 +618,7 @@ impl From<&VersionArgs> for VersionCmdParams {
     ///   version_release_date: None,
     ///   version_archived: None,
     ///   version_released: None,
+    ///  changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(10), page_offset: Some(0) },
     /// };
     ///
@@ -625,6 +646,7 @@ impl From<&VersionArgs> for VersionCmdParams {
             version_release_date: args.version_release_date.clone(),
             version_archived: args.version_archived.clone(),
             version_released: args.version_released.clone(),
+            changelog_file: args.changelog_file.clone(),
             versions_page_size: args.pagination.page_size.clone(),
             versions_page_offset: args.pagination.page_offset.clone(),
         }

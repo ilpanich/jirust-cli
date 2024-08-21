@@ -138,6 +138,13 @@ pub struct VersionArgs {
         help = "Jira Project version released"
     )]
     pub version_released: Option<bool>,
+    #[clap(
+        long,
+        short = 'c',
+        value_name = "changelog_file",
+        help = "changelog file path to be used for automatic description generation (if set the script detects automatically the first tagged block in the changelog and use it as description)"
+    )]
+    pub changelog_file: Option<String>,
     #[clap(flatten)]
     pub pagination: PaginationArgs,
 }
