@@ -134,6 +134,7 @@ pub async fn process_command(
             let project_executor = ProjectExecutor::new(cfg_data, args.project_act, args);
             project_executor.exec_jira_command().await?
         }
+        Commands::Issue(_args) => todo!("Issue commands to be implemented!"),
     }
     Ok(())
 }

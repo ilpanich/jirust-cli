@@ -1,5 +1,4 @@
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use serde_json::Value;
 use std::error::Error;
 
 /// Command line arguments base
