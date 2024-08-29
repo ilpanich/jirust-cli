@@ -227,18 +227,35 @@ pub struct IssueArgs {
         help_heading = "Jira Project issue management"
     )]
     pub issue_act: IssueActionValues,
-    #[clap(long)]
-    pub project: String,
-    #[clap(long)]
+    #[clap(
+        long,
+        short = 'p',
+        value_name = "project_key",
+        help = "Jira Project key"
+    )]
+    pub project_key: String,
+    #[clap(
+        long,
+        short = 'i',
+        value_name = "issue_key",
+        help = "Jira Project issue key"
+    )]
     pub issue_key: Option<String>,
-    #[clap(long, value_parser = parse_key_val::<String, String>)]
+    #[clap(long,
+        short = 'f',
+        value_name = "issue_fields",
+        value_parser = parse_key_val::<String, String>,
+        help = "Jira Project issue fields (field_name=value)")]
     pub issue_fields: Option<Vec<(String, String)>>,
-    #[clap(long)]
+    #[clap(
+        long,
+        short = 't',
+        value_name = "transition_to",
+        help = "Jira Project issue transition to"
+    )]
     pub transition_to: Option<String>,
-    #[clap(long)]
-    pub issue_page_size: Option<i32>,
-    #[clap(long)]
-    pub issue_page_offset: Option<i64>,
+    #[clap(flatten)]
+    pub pagination: PaginationArgs,
 }
 
 /// Available issue action values
@@ -246,11 +263,17 @@ pub struct IssueArgs {
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum IssueActionValues {
+    #[value(name = "assign", help = "Assign a Jira Project issue")]
     Assign,
+    #[value(name = "create", help = "Create a Jira Project issue")]
     Create,
+    #[value(name = "delete", help = "Delete a Jira Project issue")]
     Delete,
+    #[value(name = "list", help = "List Jira Project issues")]
     List,
+    #[value(name = "transition", help = "Transition a Jira Project issue")]
     Transition,
+    #[value(name = "update", help = "Update a Jira Project issue")]
     Update,
 }
 
