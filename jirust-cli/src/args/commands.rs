@@ -223,7 +223,7 @@ pub enum ProjectActionValues {
 #[derive(Args, Debug)]
 pub struct IssueArgs {
     #[arg(
-        value_name = "assign|create|delete|list|transition|update",
+        value_name = "assign|create|delete|get|transition|update",
         help_heading = "Jira Project issue management"
     )]
     pub issue_act: IssueActionValues,
@@ -254,6 +254,13 @@ pub struct IssueArgs {
         help = "Jira Project issue transition to"
     )]
     pub transition_to: Option<String>,
+    #[clap(
+        long,
+        short = 'a',
+        value_name = "assignee",
+        help = "Jira Project issue assignee"
+    )]
+    pub assignee: Option<String>,
     #[clap(flatten)]
     pub pagination: PaginationArgs,
 }
@@ -269,8 +276,8 @@ pub enum IssueActionValues {
     Create,
     #[value(name = "delete", help = "Delete a Jira Project issue")]
     Delete,
-    #[value(name = "list", help = "List Jira Project issues")]
-    List,
+    #[value(name = "get", help = "Get a specific Jira Project issue")]
+    Get,
     #[value(name = "transition", help = "Transition a Jira Project issue")]
     Transition,
     #[value(name = "update", help = "Update a Jira Project issue")]
