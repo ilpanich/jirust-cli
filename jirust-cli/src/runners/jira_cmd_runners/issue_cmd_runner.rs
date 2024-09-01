@@ -1,6 +1,6 @@
 use jira_v3_openapi::apis::issues_api::*;
 use jira_v3_openapi::models::user::AccountType;
-use jira_v3_openapi::models::{CreatedIssue, FieldMetadata, IssueBean, IssueTransition, User};
+use jira_v3_openapi::models::{CreatedIssue, IssueBean, IssueTransition, User};
 use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDetails};
 use serde_json::Value;
 use std::collections::HashMap;

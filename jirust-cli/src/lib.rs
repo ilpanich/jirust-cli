@@ -7,6 +7,7 @@ use crate::executors::jira_commands_executors::jira_version_executor::VersionExe
 use clap::Parser;
 use config::config_file::ConfigFile;
 use executors::config_executor::ConfigExecutor;
+use executors::jira_commands_executors::jira_issue_executor::IssueExecutor;
 use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
 use executors::jira_commands_executors::ExecJiraCommand;
 use std::env::Args;
@@ -134,7 +135,10 @@ pub async fn process_command(
             let project_executor = ProjectExecutor::new(cfg_data, args.project_act, args);
             project_executor.exec_jira_command().await?
         }
-        Commands::Issue(_args) => todo!("Issue commands to be implemented!"),
+        Commands::Issue(args) => {
+            let issue_executor = IssueExecutor::new(cfg_data, args.issue_act, args);
+            issue_executor.exec_jira_command().await?
+        }
     }
     Ok(())
 }

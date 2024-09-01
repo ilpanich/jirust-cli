@@ -1,5 +1,8 @@
+use std::collections::HashMap;
+
 use jira_v3_openapi::models::{
-    FieldCreateMetadata, IssueTypeIssueCreateMetadata, Project, ProjectCategory, Version,
+    CreatedIssue, FieldCreateMetadata, IssueBean, IssueTypeIssueCreateMetadata, Project,
+    ProjectCategory, Version,
 };
 
 use super::TablePrintable;
@@ -30,6 +33,58 @@ use super::TablePrintable;
 pub fn print_table_full(data: TablePrintable) {
     let mut table = prettytable::Table::new();
     match data {
+        TablePrintable::Generic { data } => todo!("To Be Implemented!"),
+        TablePrintable::IssueCreated { issues } => {
+            table.add_row(row![
+                bFC->"Issue ID",
+                bFy->"Issue Key",
+                bFm->"Issue URL",
+            ]);
+            for issue in issues {
+                table.add_row(row![
+                    Fc->issue.id.unwrap_or("".to_string()),
+                    Fy->issue.key.unwrap_or("".to_string()),
+                    Fm->issue.param_self.unwrap_or("".to_string()),
+                ]);
+            }
+        }
+        TablePrintable::IssueData { issues } => {
+            table.add_row(row![
+                bFC->"Issue ID",
+                bFy->"Issue Key",
+                bFm->"Issue Fields",
+                bFw->"Issue Transitions"
+            ]);
+            for issue in issues {
+                let fields = issue
+                    .fields
+                    .unwrap_or(HashMap::new())
+                    .iter()
+                    .map(|field| format!("{}: {:?}", field.0, field.1.to_string()))
+                    .collect::<Vec<String>>()
+                    .join(", ");
+                let transitions = issue
+                    .transitions
+                    .unwrap_or_default()
+                    .iter()
+                    .map(|transition| {
+                        format!(
+                            "{}: {} ({})",
+                            transition.clone().id.unwrap_or_default(),
+                            transition.clone().name.unwrap_or_default(),
+                            transition.is_available.unwrap_or_default()
+                        )
+                    })
+                    .collect::<Vec<String>>()
+                    .join(", ");
+                table.add_row(row![
+                    Fc->issue.id.unwrap_or("".to_string()),
+                    Fy->issue.key.unwrap_or("".to_string()),
+                    Fm->fields,
+                    Fw->transitions
+                ]);
+            }
+        }
         TablePrintable::Project { projects } => {
             table.add_row(row![
                 bFC->"Project ID",
@@ -135,6 +190,33 @@ pub fn print_table_full(data: TablePrintable) {
 pub fn print_table_basic(data: TablePrintable) {
     let mut table = prettytable::Table::new();
     match data {
+        TablePrintable::Generic { data } => todo!("To Be Implemented!"),
+        TablePrintable::IssueCreated { issues } => {
+            table.add_row(row![
+                bFC->"Issue ID",
+                bFy->"Issue Key",
+                bFm->"Issue URL",
+            ]);
+            for issue in issues {
+                table.add_row(row![
+                    Fc->issue.id.unwrap_or("".to_string()),
+                    Fy->issue.key.unwrap_or("".to_string()),
+                    Fm->issue.param_self.unwrap_or("".to_string()),
+                ]);
+            }
+        }
+        TablePrintable::IssueData { issues } => {
+            table.add_row(row![
+                bFC->"Issue ID",
+                bFy->"Issue Key",
+            ]);
+            for issue in issues {
+                table.add_row(row![
+                    Fc->issue.id.unwrap_or("".to_string()),
+                    Fy->issue.key.unwrap_or("".to_string()),
+                ]);
+            }
+        }
         TablePrintable::Project { projects } => {
             table.add_row(row![
                 bFC->"Project ID",
@@ -239,6 +321,57 @@ pub fn print_table_basic(data: TablePrintable) {
 pub fn print_table_single(data: TablePrintable) {
     let mut table = prettytable::Table::new();
     match data {
+        TablePrintable::Generic { data } => todo!("To Be Implemented!"),
+        TablePrintable::IssueCreated { issues } => {
+            let issue = issues.first().unwrap_or(&CreatedIssue::default()).clone();
+            table.add_row(row![
+                bFC->"Issue ID",
+                bFy->"Issue Key",
+                bFm->"Issue URL",
+            ]);
+
+            table.add_row(row![
+                Fc->issue.id.unwrap_or("".to_string()),
+                Fy->issue.key.unwrap_or("".to_string()),
+                Fm->issue.param_self.unwrap_or("".to_string()),
+            ]);
+        }
+        TablePrintable::IssueData { issues } => {
+            let issue = issues.first().unwrap_or(&IssueBean::default()).clone();
+            table.add_row(row![
+                bFC->"Issue ID",
+                bFy->"Issue Key",
+                bFm->"Issue Fields",
+                bFw->"Issue Transitions"
+            ]);
+            let fields = issue
+                .fields
+                .unwrap_or(HashMap::new())
+                .iter()
+                .map(|field| format!("{}: {:?}", field.0, field.1.to_string()))
+                .collect::<Vec<String>>()
+                .join(", ");
+            let transitions = issue
+                .transitions
+                .unwrap_or_default()
+                .iter()
+                .map(|transition| {
+                    format!(
+                        "{}: {} ({})",
+                        transition.clone().id.unwrap_or_default(),
+                        transition.clone().name.unwrap_or_default(),
+                        transition.is_available.unwrap_or_default()
+                    )
+                })
+                .collect::<Vec<String>>()
+                .join(", ");
+            table.add_row(row![
+                Fc->issue.id.unwrap_or("".to_string()),
+                Fy->issue.key.unwrap_or("".to_string()),
+                Fm->fields,
+                Fw->transitions
+            ]);
+        }
         TablePrintable::Project { projects } => {
             let project = projects.first().unwrap_or(&Project::default()).clone();
             table.add_row(row![
