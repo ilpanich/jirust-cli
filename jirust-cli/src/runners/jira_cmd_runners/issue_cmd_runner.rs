@@ -28,7 +28,7 @@ impl IssueCmdRunner {
         params: IssueCmdParams,
     ) -> Result<Value, Box<dyn std::error::Error>> {
         let user_data = User {
-            key: Some(params.assignee.expect("Assignee is required")),
+            account_id: Some(params.assignee.expect("Assignee is required")),
             account_type: Some(AccountType::Atlassian),
             ..Default::default()
         };
