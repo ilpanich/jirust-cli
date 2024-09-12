@@ -2,10 +2,7 @@ use crate::{
     args::commands::{IssueActionValues, IssueArgs},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdParams, IssueCmdRunner},
-    utils::{
-        table_printer::{print_table_basic, print_table_single},
-        TablePrintable,
-    },
+    utils::{print_data, OutputType, PrintableData},
 };
 
 use super::ExecJiraCommand;
@@ -45,9 +42,13 @@ impl ExecJiraCommand for IssueExecutor {
                     .issue_cmd_runner
                     .create_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await?;
-                print_table_basic(TablePrintable::IssueCreated {
-                    issues: (vec![res]),
-                })
+                print_data(
+                    PrintableData::IssueCreated {
+                        issues: (vec![res]),
+                    },
+                    self.issue_args.output.output,
+                    OutputType::Basic,
+                )
             }
             IssueActionValues::Delete => {
                 let _res = self
@@ -60,7 +61,11 @@ impl ExecJiraCommand for IssueExecutor {
                     .issue_cmd_runner
                     .get_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await?;
-                print_table_single(TablePrintable::IssueData { issues: vec![res] })
+                print_data(
+                    PrintableData::IssueData { issues: vec![res] },
+                    self.issue_args.output.output,
+                    OutputType::Single,
+                )
             }
             IssueActionValues::Transition => {
                 let _res = self

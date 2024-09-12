@@ -35,11 +35,32 @@ pub struct PaginationArgs {
     pub page_size: Option<i32>,
     #[clap(
         long,
-        short = 'o',
+        short = 's',
         value_name = "page_offset",
         help = "page offset for list"
     )]
     pub page_offset: Option<i64>,
+}
+
+/// Available output values
+/// Table, Json
+#[derive(ValueEnum, Debug, Clone, Copy)]
+#[value(rename_all = "kebab-case")]
+pub enum OutputValues {
+    #[value(name = "table", help = "Print output in table format")]
+    Table,
+    #[value(name = "json", help = "Print output in json format")]
+    Json,
+}
+
+/// Available output values
+///
+/// * Table: Print output in table format
+/// * Json: Print output in json format
+#[derive(Args, Debug)]
+pub struct OutputArgs {
+    #[clap(long, short = 'o', value_name = "table|json", help = "Output format")]
+    pub output: OutputValues,
 }
 
 /// Available configuration command line arguments
@@ -149,6 +170,8 @@ pub struct VersionArgs {
     pub changelog_file: Option<String>,
     #[clap(flatten)]
     pub pagination: PaginationArgs,
+    #[clap(flatten)]
+    pub output: OutputArgs,
 }
 
 /// Available version action values
@@ -196,6 +219,8 @@ pub struct ProjectArgs {
     pub project_issue_type: Option<String>,
     #[clap(flatten)]
     pub pagination: PaginationArgs,
+    #[clap(flatten)]
+    pub output: OutputArgs,
 }
 
 /// Available project action values
@@ -263,6 +288,8 @@ pub struct IssueArgs {
     pub assignee: Option<String>,
     #[clap(flatten)]
     pub pagination: PaginationArgs,
+    #[clap(flatten)]
+    pub output: OutputArgs,
 }
 
 /// Available issue action values

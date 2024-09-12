@@ -2,7 +2,7 @@ use crate::{
     args::commands::{ProjectActionValues, ProjectArgs},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdParams, ProjectCmdRunner},
-    utils::{table_printer::*, TablePrintable},
+    utils::{print_data, OutputType, PrintableData},
 };
 
 use super::ExecJiraCommand;
@@ -107,23 +107,35 @@ impl ExecJiraCommand for ProjectExecutor {
                     .project_cmd_runner
                     .list_jira_projects(ProjectCmdParams::from(&self.project_args))
                     .await?;
-                print_table_full(TablePrintable::Project { projects: res });
+                print_data(
+                    PrintableData::Project { projects: res },
+                    self.project_args.output.output,
+                    OutputType::Full,
+                );
             }
             ProjectActionValues::GetIssueTypes => {
                 let res = self
                     .project_cmd_runner
                     .get_jira_project_issue_types(ProjectCmdParams::from(&self.project_args))
                     .await?;
-                print_table_full(TablePrintable::IssueType { issue_types: res });
+                print_data(
+                    PrintableData::IssueType { issue_types: res },
+                    self.project_args.output.output,
+                    OutputType::Full,
+                );
             }
             ProjectActionValues::GetIssueTypeFields => {
                 let res = self
                     .project_cmd_runner
                     .get_jira_project_issue_type_id(ProjectCmdParams::from(&self.project_args))
                     .await?;
-                print_table_full(TablePrintable::IssueTypeField {
-                    issue_type_fields: res,
-                });
+                print_data(
+                    PrintableData::IssueTypeField {
+                        issue_type_fields: res,
+                    },
+                    self.project_args.output.output,
+                    OutputType::Full,
+                );
             }
         }
         Ok(())
