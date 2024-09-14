@@ -3,7 +3,8 @@ pub mod json_printer;
 pub mod table_printer;
 
 use jira_v3_openapi::models::{
-    CreatedIssue, FieldCreateMetadata, IssueBean, IssueTypeIssueCreateMetadata, Project, Version,
+    CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition, IssueTypeIssueCreateMetadata,
+    Project, Version,
 };
 use serde_json::Value;
 
@@ -26,6 +27,9 @@ pub enum PrintableData {
     },
     IssueData {
         issues: Vec<IssueBean>,
+    },
+    IssueTransitions {
+        transitions: Vec<IssueTransition>,
     },
     IssueType {
         issue_types: Vec<IssueTypeIssueCreateMetadata>,

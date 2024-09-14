@@ -11,13 +11,14 @@ pub struct JirustCliArgs {
 }
 
 /// Available CLI commands
-/// Config, Project, Version
+/// Config, Issue, Project, Transition, Version
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     Config(ConfigArgs),
-    Project(ProjectArgs),
-    Version(VersionArgs),
     Issue(IssueArgs),
+    Project(ProjectArgs),
+    Transition(TransitionArgs),
+    Version(VersionArgs),
 }
 
 /// Available pagination command line arguments
@@ -200,14 +201,16 @@ pub enum VersionActionValues {
 pub struct ProjectArgs {
     #[arg(
         value_name = "get-issue-types|get-issue-type-fields|list",
-        help_heading = "Jira Project management"
+        help_heading = "Jira Project management",
+        required = true
     )]
     pub project_act: ProjectActionValues,
     #[clap(
         long,
         short = 'k',
         value_name = "project_key",
-        help = "Jira Project key"
+        help = "Jira Project key",
+        required = true
     )]
     pub project_key: Option<String>,
     #[clap(
@@ -256,14 +259,16 @@ pub struct IssueArgs {
         long,
         short = 'p',
         value_name = "project_key",
-        help = "Jira Project key"
+        help = "Jira Project key",
+        required = true
     )]
     pub project_key: String,
     #[clap(
         long,
         short = 'i',
         value_name = "issue_key",
-        help = "Jira Project issue key"
+        help = "Jira Project issue key",
+        required = true
     )]
     pub issue_key: Option<String>,
     #[clap(long,
@@ -309,6 +314,29 @@ pub enum IssueActionValues {
     Transition,
     #[value(name = "update", help = "Update a Jira Project issue")]
     Update,
+}
+
+#[derive(Args, Debug)]
+pub struct TransitionArgs {
+    #[arg(value_name = "list", help_heading = "Jira issue transition list")]
+    pub transition_act: TransitionActionValues,
+    #[clap(
+        long,
+        short = 'i',
+        value_name = "issue_key",
+        help = "Jira Project issue key",
+        required = true
+    )]
+    pub issue_key: String,
+    #[clap(flatten)]
+    pub output: OutputArgs,
+}
+
+#[derive(ValueEnum, Debug, Clone, Copy)]
+#[value(rename_all = "kebab-case")]
+pub enum TransitionActionValues {
+    #[value(name = "list", help = "List Jira issue available transitions")]
+    List,
 }
 
 /// Parse a single key-value pair

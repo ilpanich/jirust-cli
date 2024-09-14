@@ -5,6 +5,9 @@ pub fn print_json(data: PrintableData) {
         PrintableData::Generic { data } => {
             println!("{}", serde_json::to_string_pretty(&data).unwrap());
         }
+        PrintableData::IssueTransitions { transitions } => {
+            println!("{}", serde_json::to_string_pretty(&transitions).unwrap());
+        }
         PrintableData::IssueCreated { issues } => {
             println!("{}", serde_json::to_string_pretty(&issues).unwrap());
         }

@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use jira_v3_openapi::models::{
-    CreatedIssue, FieldCreateMetadata, IssueBean, IssueTypeIssueCreateMetadata, Project,
-    ProjectCategory, Version,
+    CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition, IssueTypeIssueCreateMetadata,
+    Project, ProjectCategory, Version,
 };
 
 use super::PrintableData;
@@ -125,6 +125,20 @@ pub fn print_table_full(data: PrintableData) {
                     Fr->version.release_date.unwrap_or_default(),
                     Fb->version.archived.unwrap_or_default(),
                     Fg->version.released.unwrap_or_default()
+                ]);
+            }
+        }
+        PrintableData::IssueTransitions { transitions } => {
+            table.add_row(row![
+                bFC->"Transition ID",
+                bFc->"Name",
+                bFm->"fields",
+            ]);
+            for transition in transitions {
+                table.add_row(row![
+                    Fc->transition.id.unwrap_or("".to_string()),
+                    Fc->transition.name.unwrap_or("".to_string()),
+                    Fm->transition.fields.unwrap_or(HashMap::new()).iter().map(|field| format!("{}: {:?}", field.0, field.1)).collect::<Vec<String>>().join(", "),
                 ]);
             }
         }
@@ -255,6 +269,20 @@ pub fn print_table_basic(data: PrintableData) {
                     Fr->version.release_date.unwrap_or_default(),
                     Fb->version.archived.unwrap_or_default(),
                     Fg->version.released.unwrap_or_default()
+                ]);
+            }
+        }
+        PrintableData::IssueTransitions { transitions } => {
+            table.add_row(row![
+                bFC->"Transition ID",
+                bFc->"Name",
+                bFm->"fields",
+            ]);
+            for transition in transitions {
+                table.add_row(row![
+                    Fc->transition.id.unwrap_or("".to_string()),
+                    Fc->transition.name.unwrap_or("".to_string()),
+                    Fm->transition.fields.unwrap_or(HashMap::new()).iter().map(|field| format!("{}: {:?}", field.0, field.1)).collect::<Vec<String>>().join(", "),
                 ]);
             }
         }
@@ -412,6 +440,22 @@ pub fn print_table_single(data: PrintableData) {
                 Fr->version.release_date.unwrap_or_default(),
                 Fb->version.archived.unwrap_or_default(),
                 Fg->version.released.unwrap_or_default()
+            ]);
+        }
+        PrintableData::IssueTransitions { transitions } => {
+            let transition = transitions
+                .first()
+                .unwrap_or(&IssueTransition::default())
+                .clone();
+            table.add_row(row![
+                bFC->"Transition ID",
+                bFc->"Name",
+                bFm->"fields",
+            ]);
+            table.add_row(row![
+                Fc->transition.id.unwrap_or("".to_string()),
+                Fc->transition.name.unwrap_or("".to_string()),
+                Fm->transition.fields.unwrap_or(HashMap::new()).iter().map(|field| format!("{}: {:?}", field.0, field.1)).collect::<Vec<String>>().join(", "),
             ]);
         }
         PrintableData::IssueType { issue_types } => {

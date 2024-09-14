@@ -1,10 +1,11 @@
 use jira_v3_openapi::apis::issues_api::*;
 use jira_v3_openapi::models::user::AccountType;
-use jira_v3_openapi::models::{CreatedIssue, IssueBean, IssueTransition, User};
+use jira_v3_openapi::models::{CreatedIssue, IssueBean, IssueTransition, Transitions, User};
 use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDetails};
 use serde_json::Value;
 use std::collections::HashMap;
 
+use crate::args::commands::TransitionArgs;
 use crate::{
     args::commands::IssueArgs,
     config::config_file::{AuthData, ConfigFile},
@@ -130,6 +131,22 @@ impl IssueCmdRunner {
         )
         .await?)
     }
+
+    pub async fn get_issue_available_transitions(
+        &self,
+        params: IssueTransitionCmdParams,
+    ) -> Result<Transitions, Box<dyn std::error::Error>> {
+        Ok(get_transitions(
+            &self.cfg,
+            &params.issue_key,
+            None,
+            None,
+            None,
+            Some(false),
+            None,
+        )
+        .await?)
+    }
 }
 
 pub struct IssueCmdParams {
@@ -173,6 +190,26 @@ impl From<&IssueArgs> for IssueCmdParams {
             ),
             transition: value.transition_to.clone(),
             assignee: value.assignee.clone(),
+        }
+    }
+}
+
+pub struct IssueTransitionCmdParams {
+    pub issue_key: String,
+}
+
+impl IssueTransitionCmdParams {
+    pub fn new() -> IssueTransitionCmdParams {
+        IssueTransitionCmdParams {
+            issue_key: "".to_string(),
+        }
+    }
+}
+
+impl From<&TransitionArgs> for IssueTransitionCmdParams {
+    fn from(value: &TransitionArgs) -> Self {
+        IssueTransitionCmdParams {
+            issue_key: value.issue_key.clone(),
         }
     }
 }
