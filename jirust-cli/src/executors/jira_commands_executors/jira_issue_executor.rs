@@ -1,5 +1,5 @@
 use crate::{
-    args::commands::{IssueActionValues, IssueArgs},
+    args::commands::{IssueActionValues, IssueArgs, OutputValues},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdParams, IssueCmdRunner},
     utils::{print_data, OutputType, PrintableData},
@@ -46,7 +46,7 @@ impl ExecJiraCommand for IssueExecutor {
                     PrintableData::IssueCreated {
                         issues: (vec![res]),
                     },
-                    self.issue_args.output.output,
+                    self.issue_args.output.output.unwrap_or(OutputValues::Json),
                     OutputType::Basic,
                 )
             }
@@ -63,7 +63,7 @@ impl ExecJiraCommand for IssueExecutor {
                     .await?;
                 print_data(
                     PrintableData::IssueData { issues: vec![res] },
-                    self.issue_args.output.output,
+                    self.issue_args.output.output.unwrap_or(OutputValues::Json),
                     OutputType::Single,
                 )
             }

@@ -1,5 +1,5 @@
 use crate::{
-    args::commands::{TransitionActionValues, TransitionArgs},
+    args::commands::{OutputValues, TransitionActionValues, TransitionArgs},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueTransitionCmdParams},
     utils::{print_data, OutputType, PrintableData},
@@ -42,7 +42,10 @@ impl ExecJiraCommand for IssueTransitionExecutor {
                     PrintableData::IssueTransitions {
                         transitions: res.transitions.unwrap_or(vec![]),
                     },
-                    self.issue_transition_args.output.output,
+                    self.issue_transition_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
                     OutputType::Full,
                 )
             }

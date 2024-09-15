@@ -1,11 +1,20 @@
+use std::collections::HashMap;
+
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
 use crate::utils::changelog_extractor::ChangelogExtractor;
 use chrono::{DateTime, Utc};
 use jira_v3_openapi::apis::configuration::Configuration;
+use jira_v3_openapi::apis::issues_api::do_transition;
 use jira_v3_openapi::apis::project_versions_api::*;
 use jira_v3_openapi::apis::Error;
-use jira_v3_openapi::models::{DeleteAndReplaceVersionBean, Version};
+use jira_v3_openapi::models::user::AccountType;
+use jira_v3_openapi::models::{
+    DeleteAndReplaceVersionBean, IssueTransition, IssueUpdateDetails, User, Version,
+};
+use serde_json::Value;
+
+use super::issue_cmd_runner::{IssueCmdParams, IssueCmdRunner};
 
 /// Version command runner struct
 ///
@@ -92,6 +101,7 @@ impl VersionCmdRunner {
         params: VersionCmdParams,
     ) -> Result<Version, Box<dyn std::error::Error>> {
         let version_description;
+        let mut resolved_issues = vec![];
         if Option::is_some(&params.changelog_file) {
             let changelog_extractor = ChangelogExtractor::new(params.changelog_file.unwrap());
             version_description = Some(changelog_extractor.extract_version_changelog().unwrap_or(
@@ -101,6 +111,14 @@ impl VersionCmdRunner {
                     "No changelog found for this version".to_string()
                 },
             ));
+            if Option::is_some(&params.transition_issues) {
+                resolved_issues = changelog_extractor
+                    .extract_issues_from_changelog(
+                        version_description.clone().unwrap(),
+                        params.project.clone(),
+                    )
+                    .unwrap_or(vec![]);
+            }
         } else {
             version_description = params.version_description;
         }
@@ -118,7 +136,60 @@ impl VersionCmdRunner {
             released: params.version_released,
             ..Default::default()
         };
-        Ok(create_version(&self.cfg, version).await?)
+        let version = create_version(&self.cfg, version).await?;
+        if !resolved_issues.is_empty() {
+            let user_data;
+            if Option::is_some(&params.transition_assignee) {
+                user_data = Some(User {
+                    account_id: Some(params.transition_assignee.expect("Assignee is required")),
+                    account_type: Some(AccountType::Atlassian),
+                    ..Default::default()
+                });
+            } else {
+                user_data = None;
+            }
+            let transition = IssueTransition {
+                id: Some(
+                    params
+                        .transition_issues
+                        .expect("Transition to be applied is required"),
+                ),
+                ..Default::default()
+            };
+            for issue in resolved_issues {
+                let assignee = if user_data.is_some() {
+                    let mut data: HashMap<String, Value> = HashMap::new();
+                    data.insert(
+                        "assignee".to_string(),
+                        serde_json::from_str(
+                            serde_json::to_string(&user_data)
+                                .unwrap_or("".to_string())
+                                .as_str(),
+                        )
+                        .unwrap(),
+                    );
+                    Some(data)
+                } else {
+                    None
+                };
+                let issue_data = IssueUpdateDetails {
+                    fields: assignee,
+                    history_metadata: None,
+                    properties: None,
+                    transition: Some(transition.clone()),
+                    update: None,
+                };
+                match do_transition(&self.cfg, issue.as_str(), issue_data).await {
+                    Ok(_) => {
+                        println!("Issue {} transitioned successfully", issue);
+                    }
+                    Err(e) => {
+                        eprintln!("Error transitioning issue {}: {}", issue, e);
+                    }
+                }
+            }
+        }
+        Ok(version)
     }
 
     /// This method gets a Jira version with the given parameters
@@ -343,6 +414,7 @@ impl VersionCmdRunner {
 /// * `version_archived` - The version archived status, optional.
 /// * `version_released` - The version released status, optional.
 /// * `changelog_file` - The changelog file path, to be used for automatic description generation (changelog-based), optional: if set the script detects automatically the first tagged block in the changelog and use it as description
+/// * `resolve_issues` - The flag to resolve issues in the version, optional.
 /// * `versions_page_size` - The page size for the version, optional.
 /// * `versions_page_offset` - The page offset for the version, optional.
 pub struct VersionCmdParams {
@@ -356,6 +428,8 @@ pub struct VersionCmdParams {
     pub version_archived: Option<bool>,
     pub version_released: Option<bool>,
     pub changelog_file: Option<String>,
+    pub transition_issues: Option<String>,
+    pub transition_assignee: Option<String>,
     pub versions_page_size: Option<i32>,
     pub versions_page_offset: Option<i64>,
 }
@@ -394,6 +468,8 @@ impl VersionCmdParams {
             version_archived: None,
             version_released: None,
             changelog_file: None,
+            transition_issues: None,
+            transition_assignee: None,
             versions_page_size: None,
             versions_page_offset: None,
         }
@@ -490,6 +566,8 @@ impl VersionCmdParams {
                     current_version.released
                 },
                 changelog_file: None,
+                transition_issues: None,
+                transition_assignee: None,
                 versions_page_size: None,
                 versions_page_offset: None,
             },
@@ -504,6 +582,8 @@ impl VersionCmdParams {
                 version_archived: current_version.archived,
                 version_released: current_version.released,
                 changelog_file: None,
+                transition_issues: None,
+                transition_assignee: None,
                 versions_page_size: None,
                 versions_page_offset: None,
             },
@@ -647,6 +727,8 @@ impl From<&VersionArgs> for VersionCmdParams {
             version_archived: args.version_archived.clone(),
             version_released: args.version_released.clone(),
             changelog_file: args.changelog_file.clone(),
+            transition_issues: args.transition_issues.clone(),
+            transition_assignee: args.transition_assignee.clone(),
             versions_page_size: args.pagination.page_size.clone(),
             versions_page_offset: args.pagination.page_offset.clone(),
         }

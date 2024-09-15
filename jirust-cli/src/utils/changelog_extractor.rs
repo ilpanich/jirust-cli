@@ -78,4 +78,20 @@ impl ChangelogExtractor {
 
         Ok(version_changelog_text.to_string())
     }
+
+    pub fn extract_issues_from_changelog(
+        &self,
+        version_string: String,
+        project_key: String,
+    ) -> Result<Vec<String>, Box<dyn Error>> {
+        let issue_re =
+            Regex::new(format!(r"\*\*(?<issue>{}\-\d+)\*\*", project_key).as_str()).unwrap();
+        let Some(issues) = issue_re.captures(version_string.as_str()) else {
+            return Ok(vec![]);
+        };
+        Ok(issues
+            .iter()
+            .map(|issue| issue.unwrap().as_str().to_string())
+            .collect())
+    }
 }

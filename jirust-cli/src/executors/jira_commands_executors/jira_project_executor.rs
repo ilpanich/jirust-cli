@@ -1,5 +1,5 @@
 use crate::{
-    args::commands::{ProjectActionValues, ProjectArgs},
+    args::commands::{OutputValues, ProjectActionValues, ProjectArgs},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdParams, ProjectCmdRunner},
     utils::{print_data, OutputType, PrintableData},
@@ -109,7 +109,10 @@ impl ExecJiraCommand for ProjectExecutor {
                     .await?;
                 print_data(
                     PrintableData::Project { projects: res },
-                    self.project_args.output.output,
+                    self.project_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
                     OutputType::Full,
                 );
             }
@@ -120,7 +123,10 @@ impl ExecJiraCommand for ProjectExecutor {
                     .await?;
                 print_data(
                     PrintableData::IssueType { issue_types: res },
-                    self.project_args.output.output,
+                    self.project_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
                     OutputType::Full,
                 );
             }
@@ -133,7 +139,10 @@ impl ExecJiraCommand for ProjectExecutor {
                     PrintableData::IssueTypeField {
                         issue_type_fields: res,
                     },
-                    self.project_args.output.output,
+                    self.project_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
                     OutputType::Full,
                 );
             }

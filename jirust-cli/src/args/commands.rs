@@ -61,7 +61,7 @@ pub enum OutputValues {
 #[derive(Args, Debug)]
 pub struct OutputArgs {
     #[clap(long, short = 'o', value_name = "table|json", help = "Output format")]
-    pub output: OutputValues,
+    pub output: Option<OutputValues>,
 }
 
 /// Available configuration command line arguments
@@ -169,6 +169,20 @@ pub struct VersionArgs {
         help = "changelog file path to be used for automatic description generation (if set the script detects automatically the first tagged block in the changelog and use it as description)"
     )]
     pub changelog_file: Option<String>,
+    #[clap(
+        long,
+        short = 'r',
+        value_name = "transition_issues",
+        help = "if changelog is set and this flag is set, the script will transition all issues in the changelog of the current version release"
+    )]
+    pub transition_issues: Option<String>,
+    #[clap(
+        long,
+        short = 'a',
+        value_name = "transition_assignee",
+        help = "if changelog is set and the resolve_issues flag is set, the script will transition all issues in the changelog of the current version release"
+    )]
+    pub transition_assignee: Option<String>,
     #[clap(flatten)]
     pub pagination: PaginationArgs,
     #[clap(flatten)]

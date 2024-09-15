@@ -1,4 +1,4 @@
-use crate::args::commands::{VersionActionValues, VersionArgs};
+use crate::args::commands::{OutputValues, VersionActionValues, VersionArgs};
 use crate::config::config_file::ConfigFile;
 use crate::runners::jira_cmd_runners::version_cmd_runner::{VersionCmdParams, VersionCmdRunner};
 use crate::utils::{print_data, OutputType, PrintableData};
@@ -125,7 +125,10 @@ impl ExecJiraCommand for VersionExecutor {
                     PrintableData::Version {
                         versions: vec![res],
                     },
-                    self.version_args.output.output,
+                    self.version_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
                     OutputType::Single,
                 );
             }
@@ -136,7 +139,10 @@ impl ExecJiraCommand for VersionExecutor {
                     .await?;
                 print_data(
                     PrintableData::Version { versions: res },
-                    self.version_args.output.output,
+                    self.version_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
                     OutputType::Full,
                 );
             }
@@ -161,7 +167,10 @@ impl ExecJiraCommand for VersionExecutor {
                                     PrintableData::Version {
                                         versions: vec![res],
                                     },
-                                    self.version_args.output.output,
+                                    self.version_args
+                                        .output
+                                        .output
+                                        .unwrap_or(OutputValues::Json),
                                     OutputType::Single,
                                 );
                             }
@@ -199,7 +208,10 @@ impl ExecJiraCommand for VersionExecutor {
                                     PrintableData::Version {
                                         versions: vec![res],
                                     },
-                                    self.version_args.output.output,
+                                    self.version_args
+                                        .output
+                                        .output
+                                        .unwrap_or(OutputValues::Json),
                                     OutputType::Single,
                                 );
                             }
@@ -227,7 +239,10 @@ impl ExecJiraCommand for VersionExecutor {
                                     PrintableData::Version {
                                         versions: vec![res],
                                     },
-                                    self.version_args.output.output,
+                                    self.version_args
+                                        .output
+                                        .output
+                                        .unwrap_or(OutputValues::Json),
                                     OutputType::Single,
                                 );
                             }
