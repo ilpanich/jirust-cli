@@ -1,20 +1,20 @@
 use std::collections::HashMap;
+use std::fmt::Debug;
 
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
 use crate::utils::changelog_extractor::ChangelogExtractor;
 use chrono::{DateTime, Utc};
 use jira_v3_openapi::apis::configuration::Configuration;
-use jira_v3_openapi::apis::issues_api::do_transition;
+use jira_v3_openapi::apis::issues_api::{assign_issue, do_transition, edit_issue};
 use jira_v3_openapi::apis::project_versions_api::*;
 use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::models::user::AccountType;
 use jira_v3_openapi::models::{
-    DeleteAndReplaceVersionBean, IssueTransition, IssueUpdateDetails, User, Version,
+    DeleteAndReplaceVersionBean, FieldUpdateOperation, IssueTransition, IssueUpdateDetails, User,
+    Version,
 };
 use serde_json::Value;
-
-use super::issue_cmd_runner::{IssueCmdParams, IssueCmdRunner};
 
 /// Version command runner struct
 ///
@@ -22,6 +22,8 @@ use super::issue_cmd_runner::{IssueCmdParams, IssueCmdRunner};
 /// and it is used to pass the parameters to the version commands runner
 pub struct VersionCmdRunner {
     cfg: Configuration,
+    resolution_value: Value,
+    resolution_comment: Value,
 }
 
 /// Version command runner implementation.
@@ -63,7 +65,16 @@ impl VersionCmdRunner {
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
         config.basic_auth = Some((auth_data.0, Some(auth_data.1)));
-        VersionCmdRunner { cfg: config }
+        let res: Value = serde_json::from_str(cfg_file.get_standard_resolution().as_str()).unwrap();
+        VersionCmdRunner {
+            cfg: config,
+            resolution_value: serde_json::from_str(cfg_file.get_standard_resolution().as_str())
+                .unwrap_or(Value::Null),
+            resolution_comment: serde_json::from_str(
+                cfg_file.get_standard_resolution_comment().as_str(),
+            )
+            .unwrap_or(Value::Null),
+        }
     }
 
     /// This method creates a new Jira version with the given parameters
@@ -157,35 +168,75 @@ impl VersionCmdRunner {
                 ..Default::default()
             };
             for issue in resolved_issues {
-                let assignee = if user_data.is_some() {
-                    let mut data: HashMap<String, Value> = HashMap::new();
-                    data.insert(
-                        "assignee".to_string(),
-                        serde_json::from_str(
-                            serde_json::to_string(&user_data)
-                                .unwrap_or("".to_string())
-                                .as_str(),
-                        )
-                        .unwrap(),
-                    );
-                    Some(data)
-                } else {
-                    None
-                };
-                let issue_data = IssueUpdateDetails {
-                    fields: assignee,
+                let mut update_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
+                    HashMap::new();
+                let mut transition_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
+                    HashMap::new();
+                let mut version_update_op = FieldUpdateOperation::new();
+                let mut version_resolution_update_field = HashMap::new();
+                let mut version_resolution_comment_op = FieldUpdateOperation::new();
+                let version_json: Value =
+                    serde_json::from_str(serde_json::to_string(&version).unwrap().as_str())
+                        .unwrap_or(Value::Null);
+                let resolution_value = self.resolution_value.clone();
+                let comment_value = self.resolution_comment.clone();
+                version_update_op.add = Some(Some(version_json));
+                version_resolution_update_field.insert("resolution".to_string(), resolution_value);
+                version_resolution_comment_op.add = Some(Some(comment_value));
+                update_fields_hashmap.insert("fixVersions".to_string(), vec![version_update_op]);
+                transition_fields_hashmap
+                    .insert("comment".to_string(), vec![version_resolution_comment_op]);
+                println!("{:?}", version_resolution_update_field);
+                println!("{:?}", transition_fields_hashmap);
+                let issue_transition_data = IssueUpdateDetails {
+                    fields: Some(version_resolution_update_field),
                     history_metadata: None,
                     properties: None,
                     transition: Some(transition.clone()),
-                    update: None,
+                    update: Some(transition_fields_hashmap),
                 };
-                match do_transition(&self.cfg, issue.as_str(), issue_data).await {
+                let issue_update_data = IssueUpdateDetails {
+                    fields: None,
+                    history_metadata: None,
+                    properties: None,
+                    transition: None,
+                    update: Some(update_fields_hashmap),
+                };
+                match do_transition(&self.cfg, issue.clone().as_str(), issue_transition_data).await
+                {
                     Ok(_) => {
                         println!("Issue {} transitioned successfully", issue);
                     }
-                    Err(e) => {
-                        eprintln!("Error transitioning issue {}: {}", issue, e);
+                    Err(_) => {}
+                }
+                match assign_issue(
+                    &self.cfg,
+                    issue.clone().as_str(),
+                    user_data.clone().unwrap(),
+                )
+                .await
+                {
+                    Ok(_) => {
+                        println!("Issue {} assigned successfully", issue);
                     }
+                    Err(_) => {}
+                }
+                match edit_issue(
+                    &self.cfg,
+                    issue.clone().as_str(),
+                    issue_update_data,
+                    Some(true),
+                    None,
+                    None,
+                    Some(true),
+                    None,
+                )
+                .await
+                {
+                    Ok(_) => {
+                        println!("Issue {} updated successfully", issue);
+                    }
+                    Err(_) => {}
                 }
             }
         }

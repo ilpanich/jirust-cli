@@ -1,5 +1,6 @@
 use base64::prelude::*;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::{fs, io::Write};
 use toml;
 
@@ -27,6 +28,8 @@ pub struct AuthSection {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct JiraSection {
     jira_url: String,
+    standard_resolution: String,
+    standard_resolution_comment: String,
 }
 
 /// Implementation of AuthData
@@ -174,10 +177,19 @@ impl ConfigFile {
     /// assert_eq!(config.get_auth_key(), "auth_token");
     /// assert_eq!(config.get_jira_url(), "jira_url");
     /// ```
-    pub fn new(auth_token: String, jira_url: String) -> ConfigFile {
+    pub fn new(
+        auth_token: String,
+        jira_url: String,
+        standard_resolution: String,
+        standard_resolution_comment: String,
+    ) -> ConfigFile {
         ConfigFile {
             auth: AuthSection { auth_token },
-            jira: JiraSection { jira_url },
+            jira: JiraSection {
+                jira_url,
+                standard_resolution,
+                standard_resolution_comment,
+            },
         }
     }
 
@@ -208,6 +220,8 @@ impl ConfigFile {
             },
             jira: JiraSection {
                 jira_url: String::from(""),
+                standard_resolution: String::from(""),
+                standard_resolution_comment: String::from(""),
             },
         }
     }
@@ -291,6 +305,22 @@ impl ConfigFile {
     /// ```
     pub fn get_jira_url(&self) -> &str {
         &self.jira.jira_url
+    }
+
+    pub fn set_standard_resolution(&mut self, standard_resolution: String) {
+        self.jira.standard_resolution = standard_resolution;
+    }
+
+    pub fn get_standard_resolution(&self) -> &String {
+        &self.jira.standard_resolution
+    }
+
+    pub fn set_standard_resolution_comment(&mut self, standard_resolution_comment: String) {
+        self.jira.standard_resolution_comment = standard_resolution_comment;
+    }
+
+    pub fn get_standard_resolution_comment(&self) -> &String {
+        &self.jira.standard_resolution_comment
     }
 
     /// Stores the configuration to a file.

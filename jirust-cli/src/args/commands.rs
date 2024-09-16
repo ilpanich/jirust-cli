@@ -171,14 +171,14 @@ pub struct VersionArgs {
     pub changelog_file: Option<String>,
     #[clap(
         long,
-        short = 'r',
+        short = 't',
         value_name = "transition_issues",
         help = "if changelog is set and this flag is set, the script will transition all issues in the changelog of the current version release"
     )]
     pub transition_issues: Option<String>,
     #[clap(
         long,
-        short = 'a',
+        short = 'u',
         value_name = "transition_assignee",
         help = "if changelog is set and the resolve_issues flag is set, the script will transition all issues in the changelog of the current version release"
     )]

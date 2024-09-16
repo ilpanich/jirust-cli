@@ -59,7 +59,6 @@ impl ChangelogExtractor {
     /// ```
     pub fn extract_version_changelog(&self) -> Result<String, Box<dyn Error>> {
         let version_re = Regex::new(r"## \[\d+.\d+.\d+\] \d+\-\d+\-\d+\n").unwrap();
-        println!("version_re: {:?}", version_re.as_str());
         let changelog = fs::read_to_string(&self.changelog_file)?;
         let matches: Vec<Match> = version_re.find_iter(&changelog).collect();
         if matches.is_empty() {
@@ -84,14 +83,14 @@ impl ChangelogExtractor {
         version_string: String,
         project_key: String,
     ) -> Result<Vec<String>, Box<dyn Error>> {
-        let issue_re =
-            Regex::new(format!(r"\*\*(?<issue>{}\-\d+)\*\*", project_key).as_str()).unwrap();
-        let Some(issues) = issue_re.captures(version_string.as_str()) else {
-            return Ok(vec![]);
-        };
-        Ok(issues
-            .iter()
-            .map(|issue| issue.unwrap().as_str().to_string())
-            .collect())
+        let issue_re = Regex::new(format!(r"\*\*({}\-\d+)\*\*", project_key).as_str()).unwrap();
+        let mut issues: Vec<String> = vec![];
+        for (_, [issue]) in issue_re
+            .captures_iter(version_string.as_str())
+            .map(|issue| issue.extract())
+        {
+            issues.push(issue.to_string());
+        }
+        Ok(issues)
     }
 }
