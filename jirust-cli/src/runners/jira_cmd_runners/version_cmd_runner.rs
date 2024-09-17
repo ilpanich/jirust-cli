@@ -24,6 +24,7 @@ pub struct VersionCmdRunner {
     cfg: Configuration,
     resolution_value: Value,
     resolution_comment: Value,
+    resolution_transition_id: Option<String>,
 }
 
 /// Version command runner implementation.
@@ -74,6 +75,7 @@ impl VersionCmdRunner {
                 cfg_file.get_standard_resolution_comment().as_str(),
             )
             .unwrap_or(Value::Null),
+            resolution_transition_id: cfg_file.get_transition_id("resolve"),
         }
     }
 
@@ -122,7 +124,7 @@ impl VersionCmdRunner {
                     "No changelog found for this version".to_string()
                 },
             ));
-            if Option::is_some(&params.transition_issues) {
+            if Option::is_some(&params.transition_issues) && params.transition_issues.unwrap() {
                 resolved_issues = changelog_extractor
                     .extract_issues_from_changelog(
                         version_description.clone().unwrap(),
@@ -159,12 +161,12 @@ impl VersionCmdRunner {
             } else {
                 user_data = None;
             }
+            let transition_id: String = self
+                .resolution_transition_id
+                .clone()
+                .expect("Transition ID is required and must be set in the config file");
             let transition = IssueTransition {
-                id: Some(
-                    params
-                        .transition_issues
-                        .expect("Transition to be applied is required"),
-                ),
+                id: Some(transition_id),
                 ..Default::default()
             };
             for issue in resolved_issues {
@@ -479,7 +481,7 @@ pub struct VersionCmdParams {
     pub version_archived: Option<bool>,
     pub version_released: Option<bool>,
     pub changelog_file: Option<String>,
-    pub transition_issues: Option<String>,
+    pub transition_issues: Option<bool>,
     pub transition_assignee: Option<String>,
     pub versions_page_size: Option<i32>,
     pub versions_page_offset: Option<i64>,

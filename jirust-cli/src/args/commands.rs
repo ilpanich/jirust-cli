@@ -175,7 +175,7 @@ pub struct VersionArgs {
         value_name = "transition_issues",
         help = "if changelog is set and this flag is set, the script will transition all issues in the changelog of the current version release"
     )]
-    pub transition_issues: Option<String>,
+    pub transition_issues: Option<bool>,
     #[clap(
         long,
         short = 'u',

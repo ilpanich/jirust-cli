@@ -1,8 +1,7 @@
 use base64::prelude::*;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::{fs, io::Write};
-use toml;
+use toml::{self, Table, Value};
 
 /// This struct holds the username and api_key for the Jira API.
 #[derive(Debug)]
@@ -30,6 +29,7 @@ pub struct JiraSection {
     jira_url: String,
     standard_resolution: String,
     standard_resolution_comment: String,
+    transitions_ids: Table,
 }
 
 /// Implementation of AuthData
@@ -182,6 +182,7 @@ impl ConfigFile {
         jira_url: String,
         standard_resolution: String,
         standard_resolution_comment: String,
+        transitions_ids: Table,
     ) -> ConfigFile {
         ConfigFile {
             auth: AuthSection { auth_token },
@@ -189,6 +190,7 @@ impl ConfigFile {
                 jira_url,
                 standard_resolution,
                 standard_resolution_comment,
+                transitions_ids,
             },
         }
     }
@@ -222,6 +224,7 @@ impl ConfigFile {
                 jira_url: String::from(""),
                 standard_resolution: String::from(""),
                 standard_resolution_comment: String::from(""),
+                transitions_ids: Table::new(),
             },
         }
     }
@@ -321,6 +324,17 @@ impl ConfigFile {
 
     pub fn get_standard_resolution_comment(&self) -> &String {
         &self.jira.standard_resolution_comment
+    }
+
+    pub fn add_transition_id(&mut self, key: String, value: String) {
+        self.jira.transitions_ids.insert(key, Value::String(value));
+    }
+
+    pub fn get_transition_id(&self, key: &str) -> Option<String> {
+        match self.jira.transitions_ids.get(key).and_then(|v| v.as_str()) {
+            Some(value) => Some(value.to_string()),
+            None => None,
+        }
     }
 
     /// Stores the configuration to a file.
