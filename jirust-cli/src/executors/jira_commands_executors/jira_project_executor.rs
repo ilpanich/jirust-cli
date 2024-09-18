@@ -38,7 +38,7 @@ impl ProjectExecutor {
     /// ```no_run
     /// use jirust_cli::executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
     /// use jirust_cli::config::config_file::ConfigFile;
-    /// use jirust_cli::args::commands::{ProjectActionValues, ProjectArgs, PaginationArgs};
+    /// use jirust_cli::args::commands::{ProjectActionValues, ProjectArgs, PaginationArgs, OutputArgs};
     ///
     /// let cfg_data = ConfigFile::default();
     /// let project_action = ProjectActionValues::List;
@@ -47,6 +47,7 @@ impl ProjectExecutor {
     ///     project_key: Some("project_key".to_string()),
     ///     project_issue_type: None,
     ///     pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+    ///     output: OutputArgs { output: None },
     /// };
     ///
     /// let project_executor = ProjectExecutor::new(cfg_data, project_action, project_args);
@@ -78,7 +79,7 @@ impl ExecJiraCommand for ProjectExecutor {
     /// ```no_run
     /// use jirust_cli::executors::jira_commands_executors::ExecJiraCommand;
     /// use jirust_cli::executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
-    /// use jirust_cli::args::commands::{ProjectActionValues, ProjectArgs, PaginationArgs};
+    /// use jirust_cli::args::commands::{ProjectActionValues, ProjectArgs, PaginationArgs, OutputArgs};
     /// use jirust_cli::config::config_file::ConfigFile;
     /// # use std::error::Error;
     ///
@@ -91,6 +92,7 @@ impl ExecJiraCommand for ProjectExecutor {
     ///     project_key: Some("project_key".to_string()),
     ///     project_issue_type: None,
     ///     pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+    ///     output: OutputArgs { output: None },
     /// };
     ///
     /// let project_executor = ProjectExecutor::new(cfg_data, project_action, project_args);

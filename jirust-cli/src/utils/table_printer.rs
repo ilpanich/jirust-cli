@@ -23,11 +23,11 @@ use super::PrintableData;
 ///
 /// ```
 /// use jira_v3_openapi::models::Version;
-/// use jirust_cli::utils::{TablePrintable, table_printer::print_table_full};
+/// use jirust_cli::utils::{PrintableData, table_printer::print_table_full};
 ///
 /// let versions: Vec<Version> = vec![Version::new()];
 ///
-/// print_table_full(TablePrintable::Version{ versions });
+/// print_table_full(PrintableData::Version{ versions });
 /// ```
 ///
 pub fn print_table_full(data: PrintableData) {
@@ -196,10 +196,10 @@ pub fn print_table_full(data: PrintableData) {
 ///
 /// ```
 /// use jira_v3_openapi::models::Version;
-/// use jirust_cli::utils::{TablePrintable, table_printer::print_table_basic};
+/// use jirust_cli::utils::{PrintableData, table_printer::print_table_basic};
 ///
 /// let versions: Vec<Version> = vec![Version::new()];
-/// print_table_basic(TablePrintable::Version { versions });
+/// print_table_basic(PrintableData::Version { versions });
 /// ```
 pub fn print_table_basic(data: PrintableData) {
     let mut table = prettytable::Table::new();
@@ -341,10 +341,10 @@ pub fn print_table_basic(data: PrintableData) {
 ///
 /// ```
 /// use jira_v3_openapi::models::Version;
-/// use jirust_cli::utils::{TablePrintable, table_printer::print_table_single};
+/// use jirust_cli::utils::{PrintableData, table_printer::print_table_single};
 ///
 /// let version: Version = Version::new();
-/// print_table_single(TablePrintable::Version { versions: vec![version] });
+/// print_table_single(PrintableData::Version { versions: vec![version] });
 /// ```
 pub fn print_table_single(data: PrintableData) {
     let mut table = prettytable::Table::new();

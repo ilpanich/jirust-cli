@@ -171,8 +171,9 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
     /// assert_eq!(config.get_auth_key(), "auth_token");
     /// assert_eq!(config.get_jira_url(), "jira_url");
@@ -260,11 +261,12 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_key".to_string(), "jira_url".to_string());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let auth_key = config.get_auth_key();
     ///
-    /// assert_eq!(auth_key, "auth_key");
+    /// assert_eq!(auth_key, "auth_token");
     /// ```
     pub fn get_auth_key(&self) -> &str {
         &self.auth.auth_token
@@ -300,8 +302,9 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_key".to_string(), "jira_url".to_string());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let jira_url = config.get_jira_url();
     ///
     /// assert_eq!(jira_url, "jira_url");
@@ -350,8 +353,9 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_key".to_string(), "jira_url".to_string());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let result = config.write_to_file("config.toml");
     ///
     /// assert!(result.is_ok());

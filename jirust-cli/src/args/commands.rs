@@ -1,4 +1,4 @@
-use clap::{Args, Parser, Subcommand, ValueEnum};
+use clap::{ArgAction, Args, Parser, Subcommand, ValueEnum};
 use std::error::Error;
 
 /// Command line arguments base
@@ -172,6 +172,7 @@ pub struct VersionArgs {
     #[clap(
         long,
         short = 't',
+        action = ArgAction::SetTrue,
         value_name = "transition_issues",
         help = "if changelog is set and this flag is set, the script will transition all issues in the changelog of the current version release"
     )]

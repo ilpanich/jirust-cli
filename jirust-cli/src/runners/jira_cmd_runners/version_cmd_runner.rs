@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::fmt::Debug;
 
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
@@ -56,8 +55,9 @@ impl VersionCmdRunner {
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// ```
@@ -66,7 +66,6 @@ impl VersionCmdRunner {
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
         config.basic_auth = Some((auth_data.0, Some(auth_data.1)));
-        let res: Value = serde_json::from_str(cfg_file.get_standard_resolution().as_str()).unwrap();
         VersionCmdRunner {
             cfg: config,
             resolution_value: serde_json::from_str(cfg_file.get_standard_resolution().as_str())
@@ -97,10 +96,12 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    ///
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -264,10 +265,11 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -310,10 +312,11 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -368,10 +371,11 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -419,10 +423,11 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -545,7 +550,7 @@ impl VersionCmdParams {
     ///
     /// ```
     /// use jira_v3_openapi::models::Version;
-    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs};
+    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs, OutputArgs};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     ///
     /// let mut current_version: Version = Version::new();
@@ -568,6 +573,9 @@ impl VersionCmdParams {
     ///   version_released: Some(true),
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: None, page_offset: None },
+    ///   output: OutputArgs { output: None},
+    ///   transition_issues: None,
+    ///   transition_assignee: None,
     /// };
     ///
     /// let params = VersionCmdParams::merge_args(current_version, Some(&opt_args));
@@ -737,7 +745,7 @@ impl From<&VersionArgs> for VersionCmdParams {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs};
+    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs, OutputArgs};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     ///
     /// let version_args = VersionArgs {
@@ -751,8 +759,11 @@ impl From<&VersionArgs> for VersionCmdParams {
     ///   version_release_date: None,
     ///   version_archived: None,
     ///   version_released: None,
-    ///  changelog_file: None,
+    ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(10), page_offset: Some(0) },
+    ///   output: OutputArgs { output: None},
+    ///   transition_issues: None,
+    ///   transition_assignee: None,
     /// };
     ///
     /// let params = VersionCmdParams::from(&version_args);

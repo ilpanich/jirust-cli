@@ -95,7 +95,7 @@ pub fn manage_config(
 /// ```no_run
 /// use jirust_cli::process_command;
 /// use jirust_cli::config::config_file::ConfigFile;
-/// use jirust_cli::args::commands::{Commands, VersionArgs, VersionActionValues, PaginationArgs};
+/// use jirust_cli::args::commands::{Commands, VersionArgs, VersionActionValues, PaginationArgs, OutputArgs};
 ///
 /// # fn main() -> Result<(), std::io::Error> {
 /// let config_file_path = String::from("config.json");
@@ -112,6 +112,9 @@ pub fn manage_config(
 ///   version_released: Some(true),
 ///   changelog_file: None,
 ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+///   output: OutputArgs { output: None },
+///   transition_assignee: None,
+///   transition_issues: None,
 /// };
 ///
 /// let result = process_command(Commands::Version(args), config_file_path, ConfigFile::default());

@@ -36,7 +36,7 @@ impl VersionExecutor {
     /// ```no_run
     /// use jirust_cli::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
     /// use jirust_cli::config::config_file::ConfigFile;
-    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs};
+    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs, OutputArgs};
     ///
     /// let cfg_data = ConfigFile::default();
     /// let version_action = VersionActionValues::List;
@@ -53,6 +53,9 @@ impl VersionExecutor {
     ///   version_released: None,
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+    ///   output: OutputArgs { output: None },
+    ///   transition_assignee: None,
+    ///   transition_issues: None,
     /// };
     ///
     /// let version_executor = VersionExecutor::new(cfg_data, version_action, version_args);
@@ -85,7 +88,7 @@ impl ExecJiraCommand for VersionExecutor {
     /// use jirust_cli::executors::jira_commands_executors::ExecJiraCommand;
     /// use jirust_cli::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
     /// use jirust_cli::config::config_file::ConfigFile;
-    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs};
+    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs, OutputArgs};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -104,6 +107,9 @@ impl ExecJiraCommand for VersionExecutor {
     ///   version_released: None,
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+    ///   output: OutputArgs { output: None },
+    ///   transition_assignee: None,
+    ///   transition_issues: None,
     /// };
     ///
     /// let cfg_data = ConfigFile::default();
