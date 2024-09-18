@@ -6,6 +6,7 @@ use std::error::Error;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct JirustCliArgs {
+    /// Subcommands
     #[clap(subcommand)]
     pub subcmd: Commands,
 }
@@ -14,10 +15,15 @@ pub struct JirustCliArgs {
 /// Config, Issue, Project, Transition, Version
 #[derive(Subcommand, Debug)]
 pub enum Commands {
+    /// Configuration management
     Config(ConfigArgs),
+    /// Issue management
     Issue(IssueArgs),
+    /// Project management
     Project(ProjectArgs),
+    /// Transition management
     Transition(TransitionArgs),
+    /// Version management
     Version(VersionArgs),
 }
 
@@ -27,6 +33,7 @@ pub enum Commands {
 /// * page_offset: Option<i64>
 #[derive(Args, Debug)]
 pub struct PaginationArgs {
+    /// page size for lists
     #[clap(
         long,
         short = 'l',
@@ -34,6 +41,7 @@ pub struct PaginationArgs {
         help = "page size for lists"
     )]
     pub page_size: Option<i32>,
+    /// page offset for list
     #[clap(
         long,
         short = 's',
@@ -48,8 +56,10 @@ pub struct PaginationArgs {
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum OutputValues {
+    /// Print output in table format
     #[value(name = "table", help = "Print output in table format")]
     Table,
+    /// Print output in json format
     #[value(name = "json", help = "Print output in json format")]
     Json,
 }
@@ -60,6 +70,7 @@ pub enum OutputValues {
 /// * Json: Print output in json format
 #[derive(Args, Debug)]
 pub struct OutputArgs {
+    /// Output format
     #[clap(long, short = 'o', value_name = "table|json", help = "Output format")]
     pub output: Option<OutputValues>,
 }
@@ -70,6 +81,7 @@ pub struct OutputArgs {
 ///
 #[derive(Args, Debug)]
 pub struct ConfigArgs {
+    /// Configuration action
     #[arg(
         value_name = "auth|jira|setup|show",
         help_heading = "Configuration management"
@@ -82,15 +94,19 @@ pub struct ConfigArgs {
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum ConfigActionValues {
+    /// Set Jira API authentication (username, apikey)
     #[value(name = "auth", help = "Set Jira API authentication (username, apikey)")]
     Auth,
+    /// Set Jira API base URL
     #[value(name = "jira", help = "Set Jira API base URL")]
     Jira,
+    /// Setup Jira API configuration (authentication data, jira base URL, etc.)
     #[value(
         name = "setup",
-        help = "Setup Jira API configuration (authentication data, jira base URL)"
+        help = "Setup Jira API configuration (authentication data, jira base URL, etc.)"
     )]
     Setup,
+    /// Show current configuration
     #[value(name = "show", help = "Show current configuration")]
     Show,
 }
@@ -100,11 +116,13 @@ pub enum ConfigActionValues {
 ///   Create, List, Update, Delete, Release, Archive
 #[derive(Args, Debug)]
 pub struct VersionArgs {
+    /// Version action
     #[arg(
         value_name = "archive|create|delete|list|release|update",
         help_heading = "Jira Project version management"
     )]
     pub version_act: VersionActionValues,
+    /// Jira Project key
     #[clap(
         long,
         short = 'k',
@@ -113,8 +131,10 @@ pub struct VersionArgs {
         help = "Jira Project key"
     )]
     pub project_key: String,
+    /// Jira Project ID
     #[clap(long, short = 'i', value_name = "project_id", help = "Jira Project ID")]
     pub project_id: Option<i64>,
+    /// Jira Project version ID
     #[clap(
         long,
         short = 'v',
@@ -122,6 +142,7 @@ pub struct VersionArgs {
         help = "Jira Project version ID"
     )]
     pub version_id: Option<String>,
+    /// Jira Project version name
     #[clap(
         long,
         short = 'n',
@@ -129,6 +150,7 @@ pub struct VersionArgs {
         help = "Jira Project version name"
     )]
     pub version_name: Option<String>,
+    /// Jira Project version description
     #[clap(
         long,
         short = 'd',
@@ -136,18 +158,21 @@ pub struct VersionArgs {
         help = "Jira Project version description"
     )]
     pub version_description: Option<String>,
+    /// Jira Project version start date
     #[clap(
         long,
         value_name = "version_start_date",
         help = "Jira Project version start date"
     )]
     pub version_start_date: Option<String>,
+    /// Jira Project version release date
     #[clap(
         long,
         value_name = "version_release_date",
         help = "Jira Project version release date"
     )]
     pub version_release_date: Option<String>,
+    /// Jira Project version archived
     #[clap(
         long,
         short = 'a',
@@ -155,6 +180,7 @@ pub struct VersionArgs {
         help = "Jira Project version archived"
     )]
     pub version_archived: Option<bool>,
+    /// Jira Project version released
     #[clap(
         long,
         short = 'r',
@@ -162,6 +188,7 @@ pub struct VersionArgs {
         help = "Jira Project version released"
     )]
     pub version_released: Option<bool>,
+    /// Jira Project version changelog file
     #[clap(
         long,
         short = 'c',
@@ -169,6 +196,7 @@ pub struct VersionArgs {
         help = "changelog file path to be used for automatic description generation (if set the script detects automatically the first tagged block in the changelog and use it as description)"
     )]
     pub changelog_file: Option<String>,
+    /// Jira Project version automatically transition issues in changelog
     #[clap(
         long,
         short = 't',
@@ -177,6 +205,7 @@ pub struct VersionArgs {
         help = "if changelog is set and this flag is set, the script will transition all issues in the changelog of the current version release"
     )]
     pub transition_issues: Option<bool>,
+    /// Jira Project version transition assignee
     #[clap(
         long,
         short = 'u',
@@ -184,8 +213,10 @@ pub struct VersionArgs {
         help = "if changelog is set and the resolve_issues flag is set, the script will transition all issues in the changelog of the current version release"
     )]
     pub transition_assignee: Option<String>,
+    /// Jira Project version pagination
     #[clap(flatten)]
     pub pagination: PaginationArgs,
+    /// Jira Project version actions result output format
     #[clap(flatten)]
     pub output: OutputArgs,
 }
@@ -195,16 +226,22 @@ pub struct VersionArgs {
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum VersionActionValues {
+    /// Archive a Jira Project version
     #[value(name = "archive", help = "Archive a Jira Project version")]
     Archive,
+    /// Create a Jira Project version
     #[value(name = "create", help = "Create a Jira Project version")]
     Create,
+    /// Delete a Jira Project version
     #[value(name = "delete", help = "Delete a Jira Project version")]
     Delete,
+    /// List Jira Project versions
     #[value(name = "list", help = "List Jira Project versions")]
     List,
+    /// Release a Jira Project version
     #[value(name = "release", help = "Release a Jira Project version")]
     Release,
+    /// Update a Jira Project version
     #[value(name = "update", help = "Update a Jira Project version")]
     Update,
 }
@@ -214,12 +251,14 @@ pub enum VersionActionValues {
 /// GetIssueTypes, GetIssueTypeFields, List
 #[derive(Args, Debug)]
 pub struct ProjectArgs {
+    /// Project action
     #[arg(
         value_name = "get-issue-types|get-issue-type-fields|list",
         help_heading = "Jira Project management",
         required = true
     )]
     pub project_act: ProjectActionValues,
+    /// Jira Project key
     #[clap(
         long,
         short = 'k',
@@ -228,6 +267,7 @@ pub struct ProjectArgs {
         required = true
     )]
     pub project_key: Option<String>,
+    /// Jira Project issue type ID
     #[clap(
         long,
         short = 'i',
@@ -235,8 +275,10 @@ pub struct ProjectArgs {
         help = "Jira Project issue type ID"
     )]
     pub project_issue_type: Option<String>,
+    /// Jira Project pagination
     #[clap(flatten)]
     pub pagination: PaginationArgs,
+    /// Jira Project actions result output format
     #[clap(flatten)]
     pub output: OutputArgs,
 }
@@ -246,16 +288,19 @@ pub struct ProjectArgs {
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum ProjectActionValues {
+    /// Get Jira Project issue types by Jira project key
     #[value(
         name = "get-issue-types",
         help = "Get Jira Project issue types by Jira project key"
     )]
     GetIssueTypes,
+    /// Get Jira Project issue type fields by Jira project key and issue type ID
     #[value(
         name = "get-issue-type-fields",
         help = "Get Jira Project issue type fields by Jira project key and issue type ID"
     )]
     GetIssueTypeFields,
+    /// List Jira Projects
     #[value(name = "list", help = "List Jira Projects")]
     List,
 }
@@ -265,11 +310,13 @@ pub enum ProjectActionValues {
 ///   Create, List, Update, Delete, Release, Archive
 #[derive(Args, Debug)]
 pub struct IssueArgs {
+    /// Issue action
     #[arg(
         value_name = "assign|create|delete|get|transition|update",
         help_heading = "Jira Project issue management"
     )]
     pub issue_act: IssueActionValues,
+    /// Jira Project key
     #[clap(
         long,
         short = 'p',
@@ -278,6 +325,7 @@ pub struct IssueArgs {
         required = true
     )]
     pub project_key: String,
+    /// Jira Project issue key
     #[clap(
         long,
         short = 'i',
@@ -286,12 +334,14 @@ pub struct IssueArgs {
         required = true
     )]
     pub issue_key: Option<String>,
+    /// Jira Project issue fields
     #[clap(long,
         short = 'f',
         value_name = "issue_fields",
         value_parser = parse_key_val::<String, String>,
         help = "Jira Project issue fields (field_name=value)")]
     pub issue_fields: Option<Vec<(String, String)>>,
+    /// Jira Project issue transition
     #[clap(
         long,
         short = 't',
@@ -299,6 +349,7 @@ pub struct IssueArgs {
         help = "Jira Project issue transition to"
     )]
     pub transition_to: Option<String>,
+    /// Jira Project issue assignee
     #[clap(
         long,
         short = 'a',
@@ -306,8 +357,10 @@ pub struct IssueArgs {
         help = "Jira Project issue assignee"
     )]
     pub assignee: Option<String>,
+    /// Jira Project issue pagination
     #[clap(flatten)]
     pub pagination: PaginationArgs,
+    /// Jira Project issue actions result output format
     #[clap(flatten)]
     pub output: OutputArgs,
 }
@@ -317,24 +370,35 @@ pub struct IssueArgs {
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum IssueActionValues {
+    /// Assign a Jira Project issue
     #[value(name = "assign", help = "Assign a Jira Project issue")]
     Assign,
+    /// Create a Jira Project issue
     #[value(name = "create", help = "Create a Jira Project issue")]
     Create,
+    /// Delete a Jira Project issue
     #[value(name = "delete", help = "Delete a Jira Project issue")]
     Delete,
+    /// Get a specific Jira Project issue
     #[value(name = "get", help = "Get a specific Jira Project issue")]
     Get,
+    /// Transition a Jira Project issue
     #[value(name = "transition", help = "Transition a Jira Project issue")]
     Transition,
+    /// Update a Jira Project issue
     #[value(name = "update", help = "Update a Jira Project issue")]
     Update,
 }
 
+/// Available transition command line arguments
+/// transition_act: TransitionActionValues
+/// List
 #[derive(Args, Debug)]
 pub struct TransitionArgs {
+    /// Transition action
     #[arg(value_name = "list", help_heading = "Jira issue transition list")]
     pub transition_act: TransitionActionValues,
+    /// Jira issue key
     #[clap(
         long,
         short = 'i',
@@ -343,13 +407,17 @@ pub struct TransitionArgs {
         required = true
     )]
     pub issue_key: String,
+    /// Jira issue output format
     #[clap(flatten)]
     pub output: OutputArgs,
 }
 
+/// Available transition action values
+/// List
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum TransitionActionValues {
+    /// List Jira issue available transitions
     #[value(name = "list", help = "List Jira issue available transitions")]
     List,
 }
