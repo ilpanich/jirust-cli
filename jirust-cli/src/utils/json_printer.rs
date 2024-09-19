@@ -10,7 +10,7 @@ use super::PrintableData;
 ///
 /// ```
 /// use jira_v3_openapi::models::Version;
-/// use jirust_cli::utils::{PrintableData, table_printer::print_table_full};
+/// use jirust_cli::utils::{PrintableData, json_printer::print_json};
 ///
 /// let versions: Vec<Version> = vec![Version::new()];
 ///
