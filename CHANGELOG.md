@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
 
+## [0.9.0] 2024-09-20
+### Added
+- Added Jira issue management commands
+
 ## [0.8.4] 2024-08-21
 ### Added
 - Added automatic version description extraction from a "keepachangelog" markdown formatted changelog file
