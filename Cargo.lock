@@ -762,6 +762,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "jira_v3_openapi"
+version = "1.0.8"
+dependencies = [
+ "reqwest",
+ "reqwest-middleware",
+ "serde",
+ "serde_json",
+ "serde_with",
+ "url",
+ "uuid",
+]
+
+[[package]]
 name = "jirust-cli"
 version = "0.9.0"
 dependencies = [
@@ -769,7 +782,7 @@ dependencies = [
  "chrono",
  "clap",
  "clap_derive",
- "jira_v3_openapi",
+ "jira_v3_openapi 1.0.6",
  "prettytable-rs",
  "regex",
  "rpassword",
@@ -922,19 +935,6 @@ name = "once_cell"
 version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
-
-[[package]]
-name = "openapi"
-version = "1.0.7"
-dependencies = [
- "reqwest",
- "reqwest-middleware",
- "serde",
- "serde_json",
- "serde_with",
- "url",
- "uuid",
-]
 
 [[package]]
 name = "openssl"
