@@ -1,5 +1,21 @@
 use super::PrintableData;
 
+/// Print the data in JSON format
+///
+/// # Arguments
+///
+/// * `data` - The data to be printed
+///
+/// # Example
+///
+/// ```
+/// use jira_v3_openapi::models::Version;
+/// use jirust_cli::utils::{PrintableData, table_printer::print_table_full};
+///
+/// let versions: Vec<Version> = vec![Version::new()];
+///
+/// print_json(PrintableData::Version { versions });
+/// ```
 pub fn print_json(data: PrintableData) {
     match data {
         PrintableData::Generic { data } => {

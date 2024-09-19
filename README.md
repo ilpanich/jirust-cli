@@ -49,6 +49,18 @@ Currently the basic version management is implemented and you can:
 * list all the projects
 * list all the issue types available in a given project
 * list all the fields available in a given project for a given issue type
+* Create a new issue (Not yet working, to be fixed)
+* Show an issue details
+* Update an issue (Not yet working, to be fixed)
+* Delete an issue
+* Transition an issue
+* Assign an issue
+* List all the transitions available for an issue
+
+Supported output formats are:
+* JSON (default)
+* Table
+
 
 ## Development
 The project is still under heavy development and I will prioritize the features I need the most for my daily programmer life.

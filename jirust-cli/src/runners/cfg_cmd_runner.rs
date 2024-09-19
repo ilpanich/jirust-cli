@@ -122,9 +122,11 @@ impl ConfigCmdRunner {
         println!("Your Jira instance URL: ");
         input.read_line(&mut read_data)?;
         cfg.set_jira_url(read_data.clone());
+        read_data.clear();
         println!("Default Jira issue resolution JSON Value: ");
         input.read_line(&mut read_data)?;
         cfg.set_standard_resolution(read_data.clone());
+        read_data.clear();
         println!("Default Jira issue resolution comment JSON: ");
         input.read_line(&mut read_data)?;
         cfg.set_standard_resolution_comment(read_data);

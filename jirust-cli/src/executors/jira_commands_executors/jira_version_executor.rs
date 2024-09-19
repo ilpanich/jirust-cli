@@ -6,9 +6,18 @@ use crate::utils::{print_data, OutputType, PrintableData};
 use super::ExecJiraCommand;
 
 /// VersionExecutor is responsible for executing the Jira version-related commands
+///
+/// # Fields
+///
+/// * `version_cmd_runner` - the runner responsible for running the Jira version-related commands
+/// * `version_action` - the action to be performed on the Jira version
+/// * `version_args` - the arguments passed to the Jira version command
 pub struct VersionExecutor {
+    /// version_cmd_runner is the runner responsible for running the Jira version-related commands
     version_cmd_runner: VersionCmdRunner,
+    /// version_action is the action to be performed on the Jira version
     version_action: VersionActionValues,
+    /// version_args are the arguments passed to the Jira version command
     version_args: VersionArgs,
 }
 
@@ -74,7 +83,12 @@ impl VersionExecutor {
     }
 }
 
-/// Implements the `ExecJiraCommand` trait for `VersionExecutor`
+/// Implementation of the `ExecJiraCommand` trait for `VersionExecutor`
+/// This trait is responsible for executing the Jira command
+///
+/// # Methods
+///
+/// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
 impl ExecJiraCommand for VersionExecutor {
     /// Executes the Jira command
     ///

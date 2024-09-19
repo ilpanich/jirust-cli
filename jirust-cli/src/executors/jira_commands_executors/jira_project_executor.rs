@@ -8,9 +8,18 @@ use crate::{
 use super::ExecJiraCommand;
 
 /// ProjectExecutor is responsible for executing the Jira project-related commands
+///
+/// # Fields
+///
+/// * `project_cmd_runner` - the runner responsible for running the Jira project-related commands
+/// * `project_action` - the action to be performed on the Jira project
+/// * `project_args` - the arguments passed to the Jira project command
 pub struct ProjectExecutor {
+    /// project_cmd_runner is the runner responsible for running the Jira project-related commands
     project_cmd_runner: ProjectCmdRunner,
+    /// project_action is the action to be performed on the Jira project
     project_action: ProjectActionValues,
+    /// project_args are the arguments passed to the Jira project command
     project_args: ProjectArgs,
 }
 
@@ -67,6 +76,11 @@ impl ProjectExecutor {
 }
 
 /// Implementation of the ExecJiraCommand trait for ProjectExecutor
+/// This trait is responsible for executing the Jira command
+///
+/// # Methods
+///
+/// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
 impl ExecJiraCommand for ProjectExecutor {
     /// Executes the Jira command
     ///
