@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**approval_configuration** | Option<[**models::ApprovalConfiguration**](ApprovalConfiguration.md)> |  | [optional]
 **deprecated** | Option<**bool**> | Indicates if the status is deprecated. | [optional]
 **layout** | Option<[**models::WorkflowStatusLayout**](WorkflowStatusLayout.md)> |  | [optional]
 **properties** | Option<**std::collections::HashMap<String, String>**> | The properties associated with the status. | [optional]

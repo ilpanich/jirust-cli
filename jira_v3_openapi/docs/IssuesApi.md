@@ -7,6 +7,7 @@ Method | HTTP request | Description
 [**archive_issues**](IssuesApi.md#archive_issues) | **PUT** /rest/api/3/issue/archive | Archive issue(s) by issue ID/key
 [**archive_issues_async**](IssuesApi.md#archive_issues_async) | **POST** /rest/api/3/issue/archive | Archive issue(s) by JQL
 [**assign_issue**](IssuesApi.md#assign_issue) | **PUT** /rest/api/3/issue/{issueIdOrKey}/assignee | Assign issue
+[**bulk_fetch_issues**](IssuesApi.md#bulk_fetch_issues) | **POST** /rest/api/3/issue/bulkfetch | Bulk fetch issues
 [**create_issue**](IssuesApi.md#create_issue) | **POST** /rest/api/3/issue | Create issue
 [**create_issues**](IssuesApi.md#create_issues) | **POST** /rest/api/3/issue/bulk | Bulk create issue
 [**delete_issue**](IssuesApi.md#delete_issue) | **DELETE** /rest/api/3/issue/{issueIdOrKey} | Delete issue
@@ -106,6 +107,36 @@ Name | Type | Description  | Required | Notes
 ### Return type
 
 [**serde_json::Value**](serde_json::Value.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## bulk_fetch_issues
+
+> models::BulkIssueResults bulk_fetch_issues(bulk_fetch_issue_request_bean)
+Bulk fetch issues
+
+Returns the details for a set of requested issues. You can request up to 100 issues.  Each issue is identified by its ID or key, however, if the identifier doesn't match an issue, a case-insensitive search and check for moved issues is performed. If a matching issue is found its details are returned, a 302 or other redirect is **not** returned.  Issues will be returned in ascending `id` order. If there are errors, Jira will return a list of issues which couldn't be fetched along with error messages.  This operation can be accessed anonymously.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**bulk_fetch_issue_request_bean** | [**BulkFetchIssueRequestBean**](BulkFetchIssueRequestBean.md) | A JSON object containing the information about which issues and fields to fetch. | [required] |
+
+### Return type
+
+[**models::BulkIssueResults**](BulkIssueResults.md)
 
 ### Authorization
 

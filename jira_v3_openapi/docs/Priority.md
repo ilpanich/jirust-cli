@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**avatar_id** | Option<**i64**> | The avatarId of the avatar for the issue priority. This parameter is nullable and when set, this avatar references the universal avatar APIs. | [optional]
 **description** | Option<**String**> | The description of the issue priority. | [optional]
 **icon_url** | Option<**String**> | The URL of the icon for the issue priority. | [optional]
 **id** | Option<**String**> | The ID of the issue priority. | [optional]

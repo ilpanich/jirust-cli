@@ -175,7 +175,7 @@ Name | Type | Description  | Required | Notes
 
 ## read_workflows
 
-> models::WorkflowReadResponse read_workflows(workflow_read_request, expand, use_transition_links_format)
+> models::WorkflowReadResponse read_workflows(workflow_read_request, expand, use_transition_links_format, use_approval_configuration)
 Bulk get workflows
 
 Returns a list of workflows and related statuses by providing workflow names, workflow IDs, or project and issue types.  **[Permissions](#permissions) required:**   *  *Administer Jira* global permission to access all, including project-scoped, workflows  *  At least one of the *Administer projects* and *View (read-only) workflow* project permissions to access project-scoped workflows
@@ -188,6 +188,7 @@ Name | Type | Description  | Required | Notes
 **workflow_read_request** | [**WorkflowReadRequest**](WorkflowReadRequest.md) |  | [required] |
 **expand** | Option<**String**> | Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `workflows.usages` Returns the project and issue types that each workflow is associated with.  *  `statuses.usages` Returns the project and issue types that each status is associated with. |  |
 **use_transition_links_format** | Option<**bool**> | Return the new fields (`toStatusReference`/`links`) instead of the deprecated fields (`to`/`from`) for workflow transition port mappings. |  |[default to false]
+**use_approval_configuration** | Option<**bool**> | Return the new field `approvalConfiguration` instead of the deprecated status properties for approval configuration. |  |[default to false]
 
 ### Return type
 

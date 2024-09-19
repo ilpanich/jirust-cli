@@ -4,12 +4,45 @@ All URIs are relative to *https://your-domain.atlassian.net*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**count_issues**](IssueSearchApi.md#count_issues) | **POST** /rest/api/3/search/approximate-count | Count issues using JQL
 [**get_issue_picker_resource**](IssueSearchApi.md#get_issue_picker_resource) | **GET** /rest/api/3/issue/picker | Get issue picker suggestions
 [**match_issues**](IssueSearchApi.md#match_issues) | **POST** /rest/api/3/jql/match | Check issues against JQL
+[**search_and_reconsile_issues_using_jql**](IssueSearchApi.md#search_and_reconsile_issues_using_jql) | **GET** /rest/api/3/search/jql | Search for issues using JQL enhanced search (GET)
+[**search_and_reconsile_issues_using_jql_post**](IssueSearchApi.md#search_and_reconsile_issues_using_jql_post) | **POST** /rest/api/3/search/jql | Search for issues using JQL enhanced search (POST)
 [**search_for_issues_ids**](IssueSearchApi.md#search_for_issues_ids) | **POST** /rest/api/3/search/id | Search issue IDs using JQL
 [**search_for_issues_using_jql**](IssueSearchApi.md#search_for_issues_using_jql) | **GET** /rest/api/3/search | Search for issues using JQL (GET)
 [**search_for_issues_using_jql_post**](IssueSearchApi.md#search_for_issues_using_jql_post) | **POST** /rest/api/3/search | Search for issues using JQL (POST)
 
+
+
+## count_issues
+
+> models::JqlCountResultsBean count_issues(jql_count_request_bean)
+Count issues using JQL
+
+Provide an estimated count of the issues that match the [JQL](https://confluence.atlassian.com/x/egORLQ). Recent updates might not be immediately visible in the returned output. This endpoint requires JQL to be bounded.  This operation can be accessed anonymously.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**jql_count_request_bean** | [**JqlCountRequestBean**](JqlCountRequestBean.md) | A JSON object containing the search request. | [required] |
+
+### Return type
+
+[**models::JqlCountResultsBean**](JQLCountResultsBean.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
 ## get_issue_picker_resource
@@ -64,6 +97,66 @@ Name | Type | Description  | Required | Notes
 ### Return type
 
 [**models::IssueMatches**](IssueMatches.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## search_and_reconsile_issues_using_jql
+
+> models::SearchAndReconcileResults search_and_reconsile_issues_using_jql(search_and_reconcile_request_bean)
+Search for issues using JQL enhanced search (GET)
+
+Searches for issues using [JQL](https://confluence.atlassian.com/x/egORLQ). Recent updates might not be immediately visible in the returned search results. If you need read-after-write consistency, you can utilize the `reconcileIssues` parameter to ensure stronger consistency assurances. This operation can be accessed anonymously.  If the JQL query expression is too large to be encoded as a query parameter, use the [POST](#api-rest-api-3-search-post) version of this resource.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**search_and_reconcile_request_bean** | [**SearchAndReconcileRequestBean**](SearchAndReconcileRequestBean.md) |  | [required] |
+
+### Return type
+
+[**models::SearchAndReconcileResults**](SearchAndReconcileResults.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## search_and_reconsile_issues_using_jql_post
+
+> models::SearchAndReconcileResults search_and_reconsile_issues_using_jql_post(search_and_reconcile_request_bean)
+Search for issues using JQL enhanced search (POST)
+
+Searches for issues using [JQL](https://confluence.atlassian.com/x/egORLQ). Recent updates might not be immediately visible in the returned search results. If you need read-after-write consistency, you can utilize the `reconcileIssues` parameter to ensure stronger consistency assurances. This operation can be accessed anonymously.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**search_and_reconcile_request_bean** | [**SearchAndReconcileRequestBean**](SearchAndReconcileRequestBean.md) |  | [required] |
+
+### Return type
+
+[**models::SearchAndReconcileResults**](SearchAndReconcileResults.md)
 
 ### Authorization
 

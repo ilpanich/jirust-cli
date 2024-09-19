@@ -19,6 +19,7 @@ docs/Application.md
 docs/ApplicationProperty.md
 docs/ApplicationRole.md
 docs/ApplicationRolesApi.md
+docs/ApprovalConfiguration.md
 docs/ArchiveIssueAsyncRequest.md
 docs/ArchivedIssuesFilterRequest.md
 docs/AssociateFieldConfigurationsWithIssueTypesRequest.md
@@ -55,8 +56,10 @@ docs/BulkEditActionError.md
 docs/BulkEditGetFields.md
 docs/BulkEditShareableEntityRequest.md
 docs/BulkEditShareableEntityResponse.md
+docs/BulkFetchIssueRequestBean.md
 docs/BulkIssueIsWatching.md
 docs/BulkIssuePropertyUpdateRequest.md
+docs/BulkIssueResults.md
 docs/BulkOperationErrorResponse.md
 docs/BulkOperationErrorResult.md
 docs/BulkOperationProgress.md
@@ -258,6 +261,7 @@ docs/IssueCustomFieldOptionsAppsApi.md
 docs/IssueCustomFieldValuesAppsApi.md
 docs/IssueEntityProperties.md
 docs/IssueEntityPropertiesForMultiUpdate.md
+docs/IssueError.md
 docs/IssueEvent.md
 docs/IssueFieldConfigurationsApi.md
 docs/IssueFieldOption.md
@@ -333,6 +337,12 @@ docs/IssuesApi.md
 docs/IssuesJqlMetaDataBean.md
 docs/IssuesMetaBean.md
 docs/IssuesUpdateBean.md
+docs/JExpEvaluateIssuesJqlMetaDataBean.md
+docs/JExpEvaluateIssuesMetaBean.md
+docs/JExpEvaluateJiraExpressionResultBean.md
+docs/JExpEvaluateMetaDataBean.md
+docs/JexpEvaluateCtxIssues.md
+docs/JexpEvaluateCtxJqlIssues.md
 docs/JexpIssues.md
 docs/JexpJqlIssues.md
 docs/JiraCascadingSelectField.md
@@ -348,6 +358,8 @@ docs/JiraExpressionAnalysis.md
 docs/JiraExpressionComplexity.md
 docs/JiraExpressionEvalContextBean.md
 docs/JiraExpressionEvalRequestBean.md
+docs/JiraExpressionEvaluateContextBean.md
+docs/JiraExpressionEvaluateRequestBean.md
 docs/JiraExpressionEvaluationMetaDataBean.md
 docs/JiraExpressionForAnalysis.md
 docs/JiraExpressionResult.md
@@ -385,6 +397,8 @@ docs/JiraVersionField.md
 docs/JiraWorkflow.md
 docs/JiraWorkflowStatus.md
 docs/JqlApi.md
+docs/JqlCountRequestBean.md
+docs/JqlCountResultsBean.md
 docs/JqlFunctionPrecomputationBean.md
 docs/JqlFunctionPrecomputationUpdateBean.md
 docs/JqlFunctionPrecomputationUpdateRequestBean.md
@@ -618,6 +632,8 @@ docs/ScreenWithTab.md
 docs/ScreenableField.md
 docs/ScreenableTab.md
 docs/ScreensApi.md
+docs/SearchAndReconcileRequestBean.md
+docs/SearchAndReconcileResults.md
 docs/SearchAutoCompleteFilter.md
 docs/SearchRequestBean.md
 docs/SearchResults.md
@@ -926,6 +942,7 @@ src/models/app_workflow_transition_rule.rs
 src/models/application.rs
 src/models/application_property.rs
 src/models/application_role.rs
+src/models/approval_configuration.rs
 src/models/archive_issue_async_request.rs
 src/models/archived_issues_filter_request.rs
 src/models/associate_field_configurations_with_issue_types_request.rs
@@ -960,8 +977,10 @@ src/models/bulk_edit_action_error.rs
 src/models/bulk_edit_get_fields.rs
 src/models/bulk_edit_shareable_entity_request.rs
 src/models/bulk_edit_shareable_entity_response.rs
+src/models/bulk_fetch_issue_request_bean.rs
 src/models/bulk_issue_is_watching.rs
 src/models/bulk_issue_property_update_request.rs
+src/models/bulk_issue_results.rs
 src/models/bulk_operation_error_response.rs
 src/models/bulk_operation_error_result.rs
 src/models/bulk_operation_progress.rs
@@ -1147,6 +1166,7 @@ src/models/issue_context_variable.rs
 src/models/issue_create_metadata.rs
 src/models/issue_entity_properties.rs
 src/models/issue_entity_properties_for_multi_update.rs
+src/models/issue_error.rs
 src/models/issue_event.rs
 src/models/issue_field_option.rs
 src/models/issue_field_option_configuration.rs
@@ -1200,6 +1220,12 @@ src/models/issues_and_jql_queries.rs
 src/models/issues_jql_meta_data_bean.rs
 src/models/issues_meta_bean.rs
 src/models/issues_update_bean.rs
+src/models/j_exp_evaluate_issues_jql_meta_data_bean.rs
+src/models/j_exp_evaluate_issues_meta_bean.rs
+src/models/j_exp_evaluate_jira_expression_result_bean.rs
+src/models/j_exp_evaluate_meta_data_bean.rs
+src/models/jexp_evaluate_ctx_issues.rs
+src/models/jexp_evaluate_ctx_jql_issues.rs
 src/models/jexp_issues.rs
 src/models/jexp_jql_issues.rs
 src/models/jira_cascading_select_field.rs
@@ -1215,6 +1241,8 @@ src/models/jira_expression_analysis.rs
 src/models/jira_expression_complexity.rs
 src/models/jira_expression_eval_context_bean.rs
 src/models/jira_expression_eval_request_bean.rs
+src/models/jira_expression_evaluate_context_bean.rs
+src/models/jira_expression_evaluate_request_bean.rs
 src/models/jira_expression_evaluation_meta_data_bean.rs
 src/models/jira_expression_for_analysis.rs
 src/models/jira_expression_result.rs
@@ -1249,6 +1277,8 @@ src/models/jira_user_field.rs
 src/models/jira_version_field.rs
 src/models/jira_workflow.rs
 src/models/jira_workflow_status.rs
+src/models/jql_count_request_bean.rs
+src/models/jql_count_results_bean.rs
 src/models/jql_function_precomputation_bean.rs
 src/models/jql_function_precomputation_update_bean.rs
 src/models/jql_function_precomputation_update_request_bean.rs
@@ -1458,6 +1488,8 @@ src/models/screen_types.rs
 src/models/screen_with_tab.rs
 src/models/screenable_field.rs
 src/models/screenable_tab.rs
+src/models/search_and_reconcile_request_bean.rs
+src/models/search_and_reconcile_results.rs
 src/models/search_auto_complete_filter.rs
 src/models/search_request_bean.rs
 src/models/search_results.rs
