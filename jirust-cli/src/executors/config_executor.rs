@@ -3,8 +3,15 @@ use crate::config::config_file::ConfigFile;
 use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
 
 /// ConfigExecutor struct
+///
+/// # Fields
+///
+/// * `config_cmd_runner: ConfigCmdRunner` - configuration command runner
+/// * `config_action: ConfigActionValues` - configuration action
 pub struct ConfigExecutor {
+    /// Configuration command runner
     config_cmd_runner: ConfigCmdRunner,
+    /// Configuration action
     config_action: ConfigActionValues,
 }
 

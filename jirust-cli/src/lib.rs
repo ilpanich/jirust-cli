@@ -7,6 +7,8 @@ use crate::executors::jira_commands_executors::jira_version_executor::VersionExe
 use clap::Parser;
 use config::config_file::ConfigFile;
 use executors::config_executor::ConfigExecutor;
+use executors::jira_commands_executors::jira_issue_executor::IssueExecutor;
+use executors::jira_commands_executors::jira_issue_transition_executor::IssueTransitionExecutor;
 use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
 use executors::jira_commands_executors::ExecJiraCommand;
 use std::env::Args;
@@ -93,7 +95,7 @@ pub fn manage_config(
 /// ```no_run
 /// use jirust_cli::process_command;
 /// use jirust_cli::config::config_file::ConfigFile;
-/// use jirust_cli::args::commands::{Commands, VersionArgs, VersionActionValues, PaginationArgs};
+/// use jirust_cli::args::commands::{Commands, VersionArgs, VersionActionValues, PaginationArgs, OutputArgs};
 ///
 /// # fn main() -> Result<(), std::io::Error> {
 /// let config_file_path = String::from("config.json");
@@ -110,6 +112,9 @@ pub fn manage_config(
 ///   version_released: Some(true),
 ///   changelog_file: None,
 ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+///   output: OutputArgs { output: None },
+///   transition_assignee: None,
+///   transition_issues: None,
 /// };
 ///
 /// let result = process_command(Commands::Version(args), config_file_path, ConfigFile::default());
@@ -133,6 +138,15 @@ pub async fn process_command(
         Commands::Project(args) => {
             let project_executor = ProjectExecutor::new(cfg_data, args.project_act, args);
             project_executor.exec_jira_command().await?
+        }
+        Commands::Issue(args) => {
+            let issue_executor = IssueExecutor::new(cfg_data, args.issue_act, args);
+            issue_executor.exec_jira_command().await?
+        }
+        Commands::Transition(args) => {
+            let issue_transition_executor =
+                IssueTransitionExecutor::new(cfg_data, args.transition_act, args);
+            issue_transition_executor.exec_jira_command().await?
         }
     }
     Ok(())

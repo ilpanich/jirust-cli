@@ -1,14 +1,23 @@
-use crate::args::commands::{VersionActionValues, VersionArgs};
+use crate::args::commands::{OutputValues, VersionActionValues, VersionArgs};
 use crate::config::config_file::ConfigFile;
 use crate::runners::jira_cmd_runners::version_cmd_runner::{VersionCmdParams, VersionCmdRunner};
-use crate::utils::{table_printer::*, TablePrintable};
+use crate::utils::{print_data, OutputType, PrintableData};
 
 use super::ExecJiraCommand;
 
 /// VersionExecutor is responsible for executing the Jira version-related commands
+///
+/// # Fields
+///
+/// * `version_cmd_runner` - the runner responsible for running the Jira version-related commands
+/// * `version_action` - the action to be performed on the Jira version
+/// * `version_args` - the arguments passed to the Jira version command
 pub struct VersionExecutor {
+    /// version_cmd_runner is the runner responsible for running the Jira version-related commands
     version_cmd_runner: VersionCmdRunner,
+    /// version_action is the action to be performed on the Jira version
     version_action: VersionActionValues,
+    /// version_args are the arguments passed to the Jira version command
     version_args: VersionArgs,
 }
 
@@ -36,7 +45,7 @@ impl VersionExecutor {
     /// ```no_run
     /// use jirust_cli::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
     /// use jirust_cli::config::config_file::ConfigFile;
-    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs};
+    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs, OutputArgs};
     ///
     /// let cfg_data = ConfigFile::default();
     /// let version_action = VersionActionValues::List;
@@ -53,6 +62,9 @@ impl VersionExecutor {
     ///   version_released: None,
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+    ///   output: OutputArgs { output: None },
+    ///   transition_assignee: None,
+    ///   transition_issues: None,
     /// };
     ///
     /// let version_executor = VersionExecutor::new(cfg_data, version_action, version_args);
@@ -71,7 +83,12 @@ impl VersionExecutor {
     }
 }
 
-/// Implements the `ExecJiraCommand` trait for `VersionExecutor`
+/// Implementation of the `ExecJiraCommand` trait for `VersionExecutor`
+/// This trait is responsible for executing the Jira command
+///
+/// # Methods
+///
+/// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
 impl ExecJiraCommand for VersionExecutor {
     /// Executes the Jira command
     ///
@@ -85,7 +102,7 @@ impl ExecJiraCommand for VersionExecutor {
     /// use jirust_cli::executors::jira_commands_executors::ExecJiraCommand;
     /// use jirust_cli::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
     /// use jirust_cli::config::config_file::ConfigFile;
-    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs};
+    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs, OutputArgs};
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -104,6 +121,9 @@ impl ExecJiraCommand for VersionExecutor {
     ///   version_released: None,
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+    ///   output: OutputArgs { output: None },
+    ///   transition_assignee: None,
+    ///   transition_issues: None,
     /// };
     ///
     /// let cfg_data = ConfigFile::default();
@@ -121,16 +141,30 @@ impl ExecJiraCommand for VersionExecutor {
                     .version_cmd_runner
                     .create_jira_version(VersionCmdParams::from(&self.version_args))
                     .await?;
-                print_table_single(TablePrintable::Version {
-                    versions: vec![res],
-                });
+                print_data(
+                    PrintableData::Version {
+                        versions: vec![res],
+                    },
+                    self.version_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
+                    OutputType::Single,
+                );
             }
             VersionActionValues::List => {
                 let res = self
                     .version_cmd_runner
                     .list_jira_versions(VersionCmdParams::from(&self.version_args))
                     .await?;
-                print_table_full(TablePrintable::Version { versions: res });
+                print_data(
+                    PrintableData::Version { versions: res },
+                    self.version_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
+                    OutputType::Full,
+                );
             }
             VersionActionValues::Update => {
                 match self
@@ -149,9 +183,16 @@ impl ExecJiraCommand for VersionExecutor {
                         match res {
                             Ok(res) => {
                                 println!("Version updated successfully");
-                                print_table_single(TablePrintable::Version {
-                                    versions: vec![res],
-                                });
+                                print_data(
+                                    PrintableData::Version {
+                                        versions: vec![res],
+                                    },
+                                    self.version_args
+                                        .output
+                                        .output
+                                        .unwrap_or(OutputValues::Json),
+                                    OutputType::Single,
+                                );
                             }
                             Err(err) => eprintln!("Error updating version: {}", err),
                         }
@@ -183,9 +224,16 @@ impl ExecJiraCommand for VersionExecutor {
                         match res {
                             Ok(res) => {
                                 println!("Version released successfully");
-                                print_table_single(TablePrintable::Version {
-                                    versions: vec![res],
-                                });
+                                print_data(
+                                    PrintableData::Version {
+                                        versions: vec![res],
+                                    },
+                                    self.version_args
+                                        .output
+                                        .output
+                                        .unwrap_or(OutputValues::Json),
+                                    OutputType::Single,
+                                );
                             }
                             Err(err) => eprintln!("Error releasing version: {}", err),
                         }
@@ -207,9 +255,16 @@ impl ExecJiraCommand for VersionExecutor {
                         match res {
                             Ok(res) => {
                                 println!("Version archived successfully");
-                                print_table_single(TablePrintable::Version {
-                                    versions: vec![res],
-                                });
+                                print_data(
+                                    PrintableData::Version {
+                                        versions: vec![res],
+                                    },
+                                    self.version_args
+                                        .output
+                                        .output
+                                        .unwrap_or(OutputValues::Json),
+                                    OutputType::Single,
+                                );
                             }
                             Err(err) => eprintln!("Error archiving version: {}", err),
                         }

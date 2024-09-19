@@ -1,3 +1,5 @@
+pub mod jira_issue_executor;
+pub mod jira_issue_transition_executor;
 pub mod jira_project_executor;
 pub mod jira_version_executor;
 

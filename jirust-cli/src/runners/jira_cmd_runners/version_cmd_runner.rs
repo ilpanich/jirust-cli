@@ -1,11 +1,19 @@
+use std::collections::HashMap;
+
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
 use crate::utils::changelog_extractor::ChangelogExtractor;
 use chrono::{DateTime, Utc};
 use jira_v3_openapi::apis::configuration::Configuration;
+use jira_v3_openapi::apis::issues_api::{assign_issue, do_transition, edit_issue};
 use jira_v3_openapi::apis::project_versions_api::*;
 use jira_v3_openapi::apis::Error;
-use jira_v3_openapi::models::{DeleteAndReplaceVersionBean, Version};
+use jira_v3_openapi::models::user::AccountType;
+use jira_v3_openapi::models::{
+    DeleteAndReplaceVersionBean, FieldUpdateOperation, IssueTransition, IssueUpdateDetails, User,
+    Version,
+};
+use serde_json::Value;
 
 /// Version command runner struct
 ///
@@ -13,6 +21,9 @@ use jira_v3_openapi::models::{DeleteAndReplaceVersionBean, Version};
 /// and it is used to pass the parameters to the version commands runner
 pub struct VersionCmdRunner {
     cfg: Configuration,
+    resolution_value: Value,
+    resolution_comment: Value,
+    resolution_transition_id: Option<String>,
 }
 
 /// Version command runner implementation.
@@ -44,8 +55,9 @@ impl VersionCmdRunner {
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// ```
@@ -54,7 +66,16 @@ impl VersionCmdRunner {
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
         config.basic_auth = Some((auth_data.0, Some(auth_data.1)));
-        VersionCmdRunner { cfg: config }
+        VersionCmdRunner {
+            cfg: config,
+            resolution_value: serde_json::from_str(cfg_file.get_standard_resolution().as_str())
+                .unwrap_or(Value::Null),
+            resolution_comment: serde_json::from_str(
+                cfg_file.get_standard_resolution_comment().as_str(),
+            )
+            .unwrap_or(Value::Null),
+            resolution_transition_id: cfg_file.get_transition_id("resolve"),
+        }
     }
 
     /// This method creates a new Jira version with the given parameters
@@ -75,10 +96,12 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    ///
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -92,6 +115,7 @@ impl VersionCmdRunner {
         params: VersionCmdParams,
     ) -> Result<Version, Box<dyn std::error::Error>> {
         let version_description;
+        let mut resolved_issues = vec![];
         if Option::is_some(&params.changelog_file) {
             let changelog_extractor = ChangelogExtractor::new(params.changelog_file.unwrap());
             version_description = Some(changelog_extractor.extract_version_changelog().unwrap_or(
@@ -101,6 +125,14 @@ impl VersionCmdRunner {
                     "No changelog found for this version".to_string()
                 },
             ));
+            if Option::is_some(&params.transition_issues) && params.transition_issues.unwrap() {
+                resolved_issues = changelog_extractor
+                    .extract_issues_from_changelog(
+                        version_description.clone().unwrap(),
+                        params.project.clone(),
+                    )
+                    .unwrap_or(vec![]);
+            }
         } else {
             version_description = params.version_description;
         }
@@ -118,7 +150,100 @@ impl VersionCmdRunner {
             released: params.version_released,
             ..Default::default()
         };
-        Ok(create_version(&self.cfg, version).await?)
+        let version = create_version(&self.cfg, version).await?;
+        if !resolved_issues.is_empty() {
+            let user_data;
+            if Option::is_some(&params.transition_assignee) {
+                user_data = Some(User {
+                    account_id: Some(params.transition_assignee.expect("Assignee is required")),
+                    account_type: Some(AccountType::Atlassian),
+                    ..Default::default()
+                });
+            } else {
+                user_data = None;
+            }
+            let transition_id: String = self
+                .resolution_transition_id
+                .clone()
+                .expect("Transition ID is required and must be set in the config file");
+            let transition = IssueTransition {
+                id: Some(transition_id),
+                ..Default::default()
+            };
+            for issue in resolved_issues {
+                let mut update_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
+                    HashMap::new();
+                let mut transition_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
+                    HashMap::new();
+                let mut version_update_op = FieldUpdateOperation::new();
+                let mut version_resolution_update_field = HashMap::new();
+                let mut version_resolution_comment_op = FieldUpdateOperation::new();
+                let version_json: Value =
+                    serde_json::from_str(serde_json::to_string(&version).unwrap().as_str())
+                        .unwrap_or(Value::Null);
+                let resolution_value = self.resolution_value.clone();
+                let comment_value = self.resolution_comment.clone();
+                version_update_op.add = Some(Some(version_json));
+                version_resolution_update_field.insert("resolution".to_string(), resolution_value);
+                version_resolution_comment_op.add = Some(Some(comment_value));
+                update_fields_hashmap.insert("fixVersions".to_string(), vec![version_update_op]);
+                transition_fields_hashmap
+                    .insert("comment".to_string(), vec![version_resolution_comment_op]);
+                println!("{:?}", version_resolution_update_field);
+                println!("{:?}", transition_fields_hashmap);
+                let issue_transition_data = IssueUpdateDetails {
+                    fields: Some(version_resolution_update_field),
+                    history_metadata: None,
+                    properties: None,
+                    transition: Some(transition.clone()),
+                    update: Some(transition_fields_hashmap),
+                };
+                let issue_update_data = IssueUpdateDetails {
+                    fields: None,
+                    history_metadata: None,
+                    properties: None,
+                    transition: None,
+                    update: Some(update_fields_hashmap),
+                };
+                match do_transition(&self.cfg, issue.clone().as_str(), issue_transition_data).await
+                {
+                    Ok(_) => {
+                        println!("Issue {} transitioned successfully", issue);
+                    }
+                    Err(_) => {}
+                }
+                match assign_issue(
+                    &self.cfg,
+                    issue.clone().as_str(),
+                    user_data.clone().unwrap(),
+                )
+                .await
+                {
+                    Ok(_) => {
+                        println!("Issue {} assigned successfully", issue);
+                    }
+                    Err(_) => {}
+                }
+                match edit_issue(
+                    &self.cfg,
+                    issue.clone().as_str(),
+                    issue_update_data,
+                    Some(true),
+                    None,
+                    None,
+                    Some(true),
+                    None,
+                )
+                .await
+                {
+                    Ok(_) => {
+                        println!("Issue {} updated successfully", issue);
+                    }
+                    Err(_) => {}
+                }
+            }
+        }
+        Ok(version)
     }
 
     /// This method gets a Jira version with the given parameters
@@ -140,10 +265,11 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -186,10 +312,11 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -244,10 +371,11 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -295,10 +423,11 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -343,6 +472,7 @@ impl VersionCmdRunner {
 /// * `version_archived` - The version archived status, optional.
 /// * `version_released` - The version released status, optional.
 /// * `changelog_file` - The changelog file path, to be used for automatic description generation (changelog-based), optional: if set the script detects automatically the first tagged block in the changelog and use it as description
+/// * `resolve_issues` - The flag to resolve issues in the version, optional.
 /// * `versions_page_size` - The page size for the version, optional.
 /// * `versions_page_offset` - The page offset for the version, optional.
 pub struct VersionCmdParams {
@@ -356,6 +486,8 @@ pub struct VersionCmdParams {
     pub version_archived: Option<bool>,
     pub version_released: Option<bool>,
     pub changelog_file: Option<String>,
+    pub transition_issues: Option<bool>,
+    pub transition_assignee: Option<String>,
     pub versions_page_size: Option<i32>,
     pub versions_page_offset: Option<i64>,
 }
@@ -394,6 +526,8 @@ impl VersionCmdParams {
             version_archived: None,
             version_released: None,
             changelog_file: None,
+            transition_issues: None,
+            transition_assignee: None,
             versions_page_size: None,
             versions_page_offset: None,
         }
@@ -416,7 +550,7 @@ impl VersionCmdParams {
     ///
     /// ```
     /// use jira_v3_openapi::models::Version;
-    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs};
+    /// use jirust_cli::args::commands::{VersionArgs, VersionActionValues, PaginationArgs, OutputArgs};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     ///
     /// let mut current_version: Version = Version::new();
@@ -439,6 +573,9 @@ impl VersionCmdParams {
     ///   version_released: Some(true),
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: None, page_offset: None },
+    ///   output: OutputArgs { output: None},
+    ///   transition_issues: None,
+    ///   transition_assignee: None,
     /// };
     ///
     /// let params = VersionCmdParams::merge_args(current_version, Some(&opt_args));
@@ -490,6 +627,8 @@ impl VersionCmdParams {
                     current_version.released
                 },
                 changelog_file: None,
+                transition_issues: None,
+                transition_assignee: None,
                 versions_page_size: None,
                 versions_page_offset: None,
             },
@@ -504,6 +643,8 @@ impl VersionCmdParams {
                 version_archived: current_version.archived,
                 version_released: current_version.released,
                 changelog_file: None,
+                transition_issues: None,
+                transition_assignee: None,
                 versions_page_size: None,
                 versions_page_offset: None,
             },
@@ -604,7 +745,7 @@ impl From<&VersionArgs> for VersionCmdParams {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs};
+    /// use jirust_cli::args::commands::{VersionActionValues, VersionArgs, PaginationArgs, OutputArgs};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
     ///
     /// let version_args = VersionArgs {
@@ -618,8 +759,11 @@ impl From<&VersionArgs> for VersionCmdParams {
     ///   version_release_date: None,
     ///   version_archived: None,
     ///   version_released: None,
-    ///  changelog_file: None,
+    ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(10), page_offset: Some(0) },
+    ///   output: OutputArgs { output: None},
+    ///   transition_issues: None,
+    ///   transition_assignee: None,
     /// };
     ///
     /// let params = VersionCmdParams::from(&version_args);
@@ -647,6 +791,8 @@ impl From<&VersionArgs> for VersionCmdParams {
             version_archived: args.version_archived.clone(),
             version_released: args.version_released.clone(),
             changelog_file: args.changelog_file.clone(),
+            transition_issues: args.transition_issues.clone(),
+            transition_assignee: args.transition_assignee.clone(),
             versions_page_size: args.pagination.page_size.clone(),
             versions_page_offset: args.pagination.page_offset.clone(),
         }

@@ -3,3 +3,8 @@ auth_token = "auth_key"
 
 [jira]
 jira_url = "jira_url"
+standard_resolution = '{"name": "Fixed"}'
+standard_resolution_comment = '{"body":{"content":[{"content":[{"text":"Test comment","type":"text"}],"type":"paragraph"}],"type":"doc","version":1}}'
+
+[jira.transitions_ids]
+resolve = '1'

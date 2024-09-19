@@ -11,8 +11,8 @@ use jirust_cli::{manage_config, process_command};
 #[tokio::main]
 async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
     let config_file_path = match env::var_os("HOME") {
-        Some(home) => format!("{}/.jirust-cli/jirust-cli.conf", home.to_string_lossy()),
-        None => ".jirust-cli/jirust-cli.conf".to_string(),
+        Some(home) => format!("{}/.jirust-cli/jirust-cli.toml", home.to_string_lossy()),
+        None => ".jirust-cli/jirust-cli.toml".to_string(),
     };
     let (cfg_data, opts) = match manage_config(config_file_path.clone(), std::env::args()) {
         Ok((cfg, opts)) => (cfg, opts),

@@ -1,16 +1,25 @@
 use crate::{
-    args::commands::{ProjectActionValues, ProjectArgs},
+    args::commands::{OutputValues, ProjectActionValues, ProjectArgs},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdParams, ProjectCmdRunner},
-    utils::{table_printer::*, TablePrintable},
+    utils::{print_data, OutputType, PrintableData},
 };
 
 use super::ExecJiraCommand;
 
 /// ProjectExecutor is responsible for executing the Jira project-related commands
+///
+/// # Fields
+///
+/// * `project_cmd_runner` - the runner responsible for running the Jira project-related commands
+/// * `project_action` - the action to be performed on the Jira project
+/// * `project_args` - the arguments passed to the Jira project command
 pub struct ProjectExecutor {
+    /// project_cmd_runner is the runner responsible for running the Jira project-related commands
     project_cmd_runner: ProjectCmdRunner,
+    /// project_action is the action to be performed on the Jira project
     project_action: ProjectActionValues,
+    /// project_args are the arguments passed to the Jira project command
     project_args: ProjectArgs,
 }
 
@@ -38,7 +47,7 @@ impl ProjectExecutor {
     /// ```no_run
     /// use jirust_cli::executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
     /// use jirust_cli::config::config_file::ConfigFile;
-    /// use jirust_cli::args::commands::{ProjectActionValues, ProjectArgs, PaginationArgs};
+    /// use jirust_cli::args::commands::{ProjectActionValues, ProjectArgs, PaginationArgs, OutputArgs};
     ///
     /// let cfg_data = ConfigFile::default();
     /// let project_action = ProjectActionValues::List;
@@ -47,6 +56,7 @@ impl ProjectExecutor {
     ///     project_key: Some("project_key".to_string()),
     ///     project_issue_type: None,
     ///     pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+    ///     output: OutputArgs { output: None },
     /// };
     ///
     /// let project_executor = ProjectExecutor::new(cfg_data, project_action, project_args);
@@ -66,6 +76,11 @@ impl ProjectExecutor {
 }
 
 /// Implementation of the ExecJiraCommand trait for ProjectExecutor
+/// This trait is responsible for executing the Jira command
+///
+/// # Methods
+///
+/// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
 impl ExecJiraCommand for ProjectExecutor {
     /// Executes the Jira command
     ///
@@ -78,7 +93,7 @@ impl ExecJiraCommand for ProjectExecutor {
     /// ```no_run
     /// use jirust_cli::executors::jira_commands_executors::ExecJiraCommand;
     /// use jirust_cli::executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
-    /// use jirust_cli::args::commands::{ProjectActionValues, ProjectArgs, PaginationArgs};
+    /// use jirust_cli::args::commands::{ProjectActionValues, ProjectArgs, PaginationArgs, OutputArgs};
     /// use jirust_cli::config::config_file::ConfigFile;
     /// # use std::error::Error;
     ///
@@ -91,6 +106,7 @@ impl ExecJiraCommand for ProjectExecutor {
     ///     project_key: Some("project_key".to_string()),
     ///     project_issue_type: None,
     ///     pagination: PaginationArgs { page_size: Some(20), page_offset: None },
+    ///     output: OutputArgs { output: None },
     /// };
     ///
     /// let project_executor = ProjectExecutor::new(cfg_data, project_action, project_args);
@@ -107,23 +123,44 @@ impl ExecJiraCommand for ProjectExecutor {
                     .project_cmd_runner
                     .list_jira_projects(ProjectCmdParams::from(&self.project_args))
                     .await?;
-                print_table_full(TablePrintable::Project { projects: res });
+                print_data(
+                    PrintableData::Project { projects: res },
+                    self.project_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
+                    OutputType::Full,
+                );
             }
             ProjectActionValues::GetIssueTypes => {
                 let res = self
                     .project_cmd_runner
                     .get_jira_project_issue_types(ProjectCmdParams::from(&self.project_args))
                     .await?;
-                print_table_full(TablePrintable::IssueType { issue_types: res });
+                print_data(
+                    PrintableData::IssueType { issue_types: res },
+                    self.project_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
+                    OutputType::Full,
+                );
             }
             ProjectActionValues::GetIssueTypeFields => {
                 let res = self
                     .project_cmd_runner
                     .get_jira_project_issue_type_id(ProjectCmdParams::from(&self.project_args))
                     .await?;
-                print_table_full(TablePrintable::IssueTypeField {
-                    issue_type_fields: res,
-                });
+                print_data(
+                    PrintableData::IssueTypeField {
+                        issue_type_fields: res,
+                    },
+                    self.project_args
+                        .output
+                        .output
+                        .unwrap_or(OutputValues::Json),
+                    OutputType::Full,
+                );
             }
         }
         Ok(())

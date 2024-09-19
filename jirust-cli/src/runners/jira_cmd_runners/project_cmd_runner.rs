@@ -41,8 +41,9 @@ impl ProjectCmdRunner {
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::ProjectCmdRunner;
+    /// use toml::Table;
     ///
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
     /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
     /// ```
@@ -69,10 +70,11 @@ impl ProjectCmdRunner {
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams};
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
     /// let params = ProjectCmdParams::new();
     ///
@@ -125,10 +127,11 @@ impl ProjectCmdRunner {
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams};
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
     /// let params = ProjectCmdParams::new();
     ///
@@ -172,10 +175,11 @@ impl ProjectCmdRunner {
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams};
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string());
+    /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
     /// let params = ProjectCmdParams::new();
     ///
@@ -268,13 +272,14 @@ impl From<&ProjectArgs> for ProjectCmdParams {
     ///
     /// ```
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::ProjectCmdParams;
-    /// use jirust_cli::args::commands::{ProjectArgs, ProjectActionValues, PaginationArgs};
+    /// use jirust_cli::args::commands::{ProjectArgs, ProjectActionValues, PaginationArgs, OutputArgs};
     ///
     /// let project_args = ProjectArgs {
     ///     project_act: ProjectActionValues::List,
     ///     project_key: Some("project_key".to_string()),
     ///     project_issue_type: Some("project_issue_type".to_string()),
     ///     pagination: PaginationArgs { page_size: Some(10), page_offset: None },
+    ///     output: OutputArgs { output: None },
     /// };
     ///
     /// let params = ProjectCmdParams::from(&project_args);

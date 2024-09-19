@@ -1,7 +1,7 @@
 use base64::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{fs, io::Write};
-use toml;
+use toml::{self, Table, Value};
 
 /// This struct holds the username and api_key for the Jira API.
 #[derive(Debug)]
@@ -27,6 +27,9 @@ pub struct AuthSection {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct JiraSection {
     jira_url: String,
+    standard_resolution: String,
+    standard_resolution_comment: String,
+    transitions_ids: Table,
 }
 
 /// Implementation of AuthData
@@ -160,6 +163,9 @@ impl ConfigFile {
     /// # Arguments
     /// * auth_token - The authentication token to be used with the Jira API.
     /// * jira_url - The base_url for the Jira API.
+    /// * standard_resolution - The standard resolution to be used when resolving an issue.
+    /// * standard_resolution_comment - The standard comment to be used when resolving an issue.
+    /// * transitions_ids - The transitions ids to be used when transitioning an issue.
     ///
     /// # Returns
     /// * A new ConfigFile struct.
@@ -168,16 +174,30 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
     /// assert_eq!(config.get_auth_key(), "auth_token");
     /// assert_eq!(config.get_jira_url(), "jira_url");
+    /// assert_eq!(config.get_standard_resolution(), "standard_resolution");
+    /// assert_eq!(config.get_standard_resolution_comment(), "standard_resolution_comment");
     /// ```
-    pub fn new(auth_token: String, jira_url: String) -> ConfigFile {
+    pub fn new(
+        auth_token: String,
+        jira_url: String,
+        standard_resolution: String,
+        standard_resolution_comment: String,
+        transitions_ids: Table,
+    ) -> ConfigFile {
         ConfigFile {
             auth: AuthSection { auth_token },
-            jira: JiraSection { jira_url },
+            jira: JiraSection {
+                jira_url,
+                standard_resolution,
+                standard_resolution_comment,
+                transitions_ids,
+            },
         }
     }
 
@@ -187,6 +207,9 @@ impl ConfigFile {
     /// The default values are:
     /// - auth_token: ""
     /// - jira_url: ""
+    /// - standard_resolution: ""
+    /// - standard_resolution_comment: ""
+    /// - transitions_ids: Table::new()
     ///
     /// # Returns
     /// * A new ConfigFile struct with default values.
@@ -195,11 +218,14 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
     /// let config = ConfigFile::default();
     ///
     /// assert_eq!(config.get_auth_key(), "");
     /// assert_eq!(config.get_jira_url(), "");
+    /// assert_eq!(config.get_standard_resolution(), "");
+    /// assert_eq!(config.get_standard_resolution_comment(), "");
     /// ```
     pub fn default() -> ConfigFile {
         ConfigFile {
@@ -208,6 +234,9 @@ impl ConfigFile {
             },
             jira: JiraSection {
                 jira_url: String::from(""),
+                standard_resolution: String::from(""),
+                standard_resolution_comment: String::from(""),
+                transitions_ids: Table::new(),
             },
         }
     }
@@ -243,11 +272,12 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_key".to_string(), "jira_url".to_string());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let auth_key = config.get_auth_key();
     ///
-    /// assert_eq!(auth_key, "auth_key");
+    /// assert_eq!(auth_key, "auth_token");
     /// ```
     pub fn get_auth_key(&self) -> &str {
         &self.auth.auth_token
@@ -283,14 +313,148 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_key".to_string(), "jira_url".to_string());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let jira_url = config.get_jira_url();
     ///
     /// assert_eq!(jira_url, "jira_url");
     /// ```
     pub fn get_jira_url(&self) -> &str {
         &self.jira.jira_url
+    }
+
+    /// Set the standard resolution for the ConfigFile struct.
+    /// This is the standard resolution that will be used when resolving an issue.
+    ///
+    /// # Arguments
+    /// * standard_resolution - The standard resolution to be used when resolving an issue.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
+    /// let mut config = ConfigFile::default();
+    /// config.set_standard_resolution("standard_resolution".to_string());
+    ///
+    /// assert_eq!(config.get_standard_resolution(), "standard_resolution");
+    /// ```
+    pub fn set_standard_resolution(&mut self, standard_resolution: String) {
+        self.jira.standard_resolution = standard_resolution;
+    }
+
+    /// Get the standard resolution for the ConfigFile struct.
+    /// This is the standard resolution that will be used when resolving an issue.
+    ///
+    /// # Returns
+    /// * The standard resolution to be used when resolving an issue.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
+    ///
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let standard_resolution = config.get_standard_resolution();
+    ///
+    /// assert_eq!(config.get_standard_resolution(), "standard_resolution");
+    /// ```
+    pub fn get_standard_resolution(&self) -> &String {
+        &self.jira.standard_resolution
+    }
+
+    /// Set the standard resolution comment for the ConfigFile struct.
+    /// This is the standard resolution comment that will be used when resolving an issue.
+    ///
+    /// # Arguments
+    /// * standard_resolution_comment - The standard resolution comment to be used when resolving an issue.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
+    /// let mut config = ConfigFile::default();
+    /// config.set_standard_resolution_comment("standard_resolution_comment".to_string());
+    ///
+    /// assert_eq!(config.get_standard_resolution_comment(), "standard_resolution_comment");
+    /// ```
+    pub fn set_standard_resolution_comment(&mut self, standard_resolution_comment: String) {
+        self.jira.standard_resolution_comment = standard_resolution_comment;
+    }
+
+    /// Get the standard resolution comment for the ConfigFile struct.
+    /// This is the standard resolution comment that will be used when resolving an issue.
+    ///
+    /// # Returns
+    /// * The standard resolution comment to be used when resolving an issue.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
+    ///
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let standard_resolution_comment = config.get_standard_resolution_comment();
+    ///
+    /// assert_eq!(standard_resolution_comment, "standard_resolution_comment");
+    /// ```
+    pub fn get_standard_resolution_comment(&self) -> &String {
+        &self.jira.standard_resolution_comment
+    }
+
+    /// Add a transition ID to the ConfigFile struct.
+    /// This is used to store the transition ID for a specific transition name.
+    /// This is used to transition an issue to a specific state.
+    /// The key is the transition name and the value is the transition ID.
+    ///
+    /// # Arguments
+    /// * key - The transition name.
+    /// * value - The transition ID.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
+    /// let mut config = ConfigFile::default();
+    /// config.add_transition_id("transition_name".to_string(), "42".to_string());
+    ///
+    /// assert_eq!(config.get_transition_id("transition_name"), Some("42".to_string()));
+    /// ```
+    pub fn add_transition_id(&mut self, key: String, value: String) {
+        self.jira.transitions_ids.insert(key, Value::String(value));
+    }
+
+    /// Get the transition ID for a specific transition name.
+    /// This is used to transition an issue to a specific state.
+    /// The key is the transition name and the value is the transition ID.
+    /// If the transition name does not exist, None is returned.
+    ///
+    /// # Arguments
+    /// * key - The transition name.
+    ///
+    /// # Returns
+    /// * The transition ID for the specific transition name.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    ///
+    /// let mut config = ConfigFile::default();
+    /// config.add_transition_id("transition_name".to_string(), "42".to_string());
+    ///
+    /// assert_eq!(config.get_transition_id("transition_name"), Some("42".to_string()));
+    /// ```
+    pub fn get_transition_id(&self, key: &str) -> Option<String> {
+        match self.jira.transitions_ids.get(key).and_then(|v| v.as_str()) {
+            Some(value) => Some(value.to_string()),
+            None => None,
+        }
     }
 
     /// Stores the configuration to a file.
@@ -306,8 +470,9 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_key".to_string(), "jira_url".to_string());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let result = config.write_to_file("config.toml");
     ///
     /// assert!(result.is_ok());

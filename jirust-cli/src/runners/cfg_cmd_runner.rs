@@ -118,10 +118,18 @@ impl ConfigCmdRunner {
     /// ```
     pub fn set_cfg_jira(&self, mut cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
         let input = std::io::stdin();
-        let mut url = String::new();
+        let mut read_data = String::new();
         println!("Your Jira instance URL: ");
-        input.read_line(&mut url)?;
-        cfg.set_jira_url(url);
+        input.read_line(&mut read_data)?;
+        cfg.set_jira_url(read_data.clone());
+        read_data.clear();
+        println!("Default Jira issue resolution JSON Value: ");
+        input.read_line(&mut read_data)?;
+        cfg.set_standard_resolution(read_data.clone());
+        read_data.clear();
+        println!("Default Jira issue resolution comment JSON: ");
+        input.read_line(&mut read_data)?;
+        cfg.set_standard_resolution_comment(read_data);
         cfg.write_to_file(&self.cfg_file.as_str())?;
         Ok(cfg)
     }
@@ -173,5 +181,13 @@ impl ConfigCmdRunner {
     pub fn show_cfg(&self, cfg: ConfigFile) {
         println!("Auth token: {}", cfg.get_auth_key());
         println!("Jira URL: {}", cfg.get_jira_url());
+        println!(
+            "Jira default resolution: {:?}",
+            cfg.get_standard_resolution()
+        );
+        println!(
+            "Jira default resolution comment: {:?}",
+            cfg.get_standard_resolution_comment()
+        );
     }
 }
