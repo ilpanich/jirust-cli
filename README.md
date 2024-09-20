@@ -1,4 +1,4 @@
-![icon](https://github.com/ilpanich/jirust-cli/blob/main/images/jirust-cli.png)
+![icon](https://github.com/ilpanich/jirust-cli/blob/main/images/jirust-cli.webp)
 
 # JiRust-CLI
 
