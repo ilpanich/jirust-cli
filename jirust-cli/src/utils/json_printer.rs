@@ -42,6 +42,20 @@ pub fn print_json(data: PrintableData) {
         PrintableData::Project { projects } => {
             println!("{}", serde_json::to_string_pretty(&projects).unwrap());
         }
+        PrintableData::TransitionedIssue { issues } => {
+            let printable = issues
+                .iter()
+                .map(|(issue, transitioned, assigned, fix_version)| {
+                    serde_json::json!({
+                        "issue": issue,
+                        "transitioned": transitioned,
+                        "assigned": assigned,
+                        "fixVersion": fix_version,
+                    })
+                })
+                .collect::<Vec<_>>();
+            println!("{}", serde_json::to_string_pretty(&printable).unwrap());
+        }
         PrintableData::Version { versions } => {
             println!("{}", serde_json::to_string_pretty(&versions).unwrap());
         }

@@ -143,7 +143,7 @@ impl ExecJiraCommand for VersionExecutor {
                     .await?;
                 print_data(
                     PrintableData::Version {
-                        versions: vec![res],
+                        versions: vec![res.0],
                     },
                     self.version_args
                         .output
@@ -151,6 +151,18 @@ impl ExecJiraCommand for VersionExecutor {
                         .unwrap_or(OutputValues::Json),
                     OutputType::Single,
                 );
+                if Option::is_some(&res.1) {
+                    print_data(
+                        PrintableData::TransitionedIssue {
+                            issues: res.1.unwrap_or(vec![]),
+                        },
+                        self.version_args
+                            .output
+                            .output
+                            .unwrap_or(OutputValues::Json),
+                        OutputType::Full,
+                    );
+                }
             }
             VersionActionValues::List => {
                 let res = self

@@ -201,8 +201,8 @@ pub struct VersionArgs {
         long,
         short = 't',
         action = ArgAction::SetTrue,
-        value_name = "transition_issues",
-        help = "if changelog is set and this flag is set, the script will transition all issues in the changelog of the current version release"
+        value_name = "resolve_issues",
+        help = "if changelog is set and this flag is set, the script will transition all issues in the changelog of the current version release to the \"resolved\" status setting the version as \"fixVersion\""
     )]
     pub transition_issues: Option<bool>,
     /// Jira Project version transition assignee
@@ -210,7 +210,7 @@ pub struct VersionArgs {
         long,
         short = 'u',
         value_name = "transition_assignee",
-        help = "if changelog is set and the resolve_issues flag is set, the script will transition all issues in the changelog of the current version release"
+        help = "if changelog is set and the resolve_issues flag is set, the script will assigned all the resolved issue to the user specified in this field (if not set the assignee will not be changed)"
     )]
     pub transition_assignee: Option<String>,
     /// Jira Project version pagination

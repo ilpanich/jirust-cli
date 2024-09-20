@@ -1,3 +1,4 @@
+use prettytable::{color, Attr, Cell, Row};
 use std::collections::HashMap;
 
 use jira_v3_openapi::models::{
@@ -176,6 +177,38 @@ pub fn print_table_full(data: PrintableData) {
                 ]);
             }
         }
+        PrintableData::TransitionedIssue { issues } => {
+            table.add_row(row![
+                bFC->"Issue ID",
+                bFy->"Transitioned",
+                bFm->"Assigned",
+                bFw->"Fix Version"
+            ]);
+            for issue in issues {
+                table.add_row(Row::new(vec![
+                    Cell::new(issue.0.as_str())
+                        .with_style(Attr::Bold)
+                        .with_style(Attr::ForegroundColor((color::CYAN))),
+                    Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK".to_string() {
+                        Attr::ForegroundColor((color::GREEN))
+                    } else {
+                        Attr::ForegroundColor((color::RED))
+                    }),
+                    Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK".to_string() {
+                        Attr::ForegroundColor((color::GREEN))
+                    } else {
+                        Attr::ForegroundColor((color::RED))
+                    }),
+                    Cell::new(issue.3.as_str()).with_style(
+                        if issue.3 != "NO fixVersion set".to_string() {
+                            Attr::ForegroundColor((color::GREEN))
+                        } else {
+                            Attr::ForegroundColor((color::RED))
+                        },
+                    ),
+                ]));
+            }
+        }
     }
     table.printstd();
 }
@@ -318,6 +351,38 @@ pub fn print_table_basic(data: PrintableData) {
                     Fm->field.name,
                     Fb->field.required,
                 ]);
+            }
+        }
+        PrintableData::TransitionedIssue { issues } => {
+            table.add_row(row![
+                bFC->"Issue ID",
+                bFy->"Transitioned",
+                bFm->"Assigned",
+                bFw->"Fix Version"
+            ]);
+            for issue in issues {
+                table.add_row(Row::new(vec![
+                    Cell::new(issue.0.as_str())
+                        .with_style(Attr::Bold)
+                        .with_style(Attr::ForegroundColor((color::CYAN))),
+                    Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK".to_string() {
+                        Attr::ForegroundColor((color::GREEN))
+                    } else {
+                        Attr::ForegroundColor((color::RED))
+                    }),
+                    Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK".to_string() {
+                        Attr::ForegroundColor((color::GREEN))
+                    } else {
+                        Attr::ForegroundColor((color::RED))
+                    }),
+                    Cell::new(issue.3.as_str()).with_style(
+                        if issue.3 != "NO fixVersion set".to_string() {
+                            Attr::ForegroundColor((color::GREEN))
+                        } else {
+                            Attr::ForegroundColor((color::RED))
+                        },
+                    ),
+                ]));
             }
         }
     }
@@ -497,6 +562,38 @@ pub fn print_table_single(data: PrintableData) {
                 Fm->field.name,
                 Fb->field.required,
             ]);
+        }
+        PrintableData::TransitionedIssue { issues } => {
+            table.add_row(row![
+                bFC->"Issue ID",
+                bFy->"Transitioned",
+                bFm->"Assigned",
+                bFw->"Fix Version"
+            ]);
+            for issue in issues {
+                table.add_row(Row::new(vec![
+                    Cell::new(issue.0.as_str())
+                        .with_style(Attr::Bold)
+                        .with_style(Attr::ForegroundColor((color::CYAN))),
+                    Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK".to_string() {
+                        Attr::ForegroundColor((color::GREEN))
+                    } else {
+                        Attr::ForegroundColor((color::RED))
+                    }),
+                    Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK".to_string() {
+                        Attr::ForegroundColor((color::GREEN))
+                    } else {
+                        Attr::ForegroundColor((color::RED))
+                    }),
+                    Cell::new(issue.3.as_str()).with_style(
+                        if issue.3 != "NO fixVersion set".to_string() {
+                            Attr::ForegroundColor((color::GREEN))
+                        } else {
+                            Attr::ForegroundColor((color::RED))
+                        },
+                    ),
+                ]));
+            }
         }
     }
 
