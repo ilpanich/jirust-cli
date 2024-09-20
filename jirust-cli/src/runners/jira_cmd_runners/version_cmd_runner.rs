@@ -5,7 +5,9 @@ use crate::config::config_file::{AuthData, ConfigFile};
 use crate::utils::changelog_extractor::ChangelogExtractor;
 use chrono::{DateTime, Utc};
 use jira_v3_openapi::apis::configuration::Configuration;
-use jira_v3_openapi::apis::issues_api::{assign_issue, do_transition, edit_issue};
+use jira_v3_openapi::apis::issues_api::{
+    assign_issue, do_transition, edit_issue, AssignIssueError,
+};
 use jira_v3_openapi::apis::project_versions_api::*;
 use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::models::user::AccountType;
@@ -113,9 +115,11 @@ impl VersionCmdRunner {
     pub async fn create_jira_version(
         &self,
         params: VersionCmdParams,
-    ) -> Result<Version, Box<dyn std::error::Error>> {
+    ) -> Result<(Version, Option<Vec<(String, String, String, String)>>), Box<dyn std::error::Error>>
+    {
         let version_description;
         let mut resolved_issues = vec![];
+        let mut transitioned_issue: Vec<(String, String, String, String)> = vec![];
         if Option::is_some(&params.changelog_file) {
             let changelog_extractor = ChangelogExtractor::new(params.changelog_file.unwrap());
             version_description = Some(changelog_extractor.extract_version_changelog().unwrap_or(
@@ -189,8 +193,6 @@ impl VersionCmdRunner {
                 update_fields_hashmap.insert("fixVersions".to_string(), vec![version_update_op]);
                 transition_fields_hashmap
                     .insert("comment".to_string(), vec![version_resolution_comment_op]);
-                println!("{:?}", version_resolution_update_field);
-                println!("{:?}", transition_fields_hashmap);
                 let issue_transition_data = IssueUpdateDetails {
                     fields: Some(version_resolution_update_field),
                     history_metadata: None,
@@ -205,26 +207,38 @@ impl VersionCmdRunner {
                     transition: None,
                     update: Some(update_fields_hashmap),
                 };
-                match do_transition(&self.cfg, issue.clone().as_str(), issue_transition_data).await
-                {
-                    Ok(_) => {
-                        println!("Issue {} transitioned successfully", issue);
-                    }
-                    Err(_) => {}
-                }
-                match assign_issue(
+                let transition_result: String =
+                    match do_transition(&self.cfg, issue.clone().as_str(), issue_transition_data)
+                        .await
+                    {
+                        Ok(_) => "OK".to_string(),
+                        Err(Error::Serde(e)) => {
+                            if e.is_eof() {
+                                "OK".to_string()
+                            } else {
+                                "KO".to_string()
+                            }
+                        }
+                        Err(_) => "KO".to_string(),
+                    };
+                let assign_result: String = match assign_issue(
                     &self.cfg,
                     issue.clone().as_str(),
                     user_data.clone().unwrap(),
                 )
                 .await
                 {
-                    Ok(_) => {
-                        println!("Issue {} assigned successfully", issue);
+                    Ok(_) => "OK".to_string(),
+                    Err(Error::Serde(e)) => {
+                        if e.is_eof() {
+                            "OK".to_string()
+                        } else {
+                            "KO".to_string()
+                        }
                     }
-                    Err(_) => {}
-                }
-                match edit_issue(
+                    Err(_) => "KO".to_string(),
+                };
+                let fixversion_result: String = match edit_issue(
                     &self.cfg,
                     issue.clone().as_str(),
                     issue_update_data,
@@ -236,14 +250,25 @@ impl VersionCmdRunner {
                 )
                 .await
                 {
-                    Ok(_) => {
-                        println!("Issue {} updated successfully", issue);
-                    }
-                    Err(_) => {}
-                }
+                    Ok(_) => version.clone().name.unwrap_or("".to_string()),
+                    Err(_) => "NO fixVersion set".to_string(),
+                };
+                transitioned_issue.push((
+                    issue.clone(),
+                    transition_result,
+                    assign_result,
+                    fixversion_result,
+                ));
             }
         }
-        Ok(version)
+        Ok((
+            version,
+            if !transitioned_issue.is_empty() {
+                Some(transitioned_issue)
+            } else {
+                None
+            },
+        ))
     }
 
     /// This method gets a Jira version with the given parameters

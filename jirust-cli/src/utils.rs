@@ -2,6 +2,8 @@ pub mod changelog_extractor;
 pub mod json_printer;
 pub mod table_printer;
 
+use std::collections::HashMap;
+
 use jira_v3_openapi::models::{
     CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition, IssueTypeIssueCreateMetadata,
     Project, Version,
@@ -39,6 +41,9 @@ pub enum PrintableData {
     },
     Project {
         projects: Vec<Project>,
+    },
+    TransitionedIssue {
+        issues: Vec<(String, String, String, String)>,
     },
     Version {
         versions: Vec<Version>,
