@@ -1,3 +1,5 @@
+![icon](https://github.com/ilpanich/jirust-cli/blob/main/images/jirust-cli.png)
+
 # JiRust-CLI
 
 | Component | Tests | Build | Crate | docs |
