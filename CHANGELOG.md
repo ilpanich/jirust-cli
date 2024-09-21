@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
 
+## [0.9.2] 2024-09-21
+### Changed
+- Minor changes to the README.md
+- Changed the logo
+- Added dependabot configuration
+
 ## [0.9.1] 2024-09-21
 ### Improved
 - Improved jira issue automatic resolution on version creation
