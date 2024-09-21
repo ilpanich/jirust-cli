@@ -1,6 +1,6 @@
 [package]
 name = "jirust-cli"
-version = "0.9.2"
+version = "0.9.3"
 edition = "2021"
 rust-version = "1.80.1"
 authors = ["Emanuele Panigati <ilpanich@gmail.com>"]

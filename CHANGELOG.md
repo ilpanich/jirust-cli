@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
 
+## [0.9.3] 2024-09-21
+### Fixed
+- Fixed a wrong code merge that causes the build to fail
+
+### Changed
+- Centered the logo in the README.md
+
 ## [0.9.2] 2024-09-21
 ### Changed
 - Minor changes to the README.md
