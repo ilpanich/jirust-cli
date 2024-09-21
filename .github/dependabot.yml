@@ -1,9 +1,9 @@
 version: 2
 updates:
-  - package-ecosystem: "cargo" 
+  - package-ecosystem: "cargo"
     directories:
       - "/"
       - "/jira_v3_openapi"
-      - "/jirust-cli
+      - "/jirust-cli"
     schedule:
       interval: "weekly"
