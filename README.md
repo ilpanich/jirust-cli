@@ -1,4 +1,4 @@
-![icon](https://github.com/ilpanich/jirust-cli/blob/main/images/jirust-cli.webp)
+![icon](https://github.com/ilpanich/jirust-cli/blob/main/images/jirust-cli.png)
 
 # JiRust-CLI
 
@@ -88,8 +88,7 @@ Everything is currently released upon the [crates.io](https://crates.io) platfor
 
 ## Roadmap
 Next features to be integrated and supported are:
-* Issues management
-* Projects management
+* Some issue management operations (create, update) have to be fixed since they are not working correctly at the moment, but I have to design the solution properly; the main issue is related to managing complex Jira fields..
 
 Those are mandatory for my work and I will prioritize them; other features will be added as needed.
 You can request a feature by opening an issue or you can provide an implementation compliant with what is currently developed in a PR.
