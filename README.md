@@ -1,4 +1,6 @@
+<div style="text-align: center;">
 ![icon](https://github.com/ilpanich/jirust-cli/blob/main/images/jirust-cli.png)
+</div>
 
 # JiRust-CLI
 
