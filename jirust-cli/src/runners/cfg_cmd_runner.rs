@@ -131,7 +131,6 @@ impl ConfigCmdRunner {
         input.read_line(&mut read_data)?;
         cfg.set_standard_resolution_comment(read_data);
         cfg.write_to_file(&self.cfg_file.as_str())?;
-        read_data.clear();
         Ok(cfg)
     }
 
