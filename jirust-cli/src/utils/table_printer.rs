@@ -34,7 +34,7 @@ use super::PrintableData;
 pub fn print_table_full(data: PrintableData) {
     let mut table = prettytable::Table::new();
     match data {
-        PrintableData::Generic { data } => todo!("To Be Implemented!"),
+        PrintableData::Generic { data } => todo!("To Be Implemented! {:?}", data),
         PrintableData::IssueCreated { issues } => {
             table.add_row(row![
                 bFC->"Issue ID",
@@ -188,22 +188,22 @@ pub fn print_table_full(data: PrintableData) {
                 table.add_row(Row::new(vec![
                     Cell::new(issue.0.as_str())
                         .with_style(Attr::Bold)
-                        .with_style(Attr::ForegroundColor((color::CYAN))),
+                        .with_style(Attr::ForegroundColor(color::CYAN)),
                     Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK".to_string() {
-                        Attr::ForegroundColor((color::GREEN))
+                        Attr::ForegroundColor(color::GREEN)
                     } else {
-                        Attr::ForegroundColor((color::RED))
+                        Attr::ForegroundColor(color::RED)
                     }),
                     Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK".to_string() {
-                        Attr::ForegroundColor((color::GREEN))
+                        Attr::ForegroundColor(color::GREEN)
                     } else {
-                        Attr::ForegroundColor((color::RED))
+                        Attr::ForegroundColor(color::RED)
                     }),
                     Cell::new(issue.3.as_str()).with_style(
                         if issue.3 != "NO fixVersion set".to_string() {
-                            Attr::ForegroundColor((color::GREEN))
+                            Attr::ForegroundColor(color::GREEN)
                         } else {
-                            Attr::ForegroundColor((color::RED))
+                            Attr::ForegroundColor(color::RED)
                         },
                     ),
                 ]));
@@ -237,7 +237,7 @@ pub fn print_table_full(data: PrintableData) {
 pub fn print_table_basic(data: PrintableData) {
     let mut table = prettytable::Table::new();
     match data {
-        PrintableData::Generic { data } => todo!("To Be Implemented!"),
+        PrintableData::Generic { data } => todo!("To Be Implemented! {:?}", data),
         PrintableData::IssueCreated { issues } => {
             table.add_row(row![
                 bFC->"Issue ID",
@@ -364,22 +364,22 @@ pub fn print_table_basic(data: PrintableData) {
                 table.add_row(Row::new(vec![
                     Cell::new(issue.0.as_str())
                         .with_style(Attr::Bold)
-                        .with_style(Attr::ForegroundColor((color::CYAN))),
+                        .with_style(Attr::ForegroundColor(color::CYAN)),
                     Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK".to_string() {
-                        Attr::ForegroundColor((color::GREEN))
+                        Attr::ForegroundColor(color::GREEN)
                     } else {
-                        Attr::ForegroundColor((color::RED))
+                        Attr::ForegroundColor(color::RED)
                     }),
                     Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK".to_string() {
-                        Attr::ForegroundColor((color::GREEN))
+                        Attr::ForegroundColor(color::GREEN)
                     } else {
-                        Attr::ForegroundColor((color::RED))
+                        Attr::ForegroundColor(color::RED)
                     }),
                     Cell::new(issue.3.as_str()).with_style(
                         if issue.3 != "NO fixVersion set".to_string() {
-                            Attr::ForegroundColor((color::GREEN))
+                            Attr::ForegroundColor(color::GREEN)
                         } else {
-                            Attr::ForegroundColor((color::RED))
+                            Attr::ForegroundColor(color::RED)
                         },
                     ),
                 ]));
@@ -414,7 +414,7 @@ pub fn print_table_basic(data: PrintableData) {
 pub fn print_table_single(data: PrintableData) {
     let mut table = prettytable::Table::new();
     match data {
-        PrintableData::Generic { data } => todo!("To Be Implemented!"),
+        PrintableData::Generic { data } => todo!("To Be Implemented! {:?}", data),
         PrintableData::IssueCreated { issues } => {
             let issue = issues.first().unwrap_or(&CreatedIssue::default()).clone();
             table.add_row(row![
@@ -574,22 +574,22 @@ pub fn print_table_single(data: PrintableData) {
                 table.add_row(Row::new(vec![
                     Cell::new(issue.0.as_str())
                         .with_style(Attr::Bold)
-                        .with_style(Attr::ForegroundColor((color::CYAN))),
+                        .with_style(Attr::ForegroundColor(color::CYAN)),
                     Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK".to_string() {
-                        Attr::ForegroundColor((color::GREEN))
+                        Attr::ForegroundColor(color::GREEN)
                     } else {
-                        Attr::ForegroundColor((color::RED))
+                        Attr::ForegroundColor(color::RED)
                     }),
                     Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK".to_string() {
-                        Attr::ForegroundColor((color::GREEN))
+                        Attr::ForegroundColor(color::GREEN)
                     } else {
-                        Attr::ForegroundColor((color::RED))
+                        Attr::ForegroundColor(color::RED)
                     }),
                     Cell::new(issue.3.as_str()).with_style(
                         if issue.3 != "NO fixVersion set".to_string() {
-                            Attr::ForegroundColor((color::GREEN))
+                            Attr::ForegroundColor(color::GREEN)
                         } else {
-                            Attr::ForegroundColor((color::RED))
+                            Attr::ForegroundColor(color::RED)
                         },
                     ),
                 ]));

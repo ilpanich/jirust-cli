@@ -29,7 +29,7 @@ pub struct JiraSection {
     jira_url: String,
     standard_resolution: String,
     standard_resolution_comment: String,
-    transitions_ids: Table,
+    transitions_names: Table,
 }
 
 /// Implementation of AuthData
@@ -196,7 +196,7 @@ impl ConfigFile {
                 jira_url,
                 standard_resolution,
                 standard_resolution_comment,
-                transitions_ids,
+                transitions_names: transitions_ids,
             },
         }
     }
@@ -236,7 +236,7 @@ impl ConfigFile {
                 jira_url: String::from(""),
                 standard_resolution: String::from(""),
                 standard_resolution_comment: String::from(""),
-                transitions_ids: Table::new(),
+                transitions_names: Table::new(),
             },
         }
     }
@@ -406,14 +406,14 @@ impl ConfigFile {
         &self.jira.standard_resolution_comment
     }
 
-    /// Add a transition ID to the ConfigFile struct.
-    /// This is used to store the transition ID for a specific transition name.
+    /// Add a transition name to the ConfigFile struct.
+    /// This is used to store the transition name for a specific transition.
     /// This is used to transition an issue to a specific state.
-    /// The key is the transition name and the value is the transition ID.
+    /// The key is the transition internal identifier and the value is the transition name.
     ///
     /// # Arguments
-    /// * key - The transition name.
-    /// * value - The transition ID.
+    /// * key - The transition internal identifier.
+    /// * value - The transition name.
     ///
     /// # Examples
     ///
@@ -421,24 +421,26 @@ impl ConfigFile {
     /// use jirust_cli::config::config_file::ConfigFile;
     ///
     /// let mut config = ConfigFile::default();
-    /// config.add_transition_id("transition_name".to_string(), "42".to_string());
+    /// config.add_transition_name("transition_key".to_string(), "Transition name".to_string());
     ///
-    /// assert_eq!(config.get_transition_id("transition_name"), Some("42".to_string()));
+    /// assert_eq!(config.get_transition_name("transition_key"), Some("Transition name".to_string()));
     /// ```
-    pub fn add_transition_id(&mut self, key: String, value: String) {
-        self.jira.transitions_ids.insert(key, Value::String(value));
+    pub fn add_transition_name(&mut self, key: String, value: String) {
+        self.jira
+            .transitions_names
+            .insert(key, Value::String(value));
     }
 
-    /// Get the transition ID for a specific transition name.
+    /// Get the transition name for a specific transition internal identifier.
     /// This is used to transition an issue to a specific state.
-    /// The key is the transition name and the value is the transition ID.
-    /// If the transition name does not exist, None is returned.
+    /// The key is the transition internal identifier and the value is the transition name.
+    /// If the transition internal identifier does not exist, None is returned.
     ///
     /// # Arguments
-    /// * key - The transition name.
+    /// * key - The transition internal identifier.
     ///
     /// # Returns
-    /// * The transition ID for the specific transition name.
+    /// * The transition name for the specific transition internal identifier.
     ///
     /// # Examples
     ///
@@ -446,12 +448,17 @@ impl ConfigFile {
     /// use jirust_cli::config::config_file::ConfigFile;
     ///
     /// let mut config = ConfigFile::default();
-    /// config.add_transition_id("transition_name".to_string(), "42".to_string());
+    /// config.add_transition_name("transition_key".to_string(), "Transition name".to_string());
     ///
-    /// assert_eq!(config.get_transition_id("transition_name"), Some("42".to_string()));
+    /// assert_eq!(config.get_transition_name("transition_key"), Some("Transition name".to_string()));
     /// ```
-    pub fn get_transition_id(&self, key: &str) -> Option<String> {
-        match self.jira.transitions_ids.get(key).and_then(|v| v.as_str()) {
+    pub fn get_transition_name(&self, key: &str) -> Option<String> {
+        match self
+            .jira
+            .transitions_names
+            .get(key)
+            .and_then(|v| v.as_str())
+        {
             Some(value) => Some(value.to_string()),
             None => None,
         }

@@ -183,7 +183,8 @@ pub struct VersionArgs {
     /// Jira Project version released
     #[clap(
         long,
-        short = 'r',
+        short = 'm',
+        action = ArgAction::SetTrue,
         value_name = "version_released",
         help = "Jira Project version released"
     )]
@@ -199,7 +200,7 @@ pub struct VersionArgs {
     /// Jira Project version automatically transition issues in changelog
     #[clap(
         long,
-        short = 't',
+        short = 'r',
         action = ArgAction::SetTrue,
         value_name = "resolve_issues",
         help = "if changelog is set and this flag is set, the script will transition all issues in the changelog of the current version release to the \"resolved\" status setting the version as \"fixVersion\""
