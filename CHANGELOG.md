@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
+### Fixed
+- Using the transition name instead of the transition id in the version creation command when resolve issues flag is set
 
 ## [0.9.3] 2024-09-21
 ### Fixed
