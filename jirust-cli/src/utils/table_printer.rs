@@ -486,7 +486,6 @@ pub fn print_table_single(data: PrintableData) {
         PrintableData::Version { versions } => {
             let version = versions.first().unwrap_or(&Version::default()).clone();
             table.add_row(row![
-                FC->version.project_id.unwrap_or_default(),
                 bFC->"Project ID",
                 bFc->"ID",
                 bFm->"Name",
@@ -498,6 +497,7 @@ pub fn print_table_single(data: PrintableData) {
             ]);
 
             table.add_row(row![
+                FC->version.project_id.unwrap_or_default(),
                 Fc->version.id.unwrap_or_default(),
                 Fm->version.name.unwrap_or_default(),
                 Fw->version.description.unwrap_or_default(),

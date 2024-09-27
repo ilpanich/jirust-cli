@@ -157,6 +157,12 @@ impl AuthData {
 /// * `get_jira() -> JiraSection` - gets the JiraSection from the ConfigFile
 /// * `set_auth(auth: AuthSection)` - sets the AuthSection in the ConfigFile
 /// * `set_jira(jira: JiraSection)` - sets the JiraSection in the ConfigFile
+/// * `set_standard_resolution(standard_resolution: String)` - sets the standard_resolution in the ConfigFile
+/// * `get_standard_resolution() -> String` - gets the standard_resolution from the ConfigFile
+/// * `set_standard_resolution_comment(standard_resolution_comment: String)` - sets the standard_resolution_comment in the ConfigFile
+/// * `get_standard_resolution_comment() -> String` - gets the standard_resolution_comment from the Config
+/// * `add_transition_name(key: String, value: String)` - adds a transition_name to the ConfigFile
+/// * `get_transition_name(key: &str) -> Option<String>` - gets a transition_name from the ConfigFile
 impl ConfigFile {
     /// Create a new ConfigFile struct.
     ///
@@ -165,7 +171,7 @@ impl ConfigFile {
     /// * jira_url - The base_url for the Jira API.
     /// * standard_resolution - The standard resolution to be used when resolving an issue.
     /// * standard_resolution_comment - The standard comment to be used when resolving an issue.
-    /// * transitions_ids - The transitions ids to be used when transitioning an issue.
+    /// * transitions_names - The transitions names to be used when transitioning an issue.
     ///
     /// # Returns
     /// * A new ConfigFile struct.
@@ -188,7 +194,7 @@ impl ConfigFile {
         jira_url: String,
         standard_resolution: String,
         standard_resolution_comment: String,
-        transitions_ids: Table,
+        transitions_names: Table,
     ) -> ConfigFile {
         ConfigFile {
             auth: AuthSection { auth_token },
@@ -196,7 +202,7 @@ impl ConfigFile {
                 jira_url,
                 standard_resolution,
                 standard_resolution_comment,
-                transitions_names: transitions_ids,
+                transitions_names,
             },
         }
     }
@@ -209,7 +215,7 @@ impl ConfigFile {
     /// - jira_url: ""
     /// - standard_resolution: ""
     /// - standard_resolution_comment: ""
-    /// - transitions_ids: Table::new()
+    /// - transitions_names: Table::new()
     ///
     /// # Returns
     /// * A new ConfigFile struct with default values.

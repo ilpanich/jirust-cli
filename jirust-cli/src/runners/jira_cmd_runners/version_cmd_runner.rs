@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
 use crate::utils::changelog_extractor::ChangelogExtractor;
-use chrono::{DateTime, Utc};
+use chrono::Utc;
 use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::issues_api::{assign_issue, do_transition, edit_issue, get_transitions};
 use jira_v3_openapi::apis::project_versions_api::*;
@@ -138,6 +138,16 @@ impl VersionCmdRunner {
         } else {
             version_description = params.version_description;
         }
+        let release_date;
+        if Option::is_some(&params.version_released) && params.version_released.unwrap() {
+            if Option::is_some(&params.version_release_date) {
+                release_date = params.version_release_date;
+            } else {
+                release_date = Some(Utc::now().format("%Y-%m-%d").to_string());
+            }
+        } else {
+            release_date = None;
+        }
         let version = Version {
             project: Some(params.project),
             name: Some(
@@ -147,7 +157,7 @@ impl VersionCmdRunner {
             ),
             description: version_description,
             start_date: params.version_start_date,
-            release_date: params.version_release_date,
+            release_date,
             archived: params.version_archived,
             released: params.version_released,
             ..Default::default()
@@ -829,7 +839,6 @@ impl From<&VersionArgs> for VersionCmdParams {
     /// assert_eq!(params.versions_page_offset, Some(0));
     /// ```
     fn from(args: &VersionArgs) -> Self {
-        let now: DateTime<Utc> = Utc::now();
         VersionCmdParams {
             project: args.project_key.clone(),
             project_id: args.project_id.clone(),
@@ -839,7 +848,7 @@ impl From<&VersionArgs> for VersionCmdParams {
             version_start_date: Some(
                 args.version_start_date
                     .clone()
-                    .unwrap_or(now.format("%Y-%m-%d").to_string()),
+                    .unwrap_or(Utc::now().format("%Y-%m-%d").to_string()),
             ),
             version_release_date: args.version_release_date.clone(),
             version_archived: args.version_archived.clone(),
