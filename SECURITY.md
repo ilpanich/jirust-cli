@@ -16,3 +16,5 @@ Users can report vulnerability to: sash-expose-fondue@duck.com
 If the vulnerability is evaluated as "to be fixed" an issue will be opened to track its resolution.
 
 No Bug Bounty program is active at the moment since it is a personal open-source project.
+
+The reporter username or email we be placed in the issue and in the CHANGELOG to acknowledge is contribution to the project.
