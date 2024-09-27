@@ -3,11 +3,9 @@ use std::collections::HashMap;
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
 use crate::utils::changelog_extractor::ChangelogExtractor;
-use chrono::{DateTime, Utc};
+use chrono::Utc;
 use jira_v3_openapi::apis::configuration::Configuration;
-use jira_v3_openapi::apis::issues_api::{
-    assign_issue, do_transition, edit_issue, AssignIssueError,
-};
+use jira_v3_openapi::apis::issues_api::{assign_issue, do_transition, edit_issue, get_transitions};
 use jira_v3_openapi::apis::project_versions_api::*;
 use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::models::user::AccountType;
@@ -25,7 +23,7 @@ pub struct VersionCmdRunner {
     cfg: Configuration,
     resolution_value: Value,
     resolution_comment: Value,
-    resolution_transition_id: Option<String>,
+    resolution_transition_name: Option<String>,
 }
 
 /// Version command runner implementation.
@@ -76,7 +74,7 @@ impl VersionCmdRunner {
                 cfg_file.get_standard_resolution_comment().as_str(),
             )
             .unwrap_or(Value::Null),
-            resolution_transition_id: cfg_file.get_transition_id("resolve"),
+            resolution_transition_name: cfg_file.get_transition_name("resolve"),
         }
     }
 
@@ -140,6 +138,16 @@ impl VersionCmdRunner {
         } else {
             version_description = params.version_description;
         }
+        let release_date;
+        if Option::is_some(&params.version_released) && params.version_released.unwrap() {
+            if Option::is_some(&params.version_release_date) {
+                release_date = params.version_release_date;
+            } else {
+                release_date = Some(Utc::now().format("%Y-%m-%d").to_string());
+            }
+        } else {
+            release_date = None;
+        }
         let version = Version {
             project: Some(params.project),
             name: Some(
@@ -149,7 +157,7 @@ impl VersionCmdRunner {
             ),
             description: version_description,
             start_date: params.version_start_date,
-            release_date: params.version_release_date,
+            release_date,
             archived: params.version_archived,
             released: params.version_released,
             ..Default::default()
@@ -166,15 +174,40 @@ impl VersionCmdRunner {
             } else {
                 user_data = None;
             }
-            let transition_id: String = self
-                .resolution_transition_id
-                .clone()
-                .expect("Transition ID is required and must be set in the config file");
-            let transition = IssueTransition {
-                id: Some(transition_id),
+            let empty_transition = IssueTransition {
+                id: Some("".to_string()),
                 ..Default::default()
             };
             for issue in resolved_issues {
+                let transitions: Vec<IssueTransition> = get_transitions(
+                    &self.cfg,
+                    issue.clone().as_str(),
+                    None,
+                    None,
+                    None,
+                    Some(false),
+                    None,
+                )
+                .await?
+                .transitions
+                .unwrap_or(vec![]);
+                let transition_name: String = self
+                    .resolution_transition_name
+                    .clone()
+                    .expect("Transition name is required and must be set in the config file");
+                let resolve_transition = transitions
+                    .iter()
+                    .find(|x| x.name.as_ref() == Some(&transition_name));
+                let transition_id = resolve_transition.unwrap_or(&empty_transition).id.as_ref();
+                let transition;
+                if Option::is_some(&transition_id) {
+                    transition = Some(IssueTransition {
+                        id: Some(transition_id.unwrap().to_string()),
+                        ..Default::default()
+                    });
+                } else {
+                    transition = None;
+                }
                 let mut update_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
                     HashMap::new();
                 let mut transition_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
@@ -193,13 +226,6 @@ impl VersionCmdRunner {
                 update_fields_hashmap.insert("fixVersions".to_string(), vec![version_update_op]);
                 transition_fields_hashmap
                     .insert("comment".to_string(), vec![version_resolution_comment_op]);
-                let issue_transition_data = IssueUpdateDetails {
-                    fields: Some(version_resolution_update_field),
-                    history_metadata: None,
-                    properties: None,
-                    transition: Some(transition.clone()),
-                    update: Some(transition_fields_hashmap),
-                };
                 let issue_update_data = IssueUpdateDetails {
                     fields: None,
                     history_metadata: None,
@@ -207,9 +233,21 @@ impl VersionCmdRunner {
                     transition: None,
                     update: Some(update_fields_hashmap),
                 };
-                let transition_result: String =
-                    match do_transition(&self.cfg, issue.clone().as_str(), issue_transition_data)
-                        .await
+                let mut transition_result: String = "KO".to_string();
+                if Option::is_some(&transition) {
+                    let issue_transition_data = IssueUpdateDetails {
+                        fields: Some(version_resolution_update_field),
+                        history_metadata: None,
+                        properties: None,
+                        transition: Some(transition.clone().unwrap()),
+                        update: Some(transition_fields_hashmap),
+                    };
+                    transition_result = match do_transition(
+                        &self.cfg,
+                        issue.clone().as_str(),
+                        issue_transition_data,
+                    )
+                    .await
                     {
                         Ok(_) => "OK".to_string(),
                         Err(Error::Serde(e)) => {
@@ -221,6 +259,7 @@ impl VersionCmdRunner {
                         }
                         Err(_) => "KO".to_string(),
                     };
+                }
                 let assign_result: String = match assign_issue(
                     &self.cfg,
                     issue.clone().as_str(),
@@ -800,7 +839,6 @@ impl From<&VersionArgs> for VersionCmdParams {
     /// assert_eq!(params.versions_page_offset, Some(0));
     /// ```
     fn from(args: &VersionArgs) -> Self {
-        let now: DateTime<Utc> = Utc::now();
         VersionCmdParams {
             project: args.project_key.clone(),
             project_id: args.project_id.clone(),
@@ -810,7 +848,7 @@ impl From<&VersionArgs> for VersionCmdParams {
             version_start_date: Some(
                 args.version_start_date
                     .clone()
-                    .unwrap_or(now.format("%Y-%m-%d").to_string()),
+                    .unwrap_or(Utc::now().format("%Y-%m-%d").to_string()),
             ),
             version_release_date: args.version_release_date.clone(),
             version_archived: args.version_archived.clone(),
