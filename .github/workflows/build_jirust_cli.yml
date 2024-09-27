@@ -14,12 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-
-      - name: Run tests
-        run: cargo test -p jirust-cli
 
       - name: Install dependencies
         run: |
@@ -29,30 +28,54 @@ jobs:
           rustup target add x86_64-unknown-linux-gnu
           mkdir dist
           mkdir builds
+
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.6
+
+      - name: Run tests
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
+        run: cargo test -p jirust-cli
+        
       - name: Cargo deny check
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
         run: |
           cargo install cargo-deny
           cargo deny check
+          
       - name: Build Win64
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
         run: |
           cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-pc-windows-gnu -- -C linker=x86_64-w64-mingw32-gcc
           mkdir builds/jirust-cli-win64
           cp target/x86_64-pc-windows-gnu/release/jirust-cli.exe builds/jirust-cli-win64
           tar -C builds -czvf dist/jirust-cli-win64.tar.gz jirust-cli-win64
+      
       - name: Build Linux
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
         run: |
           cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-unknown-linux-gnu
           mkdir builds/jirust-cli-linux
           cp target/x86_64-unknown-linux-gnu/release/jirust-cli builds/jirust-cli-linux
           tar -C builds -czvf dist/jirust-cli-linux.tar.gz jirust-cli-linux
+          
       - name: Extract release notes
         id: extract-release-notes
         uses: ffurrer2/extract-release-notes@v2
+      
       - name: Set output
         id: vars
         run: |
           TAG=$(echo ${{ github.ref_name }} | cut -d '_' -f 2)
           echo "final_tag=$TAG" >> $GITHUB_OUTPUT
+      
       - name: Upload release
         uses: softprops/action-gh-release@v1
         with:
@@ -66,7 +89,28 @@ jobs:
 
       - name: Publish cargo package
         env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
           CARGO_ACCESS_TOKEN: ${{ secrets.CARGO_ACCESS_TOKEN }}
         run: |
           cargo login "$CARGO_ACCESS_TOKEN"
           cargo publish -p jirust-cli
+
+      - name: Generate SBOM
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
+        run: |
+          cargo install cargo-sbom
+          cargo sbom > builds/sbom.spdx.json
+
+      - name: Attest provenance
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: 'builds/jirust-cli-*'
+
+      - name: Attest SBOM
+        uses: actions/attest-sbom@v1
+        with:
+          subject-path: 'builds/jirust-cli-*'
+          sbom-path: 'builds/sbom.spdx.json'
