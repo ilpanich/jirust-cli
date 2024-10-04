@@ -93,7 +93,7 @@ impl ConfigExecutor {
     ) -> Result<(), Box<dyn std::error::Error>> {
         match self.config_action {
             ConfigActionValues::Auth => {
-                let _cfg_res = match self.config_cmd_runner.set_cfg_auth(cfg_data) {
+                match self.config_cmd_runner.set_cfg_auth(cfg_data) {
                     Ok(_) => println!("Authentication configuration stored successfully"),
                     Err(err) => {
                         eprintln!("Error storing authentication configuration: {}", err);
@@ -101,7 +101,7 @@ impl ConfigExecutor {
                 };
             }
             ConfigActionValues::Jira => {
-                let _cfg_res = match self.config_cmd_runner.set_cfg_jira(cfg_data) {
+                match self.config_cmd_runner.set_cfg_jira(cfg_data) {
                     Ok(_) => println!("Initialization configuration stored successfully"),
                     Err(err) => {
                         eprintln!("Error storing initialization configuration: {}", err);
@@ -109,7 +109,7 @@ impl ConfigExecutor {
                 };
             }
             ConfigActionValues::Setup => {
-                let _cfg_res = match self.config_cmd_runner.setup_cfg(cfg_data) {
+                match self.config_cmd_runner.setup_cfg(cfg_data) {
                     Ok(_) => println!("Configuration setup successfully"),
                     Err(err) => {
                         eprintln!("Error setting up configuration: {}", err);

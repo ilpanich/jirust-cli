@@ -92,7 +92,7 @@ impl ConfigCmdRunner {
         let apikey = read_password()?;
         let config_data = AuthData::new(user, apikey);
         cfg.set_auth_key(config_data.to_base64());
-        cfg.write_to_file(&self.cfg_file.as_str())?;
+        cfg.write_to_file(self.cfg_file.as_str())?;
         Ok(cfg)
     }
 
@@ -130,7 +130,7 @@ impl ConfigCmdRunner {
         println!("Default Jira issue resolution comment JSON: ");
         input.read_line(&mut read_data)?;
         cfg.set_standard_resolution_comment(read_data);
-        cfg.write_to_file(&self.cfg_file.as_str())?;
+        cfg.write_to_file(self.cfg_file.as_str())?;
         Ok(cfg)
     }
 
