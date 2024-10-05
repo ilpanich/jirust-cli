@@ -419,12 +419,14 @@ impl ConfigFile {
     /// assert_eq!(config.get_transition_name("transition_key"), Some("Transition name".to_string()));
     /// ```
     pub fn get_transition_name(&self, key: &str) -> Option<String> {
-        Some(self
-            .jira
-            .transitions_names
-            .get(key)
-            .and_then(|v| v.as_str()).map(Some(value.to_string())))
-        }
+        Some(
+            self.jira
+                .transitions_names
+                .get(key)
+                .and_then(|v| v.as_str())
+                .map(|value| value.to_string())
+                .unwrap_or_default(),
+        )
     }
 
     /// Stores the configuration to a file.
