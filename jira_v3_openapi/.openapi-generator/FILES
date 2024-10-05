@@ -50,6 +50,7 @@ docs/AvatarUrlsBean.md
 docs/Avatars.md
 docs/AvatarsApi.md
 docs/BulkChangeOwnerDetails.md
+docs/BulkContextualConfiguration.md
 docs/BulkCustomFieldOptionCreateRequest.md
 docs/BulkCustomFieldOptionUpdateRequest.md
 docs/BulkEditActionError.md
@@ -84,6 +85,7 @@ docs/CompoundClause.md
 docs/ConditionGroupConfiguration.md
 docs/ConditionGroupUpdate.md
 docs/Configuration.md
+docs/ConfigurationsListParameters.md
 docs/ConnectCustomFieldValue.md
 docs/ConnectCustomFieldValues.md
 docs/ConnectModules.md
@@ -460,6 +462,7 @@ docs/Operations.md
 docs/OrderOfCustomFieldOptions.md
 docs/OrderOfIssueTypes.md
 docs/PageBean2ComponentJsonBean.md
+docs/PageBeanBulkContextualConfiguration.md
 docs/PageBeanChangelog.md
 docs/PageBeanComment.md
 docs/PageBeanComponentWithIssueCount.md
@@ -971,6 +974,7 @@ src/models/avatar.rs
 src/models/avatar_urls_bean.rs
 src/models/avatars.rs
 src/models/bulk_change_owner_details.rs
+src/models/bulk_contextual_configuration.rs
 src/models/bulk_custom_field_option_create_request.rs
 src/models/bulk_custom_field_option_update_request.rs
 src/models/bulk_edit_action_error.rs
@@ -1004,6 +1008,7 @@ src/models/compound_clause.rs
 src/models/condition_group_configuration.rs
 src/models/condition_group_update.rs
 src/models/configuration.rs
+src/models/configurations_list_parameters.rs
 src/models/connect_custom_field_value.rs
 src/models/connect_custom_field_values.rs
 src/models/connect_modules.rs
@@ -1337,6 +1342,7 @@ src/models/operations.rs
 src/models/order_of_custom_field_options.rs
 src/models/order_of_issue_types.rs
 src/models/page_bean2_component_json_bean.rs
+src/models/page_bean_bulk_contextual_configuration.rs
 src/models/page_bean_changelog.rs
 src/models/page_bean_comment.rs
 src/models/page_bean_component_with_issue_count.rs

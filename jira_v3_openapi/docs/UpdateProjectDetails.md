@@ -15,6 +15,7 @@ Name | Type | Description | Notes
 **name** | Option<**String**> | The name of the project. | [optional]
 **notification_scheme** | Option<**i64**> | The ID of the notification scheme for the project. Use the [Get notification schemes](#api-rest-api-3-notificationscheme-get) resource to get a list of notification scheme IDs. | [optional]
 **permission_scheme** | Option<**i64**> | The ID of the permission scheme for the project. Use the [Get all permission schemes](#api-rest-api-3-permissionscheme-get) resource to see a list of all permission scheme IDs. | [optional]
+**released_project_keys** | Option<**Vec<String>**> | Previous project keys to be released from the current project. Released keys must belong to the current project and not contain the current project key | [optional]
 **url** | Option<**String**> | A link to information about this project, such as project documentation | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
