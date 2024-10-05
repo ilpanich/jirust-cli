@@ -133,7 +133,7 @@ impl VersionCmdRunner {
                         version_description.clone().unwrap(),
                         params.project.clone(),
                     )
-                    .unwrap_or(vec![]);
+                    .unwrap_or_default();
             }
         } else {
             version_description = params.version_description;
@@ -189,7 +189,7 @@ impl VersionCmdRunner {
                 )
                 .await?
                 .transitions
-                .unwrap_or(vec![]);
+                .unwrap_or_default();
                 let transition_name: String = self
                     .resolution_transition_name
                     .clone()

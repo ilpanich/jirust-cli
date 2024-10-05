@@ -189,23 +189,21 @@ pub fn print_table_full(data: PrintableData) {
                     Cell::new(issue.0.as_str())
                         .with_style(Attr::Bold)
                         .with_style(Attr::ForegroundColor(color::CYAN)),
-                    Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK".to_string() {
+                    Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK" {
                         Attr::ForegroundColor(color::GREEN)
                     } else {
                         Attr::ForegroundColor(color::RED)
                     }),
-                    Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK".to_string() {
+                    Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK" {
                         Attr::ForegroundColor(color::GREEN)
                     } else {
                         Attr::ForegroundColor(color::RED)
                     }),
-                    Cell::new(issue.3.as_str()).with_style(
-                        if issue.3 != "NO fixVersion set".to_string() {
-                            Attr::ForegroundColor(color::GREEN)
-                        } else {
-                            Attr::ForegroundColor(color::RED)
-                        },
-                    ),
+                    Cell::new(issue.3.as_str()).with_style(if issue.3 != "NO fixVersion set" {
+                        Attr::ForegroundColor(color::GREEN)
+                    } else {
+                        Attr::ForegroundColor(color::RED)
+                    }),
                 ]));
             }
         }
@@ -365,23 +363,21 @@ pub fn print_table_basic(data: PrintableData) {
                     Cell::new(issue.0.as_str())
                         .with_style(Attr::Bold)
                         .with_style(Attr::ForegroundColor(color::CYAN)),
-                    Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK".to_string() {
+                    Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK" {
                         Attr::ForegroundColor(color::GREEN)
                     } else {
                         Attr::ForegroundColor(color::RED)
                     }),
-                    Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK".to_string() {
+                    Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK" {
                         Attr::ForegroundColor(color::GREEN)
                     } else {
                         Attr::ForegroundColor(color::RED)
                     }),
-                    Cell::new(issue.3.as_str()).with_style(
-                        if issue.3 != "NO fixVersion set".to_string() {
-                            Attr::ForegroundColor(color::GREEN)
-                        } else {
-                            Attr::ForegroundColor(color::RED)
-                        },
-                    ),
+                    Cell::new(issue.3.as_str()).with_style(if issue.3 != "NO fixVersion set" {
+                        Attr::ForegroundColor(color::GREEN)
+                    } else {
+                        Attr::ForegroundColor(color::RED)
+                    }),
                 ]));
             }
         }
@@ -575,23 +571,21 @@ pub fn print_table_single(data: PrintableData) {
                     Cell::new(issue.0.as_str())
                         .with_style(Attr::Bold)
                         .with_style(Attr::ForegroundColor(color::CYAN)),
-                    Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK".to_string() {
+                    Cell::new(issue.1.as_str()).with_style(if issue.1 == "OK" {
                         Attr::ForegroundColor(color::GREEN)
                     } else {
                         Attr::ForegroundColor(color::RED)
                     }),
-                    Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK".to_string() {
+                    Cell::new(issue.2.as_str()).with_style(if issue.2 == "OK" {
                         Attr::ForegroundColor(color::GREEN)
                     } else {
                         Attr::ForegroundColor(color::RED)
                     }),
-                    Cell::new(issue.3.as_str()).with_style(
-                        if issue.3 != "NO fixVersion set".to_string() {
-                            Attr::ForegroundColor(color::GREEN)
-                        } else {
-                            Attr::ForegroundColor(color::RED)
-                        },
-                    ),
+                    Cell::new(issue.3.as_str()).with_style(if issue.3 != "NO fixVersion set" {
+                        Attr::ForegroundColor(color::GREEN)
+                    } else {
+                        Attr::ForegroundColor(color::RED)
+                    }),
                 ]));
             }
         }

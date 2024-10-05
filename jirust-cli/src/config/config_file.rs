@@ -207,46 +207,6 @@ impl ConfigFile {
         }
     }
 
-    /// Create a new ConfigFile struct with default values.
-    /// This is useful for creating a new configuration file.
-    /// The default values can be set using the set methods.
-    /// The default values are:
-    /// - auth_token: ""
-    /// - jira_url: ""
-    /// - standard_resolution: ""
-    /// - standard_resolution_comment: ""
-    /// - transitions_names: Table::new()
-    ///
-    /// # Returns
-    /// * A new ConfigFile struct with default values.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
-    /// use toml::Table;
-    ///
-    /// let config = ConfigFile::default();
-    ///
-    /// assert_eq!(config.get_auth_key(), "");
-    /// assert_eq!(config.get_jira_url(), "");
-    /// assert_eq!(config.get_standard_resolution(), "");
-    /// assert_eq!(config.get_standard_resolution_comment(), "");
-    /// ```
-    pub fn default() -> ConfigFile {
-        ConfigFile {
-            auth: AuthSection {
-                auth_token: String::from(""),
-            },
-            jira: JiraSection {
-                jira_url: String::from(""),
-                standard_resolution: String::from(""),
-                standard_resolution_comment: String::from(""),
-                transitions_names: Table::new(),
-            },
-        }
-    }
-
     /// Set the authentication token for the ConfigFile struct.
     /// This is the token that will be used to authenticate with the Jira API.
     ///
@@ -459,14 +419,11 @@ impl ConfigFile {
     /// assert_eq!(config.get_transition_name("transition_key"), Some("Transition name".to_string()));
     /// ```
     pub fn get_transition_name(&self, key: &str) -> Option<String> {
-        match self
+        Some(self
             .jira
             .transitions_names
             .get(key)
-            .and_then(|v| v.as_str())
-        {
-            Some(value) => Some(value.to_string()),
-            None => None,
+            .and_then(|v| v.as_str()).map(Some(value.to_string())))
         }
     }
 
@@ -527,5 +484,47 @@ impl ConfigFile {
         let config_file_str = fs::read_to_string(file_path)
             .unwrap_or(toml::to_string(&ConfigFile::default()).unwrap_or("".to_string()));
         toml::from_str(&config_file_str)
+    }
+}
+
+impl Default for ConfigFile {
+    /// Create a new ConfigFile struct with default values.
+    /// This is useful for creating a new configuration file.
+    /// The default values can be set using the set methods.
+    /// The default values are:
+    /// - auth_token: ""
+    /// - jira_url: ""
+    /// - standard_resolution: ""
+    /// - standard_resolution_comment: ""
+    /// - transitions_names: Table::new()
+    ///
+    /// # Returns
+    /// * A new ConfigFile struct with default values.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
+    ///
+    /// let config = ConfigFile::default();
+    ///
+    /// assert_eq!(config.get_auth_key(), "");
+    /// assert_eq!(config.get_jira_url(), "");
+    /// assert_eq!(config.get_standard_resolution(), "");
+    /// assert_eq!(config.get_standard_resolution_comment(), "");
+    /// ```
+    fn default() -> ConfigFile {
+        ConfigFile {
+            auth: AuthSection {
+                auth_token: String::from(""),
+            },
+            jira: JiraSection {
+                jira_url: String::from(""),
+                standard_resolution: String::from(""),
+                standard_resolution_comment: String::from(""),
+                transitions_names: Table::new(),
+            },
+        }
     }
 }
