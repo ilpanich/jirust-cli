@@ -144,8 +144,7 @@ impl ExecJiraCommand for IssueExecutor {
                 )
             }
             IssueActionValues::Delete => {
-                let _res = self
-                    .issue_cmd_runner
+                self.issue_cmd_runner
                     .delete_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await?;
             }

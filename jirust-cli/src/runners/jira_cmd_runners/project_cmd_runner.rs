@@ -293,11 +293,36 @@ impl From<&ProjectArgs> for ProjectCmdParams {
         ProjectCmdParams {
             project_key: value.project_key.clone(),
             project_issue_type: value.project_issue_type.clone(),
-            projects_page_size: value.pagination.page_size.clone(),
+            projects_page_size: value.pagination.page_size,
             projects_page_offset: Some(
-                i32::try_from(value.pagination.page_offset.clone().unwrap_or(0))
+                i32::try_from(value.pagination.page_offset.unwrap_or(0))
                     .expect("Invalid page offset, should fit an i32!"),
             ),
         }
+    }
+}
+
+/// Implementation of the Default trait for the ProjectCmdParams struct
+impl Default for ProjectCmdParams {
+    /// Creates a default ProjectCmdParams struct instance.
+    ///
+    /// # Returns
+    ///
+    /// * A ProjectCmdParams struct instance with default values.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::ProjectCmdParams;
+    ///
+    /// let params = ProjectCmdParams::default();
+    ///
+    /// assert_eq!(params.project_key, None);
+    /// assert_eq!(params.project_issue_type, None);
+    /// assert_eq!(params.projects_page_size, None);
+    /// assert_eq!(params.projects_page_offset, None);
+    /// ```
+    fn default() -> Self {
+        ProjectCmdParams::new()
     }
 }

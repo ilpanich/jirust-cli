@@ -492,7 +492,7 @@ impl From<&IssueArgs> for IssueCmdParams {
                 value
                     .issue_fields
                     .clone()
-                    .unwrap_or(vec![])
+                    .unwrap_or_default()
                     .iter()
                     .map(|elem| {
                         (
@@ -578,5 +578,53 @@ impl From<&TransitionArgs> for IssueTransitionCmdParams {
         IssueTransitionCmdParams {
             issue_key: value.issue_key.clone(),
         }
+    }
+}
+
+/// Default implementation for IssueCmdParams struct
+impl Default for IssueTransitionCmdParams {
+    /// Creates a default IssueTransitionCmdParams instance
+    ///
+    /// # Returns
+    ///
+    /// A IssueTransitionCmdParams instance with default values
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::IssueTransitionCmdParams;
+    ///
+    /// let params = IssueTransitionCmdParams::default();
+    ///
+    /// assert_eq!(params.issue_key, "".to_string());
+    /// ```
+    fn default() -> Self {
+        IssueTransitionCmdParams::new()
+    }
+}
+
+/// Default implementation for IssueCmdParams struct
+impl Default for IssueCmdParams {
+    /// Creates a default IssueCmdParams instance
+    ///
+    /// # Returns
+    ///
+    /// A IssueCmdParams instance with default values
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::IssueCmdParams;
+    ///
+    /// let params = IssueCmdParams::default();
+    ///
+    /// assert_eq!(params.project_key, "".to_string());
+    /// assert_eq!(params.issue_key, None);
+    /// assert_eq!(params.issue_fields, None);
+    /// assert_eq!(params.transition, None);
+    /// assert_eq!(params.assignee, None);
+    /// ```
+    fn default() -> Self {
+        IssueCmdParams::new()
     }
 }

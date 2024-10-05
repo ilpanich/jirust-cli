@@ -38,7 +38,7 @@ pub struct VersionCmdRunner {
 /// * `update_jira_version` - This method updates a Jira version
 /// * `delete_jira_version` - This method deletes a Jira version
 /// * `release_jira_version` - This method releases a Jira version
-/// `archive_jira_version` - This method archives a Jira version
+/// * `archive_jira_version` - This method archives a Jira version
 impl VersionCmdRunner {
     /// This method creates a new instance of the VersionCmdRunner struct
     ///
@@ -133,7 +133,7 @@ impl VersionCmdRunner {
                         version_description.clone().unwrap(),
                         params.project.clone(),
                     )
-                    .unwrap_or(vec![]);
+                    .unwrap_or_default();
             }
         } else {
             version_description = params.version_description;
@@ -164,16 +164,15 @@ impl VersionCmdRunner {
         };
         let version = create_version(&self.cfg, version).await?;
         if !resolved_issues.is_empty() {
-            let user_data;
-            if Option::is_some(&params.transition_assignee) {
-                user_data = Some(User {
+            let user_data = if Option::is_some(&params.transition_assignee) {
+                Some(User {
                     account_id: Some(params.transition_assignee.expect("Assignee is required")),
                     account_type: Some(AccountType::Atlassian),
                     ..Default::default()
-                });
+                })
             } else {
-                user_data = None;
-            }
+                None
+            };
             let empty_transition = IssueTransition {
                 id: Some("".to_string()),
                 ..Default::default()
@@ -190,7 +189,7 @@ impl VersionCmdRunner {
                 )
                 .await?
                 .transitions
-                .unwrap_or(vec![]);
+                .unwrap_or_default();
                 let transition_name: String = self
                     .resolution_transition_name
                     .clone()
@@ -346,12 +345,12 @@ impl VersionCmdRunner {
         &self,
         params: VersionCmdParams,
     ) -> Result<Version, Error<GetVersionError>> {
-        Ok(get_version(
+        get_version(
             &self.cfg,
             params.version_id.expect("VersionID is mandatory!").as_str(),
             None,
         )
-        .await?)
+        .await
     }
 
     /// This method lists Jira versions with the given parameters
@@ -462,12 +461,12 @@ impl VersionCmdRunner {
             released: params.version_released,
             ..Default::default()
         };
-        Ok(update_version(
+        update_version(
             &self.cfg,
             params.version_id.expect("VersionID is mandatory!").as_str(),
             version,
         )
-        .await?)
+        .await
     }
 
     /// This method deletes a Jira version with the given parameters
@@ -658,7 +657,7 @@ impl VersionCmdParams {
         match opt_args {
             Some(args) => VersionCmdParams {
                 project: current_version.project.clone().unwrap_or("".to_string()),
-                project_id: current_version.project_id.clone(),
+                project_id: current_version.project_id,
                 version_id: current_version.id,
                 version_name: if Option::is_some(&args.version_name) {
                     args.version_name.clone()
@@ -698,7 +697,7 @@ impl VersionCmdParams {
             },
             None => VersionCmdParams {
                 project: current_version.project.clone().unwrap_or("".to_string()),
-                project_id: current_version.project_id.clone(),
+                project_id: current_version.project_id,
                 version_id: current_version.id,
                 version_name: current_version.name,
                 version_description: current_version.description,
@@ -841,7 +840,7 @@ impl From<&VersionArgs> for VersionCmdParams {
     fn from(args: &VersionArgs) -> Self {
         VersionCmdParams {
             project: args.project_key.clone(),
-            project_id: args.project_id.clone(),
+            project_id: args.project_id,
             version_name: args.version_name.clone(),
             version_id: args.version_id.clone(),
             version_description: args.version_description.clone(),
@@ -851,13 +850,49 @@ impl From<&VersionArgs> for VersionCmdParams {
                     .unwrap_or(Utc::now().format("%Y-%m-%d").to_string()),
             ),
             version_release_date: args.version_release_date.clone(),
-            version_archived: args.version_archived.clone(),
-            version_released: args.version_released.clone(),
+            version_archived: args.version_archived,
+            version_released: args.version_released,
             changelog_file: args.changelog_file.clone(),
-            transition_issues: args.transition_issues.clone(),
+            transition_issues: args.transition_issues,
             transition_assignee: args.transition_assignee.clone(),
-            versions_page_size: args.pagination.page_size.clone(),
-            versions_page_offset: args.pagination.page_offset.clone(),
+            versions_page_size: args.pagination.page_size,
+            versions_page_offset: args.pagination.page_offset,
         }
+    }
+}
+
+/// Implementation of the Default trait for the VersionCmdParams struct
+impl Default for VersionCmdParams {
+    /// This method returns a VersionCmdParams struct with default values
+    /// and returns a VersionCmdParams struct
+    ///
+    /// # Returns
+    ///
+    /// * A VersionCmdParams struct initialized with default values
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    ///
+    /// let params = VersionCmdParams::default();
+    ///
+    /// assert_eq!(params.project, "".to_string());
+    /// assert_eq!(params.project_id, None);
+    /// assert_eq!(params.version_name, None);
+    /// assert_eq!(params.version_id, None);
+    /// assert_eq!(params.version_description, None);
+    /// assert_eq!(params.version_start_date, None);
+    /// assert_eq!(params.version_release_date, None);
+    /// assert_eq!(params.version_archived, None);
+    /// assert_eq!(params.version_released, None);
+    /// assert_eq!(params.changelog_file, None);
+    /// assert_eq!(params.transition_issues, None);
+    /// assert_eq!(params.transition_assignee, None);
+    /// assert_eq!(params.versions_page_size, None);
+    /// assert_eq!(params.versions_page_offset, None);
+    /// ```
+    fn default() -> Self {
+        VersionCmdParams::new()
     }
 }
