@@ -12,7 +12,10 @@ name: rust-clippy analyze
 on:
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "main" ]
+    branches: ["main"]
+  push:
+    tags:
+      - "jirust-cli_*.*.*"
 
 jobs:
   rust-clippy-analyze:
@@ -38,8 +41,7 @@ jobs:
         run: cargo install clippy-sarif sarif-fmt
 
       - name: Run rust-clippy
-        run:
-          cargo clippy
+        run: cargo clippy
           --all-features
           --message-format=json | clippy-sarif | tee rust-clippy-results.sarif | sarif-fmt
         continue-on-error: true
