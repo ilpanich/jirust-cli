@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
+
+## [0.9.5] 2024-10-05
 ### Fixed
 - Refactoring, cleanup and enhancements as suggested by rust-clippy
+
+### Changed
+- Updated dependencies
 
 ## [0.9.4] 2024-09-27
 ### Fixed
