@@ -198,15 +198,14 @@ impl VersionCmdRunner {
                     .iter()
                     .find(|x| x.name.as_ref() == Some(&transition_name));
                 let transition_id = resolve_transition.unwrap_or(&empty_transition).id.as_ref();
-                let transition;
-                if Option::is_some(&transition_id) {
-                    transition = Some(IssueTransition {
+                let transition = if Option::is_some(&transition_id) {
+                    Some(IssueTransition {
                         id: Some(transition_id.unwrap().to_string()),
                         ..Default::default()
-                    });
+                    })
                 } else {
-                    transition = None;
-                }
+                    None
+                };
                 let mut update_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
                     HashMap::new();
                 let mut transition_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
