@@ -138,16 +138,16 @@ impl VersionCmdRunner {
         } else {
             version_description = params.version_description;
         }
-        let release_date;
-        if Option::is_some(&params.version_released) && params.version_released.unwrap() {
-            if Option::is_some(&params.version_release_date) {
-                release_date = params.version_release_date;
+        let release_date =
+            if Option::is_some(&params.version_released) && params.version_released.unwrap() {
+                if Option::is_some(&params.version_release_date) {
+                    params.version_release_date
+                } else {
+                    Some(Utc::now().format("%Y-%m-%d").to_string())
+                }
             } else {
-                release_date = Some(Utc::now().format("%Y-%m-%d").to_string());
-            }
-        } else {
-            release_date = None;
-        }
+                None
+            };
         let version = Version {
             project: Some(params.project),
             name: Some(
@@ -451,12 +451,22 @@ impl VersionCmdRunner {
         &self,
         params: VersionCmdParams,
     ) -> Result<Version, Error<UpdateVersionError>> {
+        let release_date =
+            if Option::is_some(&params.version_released) && params.version_released.unwrap() {
+                if Option::is_some(&params.version_release_date) {
+                    params.version_release_date
+                } else {
+                    Some(Utc::now().format("%Y-%m-%d").to_string())
+                }
+            } else {
+                None
+            };
         let version = Version {
             id: Some(params.version_id.clone().expect("VersionID is mandatory!")),
             name: params.version_name,
             description: params.version_description,
             start_date: params.version_start_date,
-            release_date: params.version_release_date,
+            release_date,
             archived: params.version_archived,
             released: params.version_released,
             ..Default::default()
