@@ -482,25 +482,15 @@ pub fn print_table_single(data: PrintableData) {
         PrintableData::Version { versions } => {
             let version = versions.first().unwrap_or(&Version::default()).clone();
             table.add_row(row![
-                bFC->"Project ID",
-                bFc->"ID",
                 bFm->"Name",
-                bFw->"Description",
                 bFy->"Start Date",
                 bFr->"Release Date",
-                bFb->"Archived",
-                bFg->"Released"
             ]);
 
             table.add_row(row![
-                FC->version.project_id.unwrap_or_default(),
-                Fc->version.id.unwrap_or_default(),
                 Fm->version.name.unwrap_or_default(),
-                Fw->version.description.unwrap_or_default(),
                 Fy->version.start_date.unwrap_or_default(),
                 Fr->version.release_date.unwrap_or_default(),
-                Fb->version.archived.unwrap_or_default(),
-                Fg->version.released.unwrap_or_default()
             ]);
         }
         PrintableData::IssueTransitions { transitions } => {
