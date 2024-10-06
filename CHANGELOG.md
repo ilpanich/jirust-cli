@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
+
+## [0.9.6] 2024-10-06
 ### Changed
 - Changed single version table display format to best fit small screens
+- Minor fixes and improvements
 - Updated dependencies
 
 ## [0.9.5] 2024-10-05
