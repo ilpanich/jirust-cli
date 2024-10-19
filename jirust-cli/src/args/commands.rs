@@ -331,8 +331,7 @@ pub struct IssueArgs {
         long,
         short = 'i',
         value_name = "issue_key",
-        help = "Jira Project issue key",
-        required = true
+        help = "Jira Project issue key"
     )]
     pub issue_key: Option<String>,
     /// Jira Project issue fields

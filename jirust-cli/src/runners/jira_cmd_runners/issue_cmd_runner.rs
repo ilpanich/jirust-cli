@@ -144,8 +144,13 @@ impl IssueCmdRunner {
         &self,
         params: IssueCmdParams,
     ) -> Result<CreatedIssue, Box<dyn std::error::Error>> {
+        let mut issue_fields = params.issue_fields.unwrap_or_default();
+        issue_fields.insert(
+            "project".to_string(),
+            serde_json::json!({"key": params.project_key}),
+        );
         let issue_data = IssueUpdateDetails {
-            fields: params.issue_fields,
+            fields: Some(issue_fields),
             history_metadata: None,
             properties: None,
             transition: None,
