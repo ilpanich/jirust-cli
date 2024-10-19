@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
+### Fixed
+- Jira issue create command now is working properly
 
 ## [0.9.6] 2024-10-06
 ### Changed
