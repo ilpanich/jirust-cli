@@ -51,7 +51,7 @@ Currently the basic version management is implemented and you can:
 * list all the projects
 * list all the issue types available in a given project
 * list all the fields available in a given project for a given issue type
-* Create a new issue (Not yet working, to be fixed)
+* Create a new issue
 * Show an issue details
 * Update an issue (Not yet working, to be fixed)
 * Delete an issue
@@ -88,7 +88,7 @@ Everything is currently released upon the [crates.io](https://crates.io) platfor
 
 ## Roadmap
 Next features to be integrated and supported are:
-* Some issue management operations (create, update) have to be fixed since they are not working correctly at the moment, but I have to design the solution properly; the main issue is related to managing complex Jira fields..
+* Update issue management operation has to be fixed since it is not working correctly at the moment, but I have to design the solution properly; the main issue is related to managing complex Jira fields.
 
 Those are mandatory for my work and I will prioritize them; other features will be added as needed.
 You can request a feature by opening an issue or you can provide an implementation compliant with what is currently developed in a PR.
