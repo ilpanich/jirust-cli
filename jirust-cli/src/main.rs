@@ -4,12 +4,14 @@ use std::env;
 
 use jirust_cli::args::commands::{Commands, ConfigActionValues, ConfigArgs};
 use jirust_cli::config::config_file::ConfigFile;
+use jirust_cli::jira_doc_std_field;
 use jirust_cli::{manage_config, process_command};
 
 /// Jirust CLI main function
 /// Run without arguments to see the help message
 #[tokio::main]
 async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
+    println!("{}", jira_doc_std_field!("Test"));
     let config_file_path = match env::var_os("HOME") {
         Some(home) => format!("{}/.jirust-cli/jirust-cli.toml", home.to_string_lossy()),
         None => ".jirust-cli/jirust-cli.toml".to_string(),
