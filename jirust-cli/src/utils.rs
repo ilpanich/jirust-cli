@@ -1,5 +1,6 @@
 pub mod changelog_extractor;
 pub mod json_printer;
+pub mod macros;
 pub mod table_printer;
 
 use jira_v3_openapi::models::{

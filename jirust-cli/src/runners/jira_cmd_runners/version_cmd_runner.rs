@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
+use crate::jira_doc_std_field;
 use crate::utils::changelog_extractor::ChangelogExtractor;
 use chrono::Utc;
 use jira_v3_openapi::apis::configuration::Configuration;
@@ -70,9 +71,9 @@ impl VersionCmdRunner {
             cfg: config,
             resolution_value: serde_json::from_str(cfg_file.get_standard_resolution().as_str())
                 .unwrap_or(Value::Null),
-            resolution_comment: serde_json::from_str(
-                cfg_file.get_standard_resolution_comment().as_str(),
-            )
+            resolution_comment: serde_json::from_str(jira_doc_std_field!(cfg_file
+                .get_standard_resolution_comment()
+                .as_str()))
             .unwrap_or(Value::Null),
             resolution_transition_name: cfg_file.get_transition_name("resolve"),
         }
