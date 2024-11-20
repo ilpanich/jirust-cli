@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 ## [Unreleased]
+### Added
+- Macro jira_doc_std_field to generate the standard jira doc type field structure
+
+### Changed
+- Updated dependencies
 
 ## [0.9.8] 2024-11-12
 ### Changed
