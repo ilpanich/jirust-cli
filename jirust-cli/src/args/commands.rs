@@ -1,4 +1,6 @@
+use crate::jira_doc_std_field;
 use clap::{ArgAction, Args, Parser, Subcommand, ValueEnum};
+use regex::Regex;
 use std::error::Error;
 
 /// Command line arguments base
@@ -434,5 +436,19 @@ where
     let pos = s
         .find('=')
         .ok_or_else(|| format!("invalid KEY=value: no `=` found in `{s}`"))?;
-    Ok((s[..pos].parse()?, s[pos + 1..].parse()?))
+    Ok((
+        s[..pos].parse()?,
+        manage_jira_document_field(s[pos + 1..].to_string()).parse()?,
+    ))
+}
+
+fn manage_jira_document_field(value: String) -> String {
+    let re = Regex::new(r"^jira_doc_field\[([\w|\d|\s]+)\]$").unwrap();
+    let captures = re.captures(&value);
+    let val = if Option::is_some(&captures) {
+        jira_doc_std_field![captures.unwrap().get(1).unwrap().as_str()].to_string()
+    } else {
+        value.to_string()
+    };
+    val
 }
