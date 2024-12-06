@@ -443,7 +443,7 @@ where
 }
 
 fn manage_jira_document_field(value: String) -> String {
-    let re = Regex::new(r"^jira_doc_field\[([\w|\d|\s]+)\]$").unwrap();
+    let re = Regex::new(r"^jira_doc_field\[(.+)\]$").unwrap();
     let captures = re.captures(&value);
     let val = if Option::is_some(&captures) {
         jira_doc_std_field![captures.unwrap().get(1).unwrap().as_str()].to_string()
