@@ -23,10 +23,10 @@ toml = "0.8"
 clap = { version = "4.5", features = ["derive"] }
 clap_derive = "4.5"
 rpassword = "7.3.1"
-jira_v3_openapi = "1.0.6"
+jira_v3_openapi = "1.0.12"
 prettytable-rs = "0.10.0"
 chrono = "0.4.38"
-regex = "1.10.6"
+regex = "1.11.1"
 
 [dev-dependencies]
 tokio-test = "0.4.4"
