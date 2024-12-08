@@ -389,12 +389,22 @@ impl ConfigFile {
     /// let mut config = ConfigFile::default();
     /// config.add_transition_name("transition_key".to_string(), "Transition name".to_string());
     ///
-    /// assert_eq!(config.get_transition_name("transition_key"), Some("Transition name".to_string()));
+    /// assert_eq!(config.get_transition_name("transition_key"), Some(vec!["Transition name".to_string()]));
     /// ```
     pub fn add_transition_name(&mut self, key: String, value: String) {
+        let mut existing_value: Vec<Value> = self
+            .jira
+            .transitions_names
+            .get(&key)
+            .and_then(|v| v.as_array())
+            .unwrap_or(&vec![])
+            .iter()
+            .map(|v| Value::String(v.as_str().unwrap().to_string()))
+            .collect();
+        existing_value.push(Value::String(value));
         self.jira
             .transitions_names
-            .insert(key, Value::String(value));
+            .insert(key, Value::Array(existing_value));
     }
 
     /// Get the transition name for a specific transition internal identifier.
@@ -416,16 +426,20 @@ impl ConfigFile {
     /// let mut config = ConfigFile::default();
     /// config.add_transition_name("transition_key".to_string(), "Transition name".to_string());
     ///
-    /// assert_eq!(config.get_transition_name("transition_key"), Some("Transition name".to_string()));
+    /// assert_eq!(config.get_transition_name("transition_key"), Some(vec!["Transition name".to_string()]));
     /// ```
-    pub fn get_transition_name(&self, key: &str) -> Option<String> {
+    pub fn get_transition_name(&self, key: &str) -> Option<Vec<String>> {
+        let tranisitons_names = self
+            .jira
+            .transitions_names
+            .get(key)
+            .and_then(|v| v.as_array());
         Some(
-            self.jira
-                .transitions_names
-                .get(key)
-                .and_then(|v| v.as_str())
-                .map(|value| value.to_string())
-                .unwrap_or_default(),
+            tranisitons_names
+                .unwrap_or(&vec![])
+                .iter()
+                .map(|v| v.as_str().unwrap().to_string())
+                .collect(),
         )
     }
 
