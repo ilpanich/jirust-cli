@@ -24,7 +24,7 @@ pub struct VersionCmdRunner {
     cfg: Configuration,
     resolution_value: Value,
     resolution_comment: Value,
-    resolution_transition_name: Option<String>,
+    resolution_transition_name: Option<Vec<String>>,
 }
 
 /// Version command runner implementation.
@@ -178,12 +178,8 @@ impl VersionCmdRunner {
             } else {
                 None
             };
-            let empty_transition = IssueTransition {
-                id: Some("".to_string()),
-                ..Default::default()
-            };
             for issue in resolved_issues {
-                let transitions: Vec<IssueTransition> = get_transitions(
+                let all_transitions: Vec<IssueTransition> = get_transitions(
                     &self.cfg,
                     issue.clone().as_str(),
                     None,
@@ -195,22 +191,29 @@ impl VersionCmdRunner {
                 .await?
                 .transitions
                 .unwrap_or_default();
-                let transition_name: String = self
+                let transition_names: Vec<String> = self
                     .resolution_transition_name
                     .clone()
                     .expect("Transition name is required and must be set in the config file");
-                let resolve_transition = transitions
-                    .iter()
-                    .find(|x| x.name.as_ref() == Some(&transition_name));
-                let transition_id = resolve_transition.unwrap_or(&empty_transition).id.as_ref();
-                let transition = if Option::is_some(&transition_id) {
-                    Some(IssueTransition {
-                        id: Some(transition_id.unwrap().to_string()),
-                        ..Default::default()
+                let resolve_transitions: Vec<IssueTransition> = all_transitions
+                    .into_iter()
+                    .filter(|t| {
+                        transition_names.contains(&t.name.clone().unwrap_or("".to_string()))
                     })
-                } else {
-                    None
-                };
+                    .collect();
+                let transition_ids = resolve_transitions
+                    .into_iter()
+                    .map(|t| t.id.clone().unwrap_or("".to_string()))
+                    .collect::<Vec<String>>();
+                let transitions = transition_ids
+                    .into_iter()
+                    .map(|id| {
+                        Some(IssueTransition {
+                            id: Some(id),
+                            ..Default::default()
+                        })
+                    })
+                    .collect::<Vec<Option<IssueTransition>>>();
                 let mut update_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
                     HashMap::new();
                 let mut transition_fields_hashmap: HashMap<String, Vec<FieldUpdateOperation>> =
@@ -237,31 +240,37 @@ impl VersionCmdRunner {
                     update: Some(update_fields_hashmap),
                 };
                 let mut transition_result: String = "KO".to_string();
-                if Option::is_some(&transition) {
-                    let issue_transition_data = IssueUpdateDetails {
-                        fields: Some(version_resolution_update_field),
-                        history_metadata: None,
-                        properties: None,
-                        transition: Some(transition.clone().unwrap()),
-                        update: Some(transition_fields_hashmap),
-                    };
-                    transition_result = match do_transition(
-                        &self.cfg,
-                        issue.clone().as_str(),
-                        issue_transition_data,
-                    )
-                    .await
-                    {
-                        Ok(_) => "OK".to_string(),
-                        Err(Error::Serde(e)) => {
-                            if e.is_eof() {
-                                "OK".to_string()
-                            } else {
-                                "KO".to_string()
+                if !Vec::is_empty(&transitions) {
+                    for transition in transitions {
+                        let issue_transition_data = IssueUpdateDetails {
+                            fields: Some(version_resolution_update_field.clone()),
+                            history_metadata: None,
+                            properties: None,
+                            transition: Some(transition.clone().unwrap()),
+                            update: Some(transition_fields_hashmap.clone()),
+                        };
+                        match do_transition(
+                            &self.cfg,
+                            issue.clone().as_str(),
+                            issue_transition_data,
+                        )
+                        .await
+                        {
+                            Ok(_) => {
+                                transition_result = "OK".to_string();
+                                break;
                             }
+                            Err(Error::Serde(e)) => {
+                                if e.is_eof() {
+                                    transition_result = "OK".to_string();
+                                    break;
+                                } else {
+                                    transition_result = "KO".to_string()
+                                }
+                            }
+                            Err(_) => transition_result = "KO".to_string(),
                         }
-                        Err(_) => "KO".to_string(),
-                    };
+                    }
                 }
                 let assign_result: String = match assign_issue(
                     &self.cfg,

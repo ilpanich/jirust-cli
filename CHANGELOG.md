@@ -7,6 +7,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Fixed
 - Fixed the format used in jira_doc_std_field macro to allow to use it properly
 
+### Added
+- Manage multiple possible resolution (or final) transitions on automatic resolution in Jira version creation
+
+
 ## [0.10.0] 2024-11-21
 ### Added
 - Macro jira_doc_std_field to generate the standard jira doc type field structure
