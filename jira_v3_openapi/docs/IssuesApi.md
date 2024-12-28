@@ -14,6 +14,7 @@ Method | HTTP request | Description
 [**do_transition**](IssuesApi.md#do_transition) | **POST** /rest/api/3/issue/{issueIdOrKey}/transitions | Transition issue
 [**edit_issue**](IssuesApi.md#edit_issue) | **PUT** /rest/api/3/issue/{issueIdOrKey} | Edit issue
 [**export_archived_issues**](IssuesApi.md#export_archived_issues) | **PUT** /rest/api/3/issues/archive/export | Export archived issue(s)
+[**get_bulk_changelogs**](IssuesApi.md#get_bulk_changelogs) | **POST** /rest/api/3/changelog/bulkfetch | Bulk fetch changelogs
 [**get_change_logs**](IssuesApi.md#get_change_logs) | **GET** /rest/api/3/issue/{issueIdOrKey}/changelog | Get changelogs
 [**get_change_logs_by_ids**](IssuesApi.md#get_change_logs_by_ids) | **POST** /rest/api/3/issue/{issueIdOrKey}/changelog/list | Get changelogs by IDs
 [**get_create_issue_meta**](IssuesApi.md#get_create_issue_meta) | **GET** /rest/api/3/issue/createmeta | Get create issue metadata
@@ -326,6 +327,36 @@ Name | Type | Description  | Required | Notes
 ### Return type
 
 [**models::ExportArchivedIssuesTaskProgressResponse**](ExportArchivedIssuesTaskProgressResponse.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## get_bulk_changelogs
+
+> models::BulkChangelogResponseBean get_bulk_changelogs(bulk_changelog_request_bean)
+Bulk fetch changelogs
+
+Bulk fetch changelogs for multiple issues and filter by fields  Returns a paginated list of all changelogs for given issues sorted by changelog date and issue IDs, starting from the oldest changelog and smallest issue ID.  Issues are identified by their ID or key, and optionally changelogs can be filtered by their field IDs. You can request the changelogs of up to 1000 issues and can filter them by up to 10 field IDs.  **[Permissions](#permissions) required:**   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the projects that the issues are in.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issues.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**bulk_changelog_request_bean** | [**BulkChangelogRequestBean**](BulkChangelogRequestBean.md) | A JSON object containing the bulk fetch changelog request filters such as issue IDs and field IDs. | [required] |
+
+### Return type
+
+[**models::BulkChangelogResponseBean**](BulkChangelogResponseBean.md)
 
 ### Authorization
 

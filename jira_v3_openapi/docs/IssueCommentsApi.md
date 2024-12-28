@@ -123,7 +123,7 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **issue_id_or_key** | **String** | The ID or key of the issue. | [required] |
 **start_at** | Option<**i64**> | The index of the first item to return in a page of results (page offset). |  |[default to 0]
-**max_results** | Option<**i32**> | The maximum number of items to return per page. |  |[default to 5000]
+**max_results** | Option<**i32**> | The maximum number of items to return per page. |  |[default to 100]
 **order_by** | Option<**String**> | [Order](#ordering) the results by a field. Accepts *created* to sort comments by their created date. |  |
 **expand** | Option<**String**> | Use [expand](#expansion) to include additional information about comments in the response. This parameter accepts `renderedBody`, which returns the comment body rendered in HTML. |  |
 

@@ -238,7 +238,7 @@ Name | Type | Description  | Required | Notes
 
 ## get_filters_paginated
 
-> models::PageBeanFilterDetails get_filters_paginated(filter_name, account_id, owner, groupname, group_id, project_id, id, order_by, start_at, max_results, expand, override_share_permissions)
+> models::PageBeanFilterDetails get_filters_paginated(filter_name, account_id, owner, groupname, group_id, project_id, id, order_by, start_at, max_results, expand, override_share_permissions, is_substring_match)
 Search for filters
 
 Returns a [paginated](#pagination) list of filters. Use this operation to get:   *  specific filters, by defining `id` only.  *  filters that match all of the specified attributes. For example, all filters for a user with a particular word in their name. When multiple attributes are specified only filters matching all attributes are returned.  This operation can be accessed anonymously.  **[Permissions](#permissions) required:** None, however, only the following filters that match the query parameters are returned:   *  filters owned by the user.  *  filters shared with a group that the user is a member of.  *  filters shared with a private project that the user has *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for.  *  filters shared with a public project.  *  filters shared with the public.
@@ -260,6 +260,7 @@ Name | Type | Description  | Required | Notes
 **max_results** | Option<**i32**> | The maximum number of items to return per page. |  |[default to 50]
 **expand** | Option<**String**> | Use [expand](#expansion) to include additional information about filter in the response. This parameter accepts a comma-separated list. Expand options include:   *  `description` Returns the description of the filter.  *  `favourite` Returns an indicator of whether the user has set the filter as a favorite.  *  `favouritedCount` Returns a count of how many users have set this filter as a favorite.  *  `jql` Returns the JQL query that the filter uses.  *  `owner` Returns the owner of the filter.  *  `searchUrl` Returns a URL to perform the filter's JQL query.  *  `sharePermissions` Returns the share permissions defined for the filter.  *  `editPermissions` Returns the edit permissions defined for the filter.  *  `isWritable` Returns whether the current user has permission to edit the filter.  *  `approximateLastUsed` \\[Experimental\\] Returns the approximate date and time when the filter was last evaluated.  *  `subscriptions` Returns the users that are subscribed to the filter.  *  `viewUrl` Returns a URL to view the filter. |  |
 **override_share_permissions** | Option<**bool**> | EXPERIMENTAL: Whether share permissions are overridden to enable filters with any share permissions to be returned. Available to users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
+**is_substring_match** | Option<**bool**> | When `true` this will perform a case-insensitive substring match for the provided `filterName`. When `false` the filter name will be searched using [full text search syntax](https://support.atlassian.com/jira-software-cloud/docs/search-for-issues-using-the-text-field/). |  |[default to false]
 
 ### Return type
 

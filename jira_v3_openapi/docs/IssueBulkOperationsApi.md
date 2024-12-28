@@ -4,11 +4,46 @@ All URIs are relative to *https://your-domain.atlassian.net*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**get_available_transitions**](IssueBulkOperationsApi.md#get_available_transitions) | **GET** /rest/api/3/bulk/issues/transition | Get available transitions
 [**get_bulk_editable_fields**](IssueBulkOperationsApi.md#get_bulk_editable_fields) | **GET** /rest/api/3/bulk/issues/fields | Get bulk editable fields
 [**get_bulk_operation_progress**](IssueBulkOperationsApi.md#get_bulk_operation_progress) | **GET** /rest/api/3/bulk/queue/{taskId} | Get bulk issue operation progress
+[**submit_bulk_delete**](IssueBulkOperationsApi.md#submit_bulk_delete) | **POST** /rest/api/3/bulk/issues/delete | Bulk delete issues
 [**submit_bulk_edit**](IssueBulkOperationsApi.md#submit_bulk_edit) | **POST** /rest/api/3/bulk/issues/fields | Bulk edit issues
 [**submit_bulk_move**](IssueBulkOperationsApi.md#submit_bulk_move) | **POST** /rest/api/3/bulk/issues/move | Bulk move issues
+[**submit_bulk_transition**](IssueBulkOperationsApi.md#submit_bulk_transition) | **POST** /rest/api/3/bulk/issues/transition | Bulk transition issue statuses
 
+
+
+## get_available_transitions
+
+> models::BulkTransitionGetAvailableTransitions get_available_transitions(issue_ids_or_keys, ending_before, starting_after)
+Get available transitions
+
+Use this API to retrieve a list of transitions available for the specified issues that can be used or bulk transition operations. You can submit either single or multiple issues in the query to obtain the available transitions.  The response will provide the available transitions for issues, organized by their respective workflows. **Only the transitions that are common among the issues within that workflow and do not involve any additional field updates will be included.** For bulk transitions that require additional field updates, please utilise the Jira Cloud UI.  You can request available transitions for up to 1,000 issues in a single operation. This API uses pagination to return responses, delivering 50 workflows at a time.  **[Permissions](#permissions) required:**   *  Global bulk change [permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-global-permissions/).  *  Transition [issues permission](https://support.atlassian.com/jira-cloud-administration/docs/permissions-for-company-managed-projects/#Transition-issues/) in all projects that contain the selected issues.  *  Browse [project permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-project-permissions/) in all projects that contain the selected issues.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**issue_ids_or_keys** | **String** | Comma (,) separated Ids or keys of the issues to get transitions available for them. | [required] |
+**ending_before** | Option<**String**> | (Optional)The end cursor for use in pagination. |  |
+**starting_after** | Option<**String**> | (Optional)The start cursor for use in pagination. |  |
+
+### Return type
+
+[**models::BulkTransitionGetAvailableTransitions**](BulkTransitionGetAvailableTransitions.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
 ## get_bulk_editable_fields
@@ -74,6 +109,36 @@ Name | Type | Description  | Required | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
+## submit_bulk_delete
+
+> models::SubmittedBulkOperation submit_bulk_delete(issue_bulk_delete_payload)
+Bulk delete issues
+
+Use this API to submit a bulk delete request. You can delete up to 1,000 issues in a single operation.  **[Permissions](#permissions) required:**   *  Global bulk change [permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-global-permissions/).  *  Delete [issues permission](https://support.atlassian.com/jira-cloud-administration/docs/permissions-for-company-managed-projects/#Delete-issues/) in all projects that contain the selected issues.  *  Browse [project permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-project-permissions/) in all projects that contain the selected issues.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**issue_bulk_delete_payload** | [**IssueBulkDeletePayload**](IssueBulkDeletePayload.md) | The request body containing the issues to be deleted. | [required] |
+
+### Return type
+
+[**models::SubmittedBulkOperation**](SubmittedBulkOperation.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
 ## submit_bulk_edit
 
 > models::SubmittedBulkOperation submit_bulk_edit(issue_bulk_edit_payload)
@@ -117,6 +182,36 @@ Use this API to submit a bulk issue move request. You can move multiple issues, 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **issue_bulk_move_payload** | [**IssueBulkMovePayload**](IssueBulkMovePayload.md) |  | [required] |
+
+### Return type
+
+[**models::SubmittedBulkOperation**](SubmittedBulkOperation.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## submit_bulk_transition
+
+> models::SubmittedBulkOperation submit_bulk_transition(issue_bulk_transition_payload)
+Bulk transition issue statuses
+
+Use this API to submit a bulk issue status transition request. You can transition multiple issues, alongside with their valid transition Ids. You can transition up to 1,000 issues in a single operation.  **[Permissions](#permissions) required:**   *  Global bulk change [permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-global-permissions/).  *  Transition [issues permission](https://support.atlassian.com/jira-cloud-administration/docs/permissions-for-company-managed-projects/#Transition-issues/) in all projects that contain the selected issues.  *  Browse [project permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-project-permissions/) in all projects that contain the selected issues.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**issue_bulk_transition_payload** | [**IssueBulkTransitionPayload**](IssueBulkTransitionPayload.md) | The request body containing the issues to be transitioned. | [required] |
 
 ### Return type
 
