@@ -13,12 +13,12 @@
 /// ```
 /// use jirust_cli::jira_doc_std_field;
 ///
-/// assert_eq!(jira_doc_std_field!("This is a test"), "{\"body\":{\"content\":[{\"content\":[{\"text\":\"This is a test\",\"type\":\"text\"}],\"type\":\"paragraph\"}],\"type\":\"doc\",\"version\":1}}");
+/// assert_eq!(jira_doc_std_field!("This is a test"), "{\"content\":[{\"content\":[{\"text\":\"This is a test\",\"type\":\"text\"}],\"type\":\"paragraph\"}],\"type\":\"doc\",\"version\":1}");
 /// ```
 #[macro_export]
 macro_rules! jira_doc_std_field {
     ($v:expr) => {
         format!(
-            "{{\"body\":{{\"content\":[{{\"content\":[{{\"text\":\"{}\",\"type\":\"text\"}}],\"type\":\"paragraph\"}}],\"type\":\"doc\",\"version\":1}}}}", $v).as_str()
+            "{{\"content\":[{{\"content\":[{{\"text\":\"{}\",\"type\":\"text\"}}],\"type\":\"paragraph\"}}],\"type\":\"doc\",\"version\":1}}", $v).as_str()
     }
 }
