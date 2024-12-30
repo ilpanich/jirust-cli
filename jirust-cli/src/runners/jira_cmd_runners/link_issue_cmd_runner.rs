@@ -1,19 +1,12 @@
 use jira_v3_openapi::apis::issue_links_api::link_issues;
-use jira_v3_openapi::apis::issues_api::*;
-use jira_v3_openapi::models::user::AccountType;
 use jira_v3_openapi::models::{
-    CreatedIssue, IssueBean, IssueLinkType, IssueTransition, LinkIssueRequestJsonBean, LinkedIssue,
-    Transitions, User,
+    IssueLinkType, LinkIssueRequestJsonBean, LinkedIssue,
 };
-use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDetails};
+use jira_v3_openapi::apis::configuration::Configuration;
 use serde_json::Value;
-use std::collections::HashMap;
 
-use crate::args::commands::{LinkIssueArgs, TransitionArgs};
-use crate::{
-    args::commands::IssueArgs,
-    config::config_file::{AuthData, ConfigFile},
-};
+use crate::args::commands::LinkIssueArgs;
+use crate::config::config_file::{AuthData, ConfigFile};
 
 /// Issue command runner
 /// This struct is responsible for running the issue command
