@@ -148,6 +148,9 @@ pub async fn process_command(
                 IssueTransitionExecutor::new(cfg_data, args.transition_act, args);
             issue_transition_executor.exec_jira_command().await?
         }
+        Commands::Link(args) => {
+            todo!("Implement link command")
+        }
     }
     Ok(())
 }
