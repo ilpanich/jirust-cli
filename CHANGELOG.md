@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+
+## [0.11.0] 2025-01-03
 ### Fixed
 - Fixed the format used in jira_doc_std_field macro to allow to use it properly
 - Fixed some wrong documentation
