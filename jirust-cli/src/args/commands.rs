@@ -57,6 +57,9 @@ pub struct PaginationArgs {
 
 /// Available output values
 /// Table, Json
+///
+/// * Table: Print output in table format
+/// * Json: Print output in json format
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum OutputValues {
@@ -70,8 +73,7 @@ pub enum OutputValues {
 
 /// Available output values
 ///
-/// * Table: Print output in table format
-/// * Json: Print output in json format
+/// * output: Option<OutputValues> - Output format
 #[derive(Args, Debug)]
 pub struct OutputArgs {
     /// Output format
@@ -82,7 +84,6 @@ pub struct OutputArgs {
 /// Available configuration command line arguments
 /// cfg_act: ConfigActionValues
 ///    Auth, Jira, Setup, Show
-///
 #[derive(Args, Debug)]
 pub struct ConfigArgs {
     /// Configuration action
@@ -95,6 +96,11 @@ pub struct ConfigArgs {
 
 /// Available configuration action values
 /// Auth, Jira, Setup, Show
+///
+/// * Auth: Set Jira API authentication (username, apikey)
+/// * Jira: Set Jira API base URL
+/// * Setup: Setup Jira API configuration (authentication data, jira base URL, etc.)
+/// * Show: Show current configuration
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum ConfigActionValues {
@@ -116,8 +122,22 @@ pub enum ConfigActionValues {
 }
 
 /// Available version command line arguments
-/// version_act: VersionActionValues
-///   Create, List, Update, Delete, Release, Archive
+/// * version_act: VersionActionValues - Version action
+/// * project_key: String - Jira Project key
+/// * project_id: Option<i64> - Jira Project ID
+/// * version_id: Option<String> - Jira Project version ID
+/// * version_name: Option<String> - Jira Project version name
+/// * version_description: Option<String> - Jira Project version description
+/// * version_start_date: Option<String> - Jira Project version start date
+/// * version_release_date: Option<String> - Jira Project version release date
+/// * version_archived: Option<bool> - Jira Project version archived
+/// * version_released: Option<bool> - Jira Project version released
+/// * changelog_file: Option<String> - Jira Project version changelog file
+/// * transition_issues: Option<bool> - Jira Project version automatically transition issues in changelog
+/// * transition_assignee: Option<String> - Jira Project version transition assignee
+/// * pagination: PaginationArgs - Jira Project version pagination
+/// * output: OutputArgs - Jira Project version actions result output format
+///
 #[derive(Args, Debug)]
 pub struct VersionArgs {
     /// Version action
@@ -228,6 +248,13 @@ pub struct VersionArgs {
 
 /// Available version action values
 /// Archive, Create, Delete, List, Release, Update
+///
+/// * Archive: Archive a Jira Project version
+/// * Create: Create a Jira Project version
+/// * Delete: Delete a Jira Project version
+/// * List: List Jira Project versions
+/// * Release: Release a Jira Project version
+/// * Update: Update a Jira Project version
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum VersionActionValues {
@@ -252,8 +279,12 @@ pub enum VersionActionValues {
 }
 
 /// Available project command line arguments
-/// version_act: ProjectActionValues
-/// GetIssueTypes, GetIssueTypeFields, List
+///
+/// * project_act: ProjectActionValues - Project action
+/// * project_key: Option<String> - Jira Project key
+/// * project_issue_type: Option<String> - Jira Project issue type ID
+/// * pagination: PaginationArgs - Jira Project pagination
+/// * output: OutputArgs - Jira Project actions result output format
 #[derive(Args, Debug)]
 pub struct ProjectArgs {
     /// Project action
@@ -289,7 +320,10 @@ pub struct ProjectArgs {
 }
 
 /// Available project action values
-/// GetIssueTypes, GetIssueTypeFields, List
+///
+/// * GetIssueTypes: Get Jira Project issue types by Jira project key
+/// * GetIssueTypeFields: Get Jira Project issue type fields by Jira project key and issue type ID
+/// * List: List Jira Projects
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum ProjectActionValues {
@@ -310,9 +344,16 @@ pub enum ProjectActionValues {
     List,
 }
 
-/// Available version command line arguments
-/// version_act: VersionActionValues
-///   Create, List, Update, Delete, Release, Archive
+/// Available issue command line arguments
+///
+/// * issue_act: IssueActionValues - Issue action
+/// * project_key: String - Jira Project key
+/// * issue_key: Option<String> - Jira Project issue key
+/// * issue_fields: Option<Vec<(String, String)>> - Jira Project issue fields
+/// * transition_to: Option<String> - Jira Project issue transition to
+/// * assignee: Option<String> - Jira Project issue assignee
+/// * pagination: PaginationArgs - Jira Project issue pagination
+/// * output: OutputArgs - Jira Project issue actions result output format
 #[derive(Args, Debug)]
 pub struct IssueArgs {
     /// Issue action
@@ -371,7 +412,13 @@ pub struct IssueArgs {
 }
 
 /// Available issue action values
-/// Create, List, Update, Delete, Release, Archive
+///
+/// * Assign: Assign a Jira Project issue
+/// * Create: Create a Jira Project issue
+/// * Delete: Delete a Jira Project issue
+/// * Get: Get a specific Jira Project issue
+/// * Transition: Transition a Jira Project issue
+/// * Update: Update a Jira Project issue
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum IssueActionValues {
@@ -396,6 +443,13 @@ pub enum IssueActionValues {
 }
 
 /// Available issues' links command line arguments
+///
+/// * link_act: LinkIssueActionValues - Jira link issue command available actions
+/// * project_key: Option<String> - Jira Project key
+/// * origin_issue_key: String - Jira origin issue link key
+/// * destination_issue_key: Option<String> - Jira destination issue link key
+/// * link_type: String - Jira issue link type
+/// * changelog_file: Option<String> - Jira Project version changelog file
 #[derive(Args, Debug)]
 pub struct LinkIssueArgs {
     // Jira link issue command available actions
@@ -450,7 +504,8 @@ pub struct LinkIssueArgs {
 }
 
 /// Available link issue action values
-/// Create
+///
+/// * Create: Create a Jira link between issues
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum LinkIssueActionValues {
@@ -460,8 +515,10 @@ pub enum LinkIssueActionValues {
 }
 
 /// Available transition command line arguments
-/// transition_act: TransitionActionValues
-/// List
+///
+/// * transition_act: TransitionActionValues - Transition action
+/// * issue_key: String - Jira issue key
+/// * output: OutputArgs - Jira issue output format
 #[derive(Args, Debug)]
 pub struct TransitionArgs {
     /// Transition action
@@ -482,7 +539,8 @@ pub struct TransitionArgs {
 }
 
 /// Available transition action values
-/// List
+///
+/// * List: List Jira issue available transitions
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum TransitionActionValues {
@@ -509,6 +567,8 @@ where
     ))
 }
 
+/// Manage Jira document field
+/// Relies on the manage_jira_document_field macro to wrap the field in the correct format
 fn manage_jira_document_field(value: String) -> String {
     let re = Regex::new(r"^jira_doc_field\[(.+)\]$").unwrap();
     let captures = re.captures(&value);
