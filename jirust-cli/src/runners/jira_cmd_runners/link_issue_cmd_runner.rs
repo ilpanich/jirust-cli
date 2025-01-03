@@ -1,15 +1,15 @@
-use jira_v3_openapi::apis::issue_links_api::link_issues;
-use jira_v3_openapi::models::{
-    IssueLinkType, LinkIssueRequestJsonBean, LinkedIssue,
-};
 use jira_v3_openapi::apis::configuration::Configuration;
+use jira_v3_openapi::apis::issue_links_api::link_issues;
+use jira_v3_openapi::apis::Error;
+use jira_v3_openapi::models::{IssueLinkType, LinkIssueRequestJsonBean, LinkedIssue};
 use serde_json::Value;
 
 use crate::args::commands::LinkIssueArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
+use crate::utils::changelog_extractor::ChangelogExtractor;
 
-/// Issue command runner
-/// This struct is responsible for running the issue command
+/// Link issue command runner
+/// This struct is responsible for running the link issue command
 /// It uses the Jira API to perform the operations
 ///
 /// # Fields
@@ -24,16 +24,10 @@ pub struct LinkIssueCmdRunner {
 ///
 /// # Methods
 ///
-/// * `new` - Creates a new instance of IssueCmdRunner
-/// * `assign_jira_issue` - Assigns a Jira issue to a user
-/// * `create_jira_issue` - Creates a Jira issue
-/// * `delete_jira_issue` - Deletes a Jira issue
-/// * `get_jira_issue` - Gets a Jira issue
-/// * `transition_jira_issue` - Transitions a Jira issue
-/// * `update_jira_issue` - Updates a Jira issue
-/// * `get_issue_available_transitions` - Gets available transitions for a Jira issue
+/// * `new` - Creates a new instance of LinkIssueCmdRunner
+/// * `link_jira_issues` - Links Jira issues
 impl LinkIssueCmdRunner {
-    /// Creates a new instance of IssueCmdRunner
+    /// Creates a new instance of LinkIssueCmdRunner
     ///
     /// # Arguments
     ///
@@ -41,18 +35,18 @@ impl LinkIssueCmdRunner {
     ///
     /// # Returns
     ///
-    /// * `IssueCmdRunner` - Instance of IssueCmdRunner
+    /// * `LinkIssueCmdRunner` - Instance of LinkIssueCmdRunner
     ///
     /// # Examples
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
-    /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::IssueCmdRunner;
+    /// use jirust_cli::runners::jira_cmd_runners::link_issue_cmd_runner::LinkIssueCmdRunner;
     /// use toml::Table;
     ///
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
+    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(cfg_file);
     /// ```
     pub fn new(cfg_file: ConfigFile) -> LinkIssueCmdRunner {
         let mut config = Configuration::new();
@@ -62,7 +56,42 @@ impl LinkIssueCmdRunner {
         LinkIssueCmdRunner { cfg: config }
     }
 
-    pub async fn link_jira_issues(&self, params: LinkIssueCmdParams) -> Result<Value, String> {
+    /// Links Jira issues
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - LinkIssueCmdParams struct
+    ///
+    /// # Returns
+    ///
+    /// * `Result<Value, Box<dyn std::error::Error>>` - Result of the operation
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use jirust_cli::runners::jira_cmd_runners::link_issue_cmd_runner::{LinkIssueCmdRunner, LinkIssueCmdParams};
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
+    /// # use std::error::Error;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(cfg_file);
+    /// let mut params = LinkIssueCmdParams::new();
+    /// params.origin_issue_key = "ISSUE-1".to_string();
+    /// params.destination_issue_key = Some("ISSUE-2".to_string());
+    /// params.link_type = "Blocks".to_string();
+    ///
+    /// let result = link_issue_cmd_runner.link_jira_issues(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
+    /// ```
+    pub async fn link_jira_issues(
+        &self,
+        params: LinkIssueCmdParams,
+    ) -> Result<Value, Box<dyn std::error::Error>> {
         let mut link_requests: Vec<LinkIssueRequestJsonBean> = Vec::new();
         if params.destination_issue_key.is_some() {
             let link_request = LinkIssueRequestJsonBean {
@@ -89,29 +118,75 @@ impl LinkIssueCmdRunner {
             };
             link_requests.push(link_request);
         } else {
-            todo!("Implement Issues extraction from changelog")
+            let changelog_extractor = ChangelogExtractor::new(params.changelog_file.unwrap());
+            let version_data: Option<String> = Some(
+                changelog_extractor
+                    .extract_version_changelog()
+                    .unwrap_or_default(),
+            );
+            if version_data.is_some() {
+                let issues = changelog_extractor
+                    .extract_issues_from_changelog(
+                        version_data.clone().unwrap(),
+                        params.project_key.clone().expect("Project key is required"),
+                    )
+                    .unwrap_or_default();
+                link_requests = issues
+                    .iter()
+                    .map(|issue| LinkIssueRequestJsonBean {
+                        comment: None,
+                        inward_issue: Box::new(LinkedIssue {
+                            key: Some(params.origin_issue_key.clone()),
+                            id: None,
+                            fields: None,
+                            param_self: None,
+                        }),
+                        outward_issue: Box::new(LinkedIssue {
+                            key: Some(issue.clone()),
+                            id: None,
+                            fields: None,
+                            param_self: None,
+                        }),
+                        r#type: Box::new(IssueLinkType {
+                            name: Some(params.link_type.clone()),
+                            inward: None,
+                            outward: None,
+                            id: None,
+                            param_self: None,
+                        }),
+                    })
+                    .collect();
+            }
         };
 
+        let mut link_result: Value = Value::String("Linking OK".to_string());
+
         for link_issue_request_json_bean in link_requests {
-            link_issues(&self.cfg, link_issue_request_json_bean)
-                .await
-                .map_err(|e| e.to_string())?;
+            match link_issues(&self.cfg, link_issue_request_json_bean).await {
+                Ok(_) => {}
+                Err(Error::Serde(_)) => {}
+                Err(_) => {
+                    link_result = Value::String("Linking KO".to_string());
+                }
+            };
         }
-        Ok(Value::Null)
+        Ok(link_result)
     }
 }
 
-/// Issue command parameters
+/// Link issue command parameters
 ///
 /// # Fields
 ///
 /// * `project_key` - Jira project key
-/// * `issue_key` - Jira issue key
-/// * `issue_fields` - Jira issue fields
-/// * `transition` - Jira issue transition
-/// * `assignee` - Jira issue assignee
+/// * `origin_issue_key` - Jira origin issue key
+/// * `destination_issue_key` - Jira destination issue key
+/// * `link_type` - Jira link type
+/// * `changelog_file` - Changelog file
 pub struct LinkIssueCmdParams {
     /// Jira project key
+    pub project_key: Option<String>,
+    /// Jira issue key
     pub origin_issue_key: String,
     /// Jira issue key
     pub destination_issue_key: Option<String>,
@@ -121,27 +196,28 @@ pub struct LinkIssueCmdParams {
     pub changelog_file: Option<String>,
 }
 
-/// Implementation of IssueCmdParams struct
+/// Implementation of LinkIssueCmdParams struct
 ///
 /// # Methods
 ///
-/// * `new` - Creates a new IssueCmdParams instance
+/// * `new` - Creates a new LinkIssueCmdParams instance
 impl LinkIssueCmdParams {
-    /// Creates a new IssueCmdParams instance
+    /// Creates a new LinkIssueCmdParams instance
     ///
     /// # Returns
     ///
-    /// * `IssueCmdParams` - Issue command parameters
+    /// * `LinkIssueCmdParams` - Issue command parameters
     ///
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::IssueCmdParams;
+    /// use jirust_cli::runners::jira_cmd_runners::link_issue_cmd_runner::LinkIssueCmdParams;
     ///
-    /// let params = IssueCmdParams::new();
+    /// let params = LinkIssueCmdParams::new();
     /// ```
     pub fn new() -> LinkIssueCmdParams {
         LinkIssueCmdParams {
+            project_key: None,
             origin_issue_key: "".to_string(),
             destination_issue_key: None,
             link_type: "".to_string(),
@@ -150,45 +226,45 @@ impl LinkIssueCmdParams {
     }
 }
 
-/// Implementation of From trait for IssueCmdParams struct
-/// to convert IssueArgs struct to IssueCmdParams struct
+/// Implementation of From trait for LinkIssueCmdParams struct
+/// to convert LinkIssueArgs struct to LinkIssueCmdParams struct
 impl From<&LinkIssueArgs> for LinkIssueCmdParams {
-    /// Converts IssueArgs struct to IssueCmdParams struct
-    /// to create a new IssueCmdParams instance
+    /// Converts LinkIssueArgs struct to LinkIssueCmdParams struct
+    /// to create a new LinkIssueCmdParams instance
     ///
     /// # Arguments
     ///
-    /// * `value` - IssueArgs struct
+    /// * `value` - LinkIssueArgs struct
     ///
     /// # Returns
     ///
-    /// * `IssueCmdParams` - Issue command parameters
+    /// * `LinkIssueArgs` - Link issue command parameters
     ///
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::IssueCmdParams;
-    /// use jirust_cli::args::commands::{IssueArgs, PaginationArgs, OutputArgs, IssueActionValues};
+    /// use jirust_cli::runners::jira_cmd_runners::link_issue_cmd_runner::LinkIssueCmdParams;
+    /// use jirust_cli::args::commands::{LinkIssueArgs, LinkIssueActionValues};
     /// use std::collections::HashMap;
     /// use serde_json::Value;
     ///
-    /// let issue_args = IssueArgs {
-    ///    issue_act: IssueActionValues::Get,
-    ///    project_key: "project_key".to_string(),
-    ///    issue_key: Some("issue_key".to_string()),
-    ///    issue_fields: Some(vec![("key".to_string(), r#"{ "key": "value" }"#.to_string())]),
-    ///    transition_to: Some("transition_to".to_string()),
-    ///    assignee: Some("assignee".to_string()),
-    ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
-    ///    output: OutputArgs { output: None },
+    /// let link_issue_args = LinkIssueArgs {
+    ///    link_act: LinkIssueActionValues::Create,
+    ///    project_key: Some("project_key".to_string()),
+    ///    origin_issue_key: "origin_issue_key".to_string(),
+    ///    destination_issue_key: Some("destination_issue_key".to_string()),
+    ///    link_type: "link_type".to_string(),
+    ///    changelog_file: None,
     /// };
     ///
-    /// let params = IssueCmdParams::from(&issue_args);
+    /// let params = LinkIssueCmdParams::from(&link_issue_args);
     ///
-    /// assert_eq!(params.project_key, "project_key".to_string());
-    /// assert_eq!(params.issue_key.unwrap(), "issue_key".to_string());
-    /// assert_eq!(params.transition.unwrap(), "transition_to".to_string());
-    /// assert_eq!(params.assignee.unwrap(), "assignee".to_string());
+    /// assert_eq!(params.project_key, Some("project_key".to_string()));
+    /// assert_eq!(params.origin_issue_key, "origin_issue_key".to_string());
+    /// assert_eq!(params.destination_issue_key, Some("destination_issue_key".to_string()));
+    /// assert_eq!(params.link_type, "link_type".to_string());
+    /// assert_eq!(params.changelog_file, None);
+    ///
     /// ```
     fn from(value: &LinkIssueArgs) -> Self {
         if (value.destination_issue_key.is_none() && value.changelog_file.is_none())
@@ -196,7 +272,11 @@ impl From<&LinkIssueArgs> for LinkIssueCmdParams {
         {
             panic!("Either destination issue key or changelog file is required");
         }
+        if value.changelog_file.is_some() && value.project_key.is_none() {
+            panic!("Project key is required when changelog file is provided");
+        }
         LinkIssueCmdParams {
+            project_key: value.project_key.clone(),
             origin_issue_key: value.origin_issue_key.clone(),
             destination_issue_key: value.destination_issue_key.clone(),
             link_type: value.link_type.clone(),
@@ -207,24 +287,24 @@ impl From<&LinkIssueArgs> for LinkIssueCmdParams {
 
 /// Default implementation for IssueCmdParams struct
 impl Default for LinkIssueCmdParams {
-    /// Creates a default IssueCmdParams instance
+    /// Creates a default LinkIssueCmdParams instance
     ///
     /// # Returns
     ///
-    /// A IssueCmdParams instance with default values
+    /// A LinkIssueCmdParams instance with default values
     ///
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::IssueCmdParams;
+    /// use jirust_cli::runners::jira_cmd_runners::link_issue_cmd_runner::LinkIssueCmdParams;
     ///
-    /// let params = IssueCmdParams::default();
+    /// let params = LinkIssueCmdParams::default();
     ///
-    /// assert_eq!(params.project_key, "".to_string());
-    /// assert_eq!(params.issue_key, None);
-    /// assert_eq!(params.issue_fields, None);
-    /// assert_eq!(params.transition, None);
-    /// assert_eq!(params.assignee, None);
+    /// assert_eq!(params.project_key, None);
+    /// assert_eq!(params.origin_issue_key, "".to_string());
+    /// assert_eq!(params.destination_issue_key, None);
+    /// assert_eq!(params.link_type, "".to_string());
+    /// assert_eq!(params.changelog_file, None);
     /// ```
     fn default() -> Self {
         LinkIssueCmdParams::new()

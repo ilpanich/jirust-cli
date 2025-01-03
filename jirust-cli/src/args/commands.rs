@@ -398,12 +398,22 @@ pub enum IssueActionValues {
 /// Available issues' links command line arguments
 #[derive(Args, Debug)]
 pub struct LinkIssueArgs {
+    // Jira link issue command available actions
     #[arg(
-        value_name = "create|delete",
+        value_name = "create",
         help_heading = "Jira issues links management",
         required = true
     )]
     pub link_act: LinkIssueActionValues,
+    /// Jira Project key
+    #[clap(
+        long,
+        short = 'k',
+        value_name = "project_key",
+        help = "Jira Project key"
+    )]
+    pub project_key: Option<String>,
+    /// Jira origin issue link key
     #[clap(
         long,
         short = 'i',
@@ -412,6 +422,7 @@ pub struct LinkIssueArgs {
         required = true
     )]
     pub origin_issue_key: String,
+    /// Jira destination issue link key
     #[clap(
         long,
         short = 'd',
@@ -419,6 +430,7 @@ pub struct LinkIssueArgs {
         help = "Jira issue link destination key"
     )]
     pub destination_issue_key: Option<String>,
+    /// Jira issue link type
     #[clap(
         long,
         short = 't',
@@ -435,21 +447,16 @@ pub struct LinkIssueArgs {
         help = "changelog file path to be used for automatic issues' links generation (if set the script detects automatically the first tagged block in the changelog and use it as description)"
     )]
     pub changelog_file: Option<String>,
-    #[clap(flatten)]
-    pub output: OutputArgs,
 }
 
 /// Available link issue action values
-/// Create, Delete
+/// Create
 #[derive(ValueEnum, Debug, Clone, Copy)]
 #[value(rename_all = "kebab-case")]
 pub enum LinkIssueActionValues {
     /// Create a Jira link between issues
     #[value(name = "create", help = "Create a Jira link between issues")]
     Create,
-    /// Delete a Jira link between issues
-    #[value(name = "delete", help = "Delete a Jira link between issues")]
-    Delete,
 }
 
 /// Available transition command line arguments
