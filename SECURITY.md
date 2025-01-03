@@ -6,8 +6,8 @@ Only last beta version will be supported, fixes and dependencies upgrade won't b
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.10.x   | :white_check_mark: |
-| < 0.10.0   | :x:                |
+| 0.11.x   | :white_check_mark: |
+| < 0.11.0   | :x:                |
 
 ## Reporting a Vulnerability
 
