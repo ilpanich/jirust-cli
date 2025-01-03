@@ -7,6 +7,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [Unreleased]
 ### Fixed
 - Fixed the format used in jira_doc_std_field macro to allow to use it properly
+- Fixed some wrong documentation
 
 ### Added
 - Manage multiple possible resolution (or final) transitions on automatic resolution in Jira version creation
@@ -14,6 +15,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Changed
 - Updated dependencies
+- Updated Security Policy
 
 ## [0.10.0] 2024-11-21
 ### Added

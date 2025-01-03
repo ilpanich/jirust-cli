@@ -57,6 +57,7 @@ Currently the basic version management is implemented and you can:
 * Delete an issue
 * Transition an issue
 * Assign an issue
+* Link issues
 * List all the transitions available for an issue
 
 Supported output formats are:
