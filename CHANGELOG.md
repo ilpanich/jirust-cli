@@ -6,6 +6,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.11.1] 2025-01-05
+### Changed
+- Dependencies updates
+- Dependencies feature flags optimizations
+
 ## [0.11.0] 2025-01-03
 ### Fixed
 - Fixed the format used in jira_doc_std_field macro to allow to use it properly
