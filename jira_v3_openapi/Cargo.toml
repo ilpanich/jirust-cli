@@ -5,7 +5,7 @@ authors = [
     "Atlassian OpenAPI <ecosystem@atlassian.com>",
     "Emanuele Panigati <ilpanich@gmail.com>",
 ]
-description = "Jira Cloud platform REST API lib (OpenAPI document version: 1001.0.0-SNAPSHOT-04504326a3bb85891591d523cc28ed61aefaa46b)"
+description = "Jira Cloud platform REST API lib (OpenAPI document version: 1001.0.0-SNAPSHOT-4168ca0e5efc137ea4ff4f0cf29358bf64e26f02)"
 keywords = ["jira", "openapi"]
 repository = "https://github.com/ilpanich/jirust-cli"
 license = "Apache-2.0"
@@ -15,19 +15,29 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-serde = { version = "^1.0", features = ["derive"] }
+serde = { version = "^1.0", default-features = false, features = ["derive"] }
 serde_with = { version = "^3.8", default-features = false, features = [
     "base64",
     "std",
     "macros",
 ] }
 serde_json = "^1.0"
+serde_repr = "0.1.19"
 url = "^2.5"
-uuid = { version = "^1.8", features = ["serde", "v4"] }
-reqwest = { version = "^0.12", features = ["json", "multipart"] }
-reqwest-middleware = { version = "^0.3", features = ["json", "multipart"] }
+uuid = { version = "^1.8", default-features = false, features = ["serde", "v4"] }
+reqwest = { version = "^0.12", default-features = false, features = ["json", "multipart"] }
+reqwest-middleware = { version = "^0.3", default-features = false, features = ["json", "multipart"] }
 
 [profile.release]
 opt-level = "s"
 lto = true
 codegen-units = 1
+
+[features]
+default = ["common"] # Default features
+all = ["common", "issues_api", "projects_api", "version_api", "link_issues_api"] # This feature is used to include all the generated modules
+common = [] # This feature is used to include basic common code that is used by all the generated modules
+issues_api = [] # This feature is used to include the Jira issues API related stuff
+projects_api = [] # This feature is used to include the Jira projects API related stuff
+version_api = [] # This feature is used to include the Jira version API related stuff
+link_issues_api = [] # This feature is used to include the Jira link issues API related stuff

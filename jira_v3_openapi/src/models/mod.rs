@@ -1054,8 +1054,6 @@ pub mod priority_id;
 pub use self::priority_id::PriorityId;
 pub mod priority_mapping;
 pub use self::priority_mapping::PriorityMapping;
-pub mod priority_scheme_changes_with_mappings;
-pub use self::priority_scheme_changes_with_mappings::PrioritySchemeChangesWithMappings;
 pub mod priority_scheme_changes_without_mappings;
 pub use self::priority_scheme_changes_without_mappings::PrioritySchemeChangesWithoutMappings;
 pub mod priority_scheme_id;

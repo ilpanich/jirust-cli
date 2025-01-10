@@ -585,7 +585,6 @@ docs/PlansApi.md
 docs/Priority.md
 docs/PriorityId.md
 docs/PriorityMapping.md
-docs/PrioritySchemeChangesWithMappings.md
 docs/PrioritySchemeChangesWithoutMappings.md
 docs/PrioritySchemeId.md
 docs/PrioritySchemeWithPaginatedPrioritiesAndProjects.md
@@ -1507,7 +1506,6 @@ src/models/permitted_projects.rs
 src/models/priority.rs
 src/models/priority_id.rs
 src/models/priority_mapping.rs
-src/models/priority_scheme_changes_with_mappings.rs
 src/models/priority_scheme_changes_without_mappings.rs
 src/models/priority_scheme_id.rs
 src/models/priority_scheme_with_paginated_priorities_and_projects.rs
