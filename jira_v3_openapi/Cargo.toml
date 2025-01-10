@@ -1,6 +1,6 @@
 [package]
 name = "jira_v3_openapi"
-version = "1.0.13"
+version = "1.1.0"
 authors = [
     "Atlassian OpenAPI <ecosystem@atlassian.com>",
     "Emanuele Panigati <ilpanich@gmail.com>",
