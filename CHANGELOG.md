@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+## [0.11.3] 2025-01-10
+### Fixed
+- README.md not correctly formatted
 
 ## [0.11.2] 2025-01-10
 ### Changed
