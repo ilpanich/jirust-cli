@@ -3,7 +3,7 @@
 # JiRust-CLI
 
 | Component | Build | Crate | docs | rust-clippy |
-|:---------:|:-----:|:-----:|:-----:|:----:|:-----------:|
+|:---------:|:-----:|:-----:|:----:|:-----------:|
 | jirust-cli | [![build and release jirust-cli](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml) | [![Crate](https://img.shields.io/crates/v/jirust-cli.svg)](https://crates.io/crates/jirust-cli) | [![API](https://docs.rs/jirust-cli/badge.svg)](https://docs.rs/jirust-cli)|[![rust-clippy analyze](https://github.com/ilpanich/jirust-cli/actions/workflows/rust-clippy.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/rust-clippy.yml)
 | jira_v3_openapi | [![build and release jira_v3_openapi](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jira_v3.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jira_v3.yml) | [![Crate](https://img.shields.io/crates/v/jira_v3_openapi.svg)](https://crates.io/crates/jira_v3_openapi) | [![API](https://docs.rs/jira_v3_openapi/badge.svg)](https://docs.rs/jira_v3_openapi) |
 
