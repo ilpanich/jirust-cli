@@ -41,3 +41,6 @@ issues_api = [] # This feature is used to include the Jira issues API related st
 projects_api = [] # This feature is used to include the Jira projects API related stuff
 version_api = [] # This feature is used to include the Jira version API related stuff
 link_issues_api = [] # This feature is used to include the Jira link issues API related stuff
+
+[package.metadata.docs.rs]
+all-features = true
