@@ -4,4 +4,4 @@ updates:
     directories:
       - "/jirust-cli"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
