@@ -748,6 +748,8 @@ checksum = "d75a2a4b1b190afb6f5425f10f6a8f959d2ea0b9c2b1d79553551850539e4674"
 [[package]]
 name = "jira_v3_openapi"
 version = "1.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d4c83d1c476be05c487c3e1fe7a06e7a49310dc91165976a2a23817eb001690a"
 dependencies = [
  "reqwest",
  "reqwest-middleware",
@@ -761,9 +763,7 @@ dependencies = [
 
 [[package]]
 name = "jira_v3_openapi"
-version = "1.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4c83d1c476be05c487c3e1fe7a06e7a49310dc91165976a2a23817eb001690a"
+version = "1.2.0"
 dependencies = [
  "reqwest",
  "reqwest-middleware",
@@ -783,7 +783,7 @@ dependencies = [
  "chrono",
  "clap",
  "clap_derive",
- "jira_v3_openapi 1.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "jira_v3_openapi 1.1.2",
  "prettytable-rs",
  "regex",
  "rpassword",
