@@ -9,7 +9,8 @@ description = "Jira Cloud platform REST API lib (OpenAPI document version: 1001.
 keywords = ["jira", "openapi"]
 repository = "https://github.com/ilpanich/jirust-cli"
 license = "Apache-2.0"
-edition = "2021"
+edition = "2024"
+rust-version = "1.85.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
