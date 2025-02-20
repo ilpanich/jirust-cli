@@ -1,8 +1,8 @@
 [package]
 name = "jirust-cli"
 version = "0.11.3"
-edition = "2021"
-rust-version = "1.80.1"
+edition = "2024"
+rust-version = "1.85.0"
 authors = ["Emanuele Panigati <ilpanich@gmail.com>"]
 description = "A CLI tool to interact with Jira"
 keywords = ["jira", "cli"]
@@ -23,7 +23,7 @@ toml = "0.8"
 clap = { version = "4.5", default-features = false, features = ["std", "derive"] }
 clap_derive = "4.5"
 rpassword = "7.3.1"
-jira_v3_openapi = {version = "1.1.2", default-features = false, features = ["common", "issues_api", "projects_api", "version_api", "link_issues_api"]}
+jira_v3_openapi = { version = "1.1.2", default-features = false, features = ["common", "issues_api", "projects_api", "version_api", "link_issues_api"]}
 prettytable-rs = "0.10.0"
 chrono = "0.4.39"
 regex = "1.11.1"

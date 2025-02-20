@@ -1,6 +1,6 @@
+use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::issue_links_api::link_issues;
-use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::models::{IssueLinkType, LinkIssueRequestJsonBean, LinkedIssue};
 use serde_json::Value;
 

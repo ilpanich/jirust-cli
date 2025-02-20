@@ -1,7 +1,7 @@
 use crate::args::commands::{OutputValues, VersionActionValues, VersionArgs};
 use crate::config::config_file::ConfigFile;
 use crate::runners::jira_cmd_runners::version_cmd_runner::{VersionCmdParams, VersionCmdRunner};
-use crate::utils::{print_data, OutputType, PrintableData};
+use crate::utils::{OutputType, PrintableData, print_data};
 
 use super::ExecJiraCommand;
 
