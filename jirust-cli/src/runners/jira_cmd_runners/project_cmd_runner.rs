@@ -6,7 +6,7 @@ use jira_v3_openapi::apis::issues_api::{
 };
 use jira_v3_openapi::apis::projects_api::search_projects;
 use jira_v3_openapi::models::{
-    project::Project, FieldCreateMetadata, IssueTypeIssueCreateMetadata,
+    FieldCreateMetadata, IssueTypeIssueCreateMetadata, project::Project,
 };
 
 /// Project command runner struct.

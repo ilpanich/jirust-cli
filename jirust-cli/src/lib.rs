@@ -7,11 +7,11 @@ use crate::executors::jira_commands_executors::jira_version_executor::VersionExe
 use clap::Parser;
 use config::config_file::ConfigFile;
 use executors::config_executor::ConfigExecutor;
+use executors::jira_commands_executors::ExecJiraCommand;
 use executors::jira_commands_executors::jira_issue_executor::IssueExecutor;
 use executors::jira_commands_executors::jira_issue_link_executor::LinkIssueExecutor;
 use executors::jira_commands_executors::jira_issue_transition_executor::IssueTransitionExecutor;
 use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
-use executors::jira_commands_executors::ExecJiraCommand;
 use std::env::Args;
 use std::io::{Error, ErrorKind};
 
@@ -65,7 +65,7 @@ pub fn manage_config(
             return Err(Error::new(
                 ErrorKind::NotFound,
                 "Missing basic configuration, setup mandatory!",
-            ))
+            ));
         }
     };
     if cfg_data.get_auth_key().is_empty() || cfg_data.get_jira_url().is_empty() {

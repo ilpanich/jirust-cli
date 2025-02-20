@@ -5,10 +5,10 @@ use crate::config::config_file::{AuthData, ConfigFile};
 use crate::jira_doc_std_field;
 use crate::utils::changelog_extractor::ChangelogExtractor;
 use chrono::Utc;
+use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::issues_api::{assign_issue, do_transition, edit_issue, get_transitions};
 use jira_v3_openapi::apis::project_versions_api::*;
-use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::models::user::AccountType;
 use jira_v3_openapi::models::{
     DeleteAndReplaceVersionBean, FieldUpdateOperation, IssueTransition, IssueUpdateDetails, User,

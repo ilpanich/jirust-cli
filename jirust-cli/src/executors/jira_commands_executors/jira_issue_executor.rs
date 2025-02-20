@@ -2,7 +2,7 @@ use crate::{
     args::commands::{IssueActionValues, IssueArgs, OutputValues},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdParams, IssueCmdRunner},
-    utils::{print_data, OutputType, PrintableData},
+    utils::{OutputType, PrintableData, print_data},
 };
 
 use super::ExecJiraCommand;
