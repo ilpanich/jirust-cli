@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Fixed
+- Issue with the missing TLS feature in jira_v3_openapi _reqwest_ dependency
+### Changed
+- Updated dependencies
+- Moved to Rust 2024 edition
+
+
 ## [0.11.3] 2025-01-10
 ### Fixed
 - README.md not correctly formatted
