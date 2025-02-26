@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+
+## [0.12.0] 2025-02-26
 ### Fixed
 - Issue with the missing TLS feature in jira_v3_openapi _reqwest_ dependency
 ### Changed
