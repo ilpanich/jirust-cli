@@ -1,3 +1,5 @@
+use std::io::{Error, ErrorKind};
+
 use crate::args::commands::{OutputValues, VersionActionValues, VersionArgs};
 use crate::config::config_file::ConfigFile;
 use crate::runners::jira_cmd_runners::version_cmd_runner::{VersionCmdParams, VersionCmdRunner};
@@ -135,48 +137,72 @@ impl ExecJiraCommand for VersionExecutor {
     /// # }
     /// ```
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
+        let result: Result<(), Box<dyn std::error::Error>>;
         match self.version_action {
             VersionActionValues::Create => {
-                let res = self
+                match self
                     .version_cmd_runner
                     .create_jira_version(VersionCmdParams::from(&self.version_args))
-                    .await?;
-                print_data(
-                    PrintableData::Version {
-                        versions: vec![res.0],
-                    },
-                    self.version_args
-                        .output
-                        .output
-                        .unwrap_or(OutputValues::Json),
-                    OutputType::Single,
-                );
-                if Option::is_some(&res.1) {
-                    print_data(
-                        PrintableData::TransitionedIssue {
-                            issues: res.1.unwrap_or(vec![]),
-                        },
-                        self.version_args
-                            .output
-                            .output
-                            .unwrap_or(OutputValues::Json),
-                        OutputType::Full,
-                    );
+                    .await
+                {
+                    Ok((version, transitions)) => {
+                        println!("Version created successfully");
+                        print_data(
+                            PrintableData::Version {
+                                versions: vec![version],
+                            },
+                            self.version_args
+                                .output
+                                .output
+                                .unwrap_or(OutputValues::Json),
+                            OutputType::Single,
+                        );
+                        if Option::is_some(&transitions) {
+                            print_data(
+                                PrintableData::TransitionedIssue {
+                                    issues: transitions.unwrap_or(vec![]),
+                                },
+                                self.version_args
+                                    .output
+                                    .output
+                                    .unwrap_or(OutputValues::Json),
+                                OutputType::Full,
+                            );
+                        }
+                        result = Ok(());
+                    }
+                    Err(err) => {
+                        result = Err(Box::new(Error::new(
+                            ErrorKind::Other,
+                            format!("Error creating version: {}", err),
+                        )))
+                    }
                 }
             }
             VersionActionValues::List => {
-                let res = self
+                match self
                     .version_cmd_runner
                     .list_jira_versions(VersionCmdParams::from(&self.version_args))
-                    .await?;
-                print_data(
-                    PrintableData::Version { versions: res },
-                    self.version_args
-                        .output
-                        .output
-                        .unwrap_or(OutputValues::Json),
-                    OutputType::Full,
-                );
+                    .await
+                {
+                    Ok(version) => {
+                        print_data(
+                            PrintableData::Version { versions: version },
+                            self.version_args
+                                .output
+                                .output
+                                .unwrap_or(OutputValues::Json),
+                            OutputType::Full,
+                        );
+                        result = Ok(());
+                    }
+                    Err(err) => {
+                        result = Err(Box::new(Error::new(
+                            ErrorKind::Other,
+                            format!("Error listing versions: {}", err),
+                        )))
+                    }
+                }
             }
             VersionActionValues::Update => {
                 match self
@@ -205,11 +231,22 @@ impl ExecJiraCommand for VersionExecutor {
                                         .unwrap_or(OutputValues::Json),
                                     OutputType::Single,
                                 );
+                                result = Ok(());
                             }
-                            Err(err) => eprintln!("Error updating version: {}", err),
+                            Err(err) => {
+                                result = Err(Box::new(Error::new(
+                                    ErrorKind::Other,
+                                    format!("Error updating version: {}", err),
+                                )))
+                            }
                         }
                     }
-                    Err(err) => eprintln!("Error retrieving version: {}", err),
+                    Err(err) => {
+                        result = Err(Box::new(Error::new(
+                            ErrorKind::Other,
+                            format!("Error retrieving version: {}", err),
+                        )))
+                    }
                 }
             }
             VersionActionValues::Delete => {
@@ -218,8 +255,16 @@ impl ExecJiraCommand for VersionExecutor {
                     .delete_jira_version(VersionCmdParams::from(&self.version_args))
                     .await;
                 match res {
-                    Ok(_) => println!("Version deleted successfully"),
-                    Err(err) => eprintln!("Error deleting version: {}", err),
+                    Ok(_) => {
+                        println!("Version deleted successfully");
+                        result = Ok(());
+                    }
+                    Err(err) => {
+                        result = Err(Box::new(Error::new(
+                            ErrorKind::Other,
+                            format!("Error deleting version: {}", err),
+                        )))
+                    }
                 }
             }
             VersionActionValues::Release => {
@@ -246,11 +291,22 @@ impl ExecJiraCommand for VersionExecutor {
                                         .unwrap_or(OutputValues::Json),
                                     OutputType::Single,
                                 );
+                                result = Ok(());
                             }
-                            Err(err) => eprintln!("Error releasing version: {}", err),
+                            Err(err) => {
+                                result = Err(Box::new(Error::new(
+                                    ErrorKind::Other,
+                                    format!("Error releasing version: {}", err),
+                                )))
+                            }
                         }
                     }
-                    Err(err) => eprintln!("Error retrieving version: {}", err),
+                    Err(err) => {
+                        result = Err(Box::new(Error::new(
+                            ErrorKind::Other,
+                            format!("Error retrieving version: {}", err),
+                        )))
+                    }
                 }
             }
             VersionActionValues::Archive => {
@@ -277,14 +333,25 @@ impl ExecJiraCommand for VersionExecutor {
                                         .unwrap_or(OutputValues::Json),
                                     OutputType::Single,
                                 );
+                                result = Ok(());
                             }
-                            Err(err) => eprintln!("Error archiving version: {}", err),
+                            Err(err) => {
+                                result = Err(Box::new(Error::new(
+                                    ErrorKind::Other,
+                                    format!("Error archiving version: {}", err),
+                                )))
+                            }
                         }
                     }
-                    Err(err) => eprintln!("Error retrieving version: {}", err),
+                    Err(err) => {
+                        result = Err(Box::new(Error::new(
+                            ErrorKind::Other,
+                            format!("Error retrieving version: {}", err),
+                        )))
+                    }
                 }
             }
         }
-        Ok(())
+        result
     }
 }
