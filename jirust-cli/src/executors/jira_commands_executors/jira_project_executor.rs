@@ -5,6 +5,8 @@ use crate::{
     utils::{OutputType, PrintableData, print_data},
 };
 
+use std::io::{Error, ErrorKind};
+
 use super::ExecJiraCommand;
 
 /// ProjectExecutor is responsible for executing the Jira project-related commands
@@ -117,52 +119,84 @@ impl ExecJiraCommand for ProjectExecutor {
     /// # }
     ///
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
+        let result: Result<(), Box<dyn std::error::Error>>;
         match self.project_action {
             ProjectActionValues::List => {
-                let res = self
+                match self
                     .project_cmd_runner
                     .list_jira_projects(ProjectCmdParams::from(&self.project_args))
-                    .await?;
-                print_data(
-                    PrintableData::Project { projects: res },
-                    self.project_args
-                        .output
-                        .output
-                        .unwrap_or(OutputValues::Json),
-                    OutputType::Full,
-                );
+                    .await
+                {
+                    Ok(version) => {
+                        print_data(
+                            PrintableData::Project { projects: version },
+                            self.project_args
+                                .output
+                                .output
+                                .unwrap_or(OutputValues::Json),
+                            OutputType::Full,
+                        );
+                        result = Ok(());
+                    }
+                    Err(err) => {
+                        result = Err(Box::new(Error::new(
+                            ErrorKind::Other,
+                            format!("Error listing projects: {}", err),
+                        )))
+                    }
+                }
             }
             ProjectActionValues::GetIssueTypes => {
-                let res = self
+                match self
                     .project_cmd_runner
                     .get_jira_project_issue_types(ProjectCmdParams::from(&self.project_args))
-                    .await?;
-                print_data(
-                    PrintableData::IssueType { issue_types: res },
-                    self.project_args
-                        .output
-                        .output
-                        .unwrap_or(OutputValues::Json),
-                    OutputType::Full,
-                );
+                    .await
+                {
+                    Ok(issue_types) => {
+                        print_data(
+                            PrintableData::IssueType { issue_types },
+                            self.project_args
+                                .output
+                                .output
+                                .unwrap_or(OutputValues::Json),
+                            OutputType::Full,
+                        );
+                        result = Ok(());
+                    }
+                    Err(err) => {
+                        result = Err(Box::new(Error::new(
+                            ErrorKind::Other,
+                            format!("Error listing issue types: {}", err),
+                        )))
+                    }
+                }
             }
             ProjectActionValues::GetIssueTypeFields => {
-                let res = self
+                match self
                     .project_cmd_runner
                     .get_jira_project_issue_type_id(ProjectCmdParams::from(&self.project_args))
-                    .await?;
-                print_data(
-                    PrintableData::IssueTypeField {
-                        issue_type_fields: res,
-                    },
-                    self.project_args
-                        .output
-                        .output
-                        .unwrap_or(OutputValues::Json),
-                    OutputType::Full,
-                );
+                    .await
+                {
+                    Ok(issue_type_fields) => {
+                        print_data(
+                            PrintableData::IssueTypeField { issue_type_fields },
+                            self.project_args
+                                .output
+                                .output
+                                .unwrap_or(OutputValues::Json),
+                            OutputType::Full,
+                        );
+                        result = Ok(());
+                    }
+                    Err(err) => {
+                        result = Err(Box::new(Error::new(
+                            ErrorKind::Other,
+                            format!("Error listing issue type fields: {}", err),
+                        )))
+                    }
+                }
             }
         }
-        Ok(())
+        result
     }
 }
