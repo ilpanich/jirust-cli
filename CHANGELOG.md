@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.13.1] 2025-03-02
+### Fixed
+- Fixed tests failing after having print logic moved to the bin
+
 ## [0.13.0] 2025-03-02
 ### Changed
 - Improved overall error handling
