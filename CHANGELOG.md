@@ -7,6 +7,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [Unreleased]
 ### Changed
 - Improved overall error handling
+- Moved printing logic from the lib to the bin
 
 ## [0.12.0] 2025-02-26
 ### Fixed
