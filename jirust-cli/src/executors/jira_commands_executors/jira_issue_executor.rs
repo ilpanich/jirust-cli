@@ -61,7 +61,7 @@ impl IssueExecutor {
     ///    transition_to: None,
     ///    assignee: None,
     ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
-    ///    output: OutputArgs { output: None },
+    ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let issue_executor = IssueExecutor::new(cfg_data, issue_action, issue_args);
@@ -114,7 +114,7 @@ impl ExecJiraCommand for IssueExecutor {
     ///   transition_to: None,
     ///   assignee: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
-    ///   output: OutputArgs { output: None },
+    ///   output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let issue_executor = IssueExecutor::new(cfg_data, issue_action, issue_args);

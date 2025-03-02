@@ -659,7 +659,7 @@ impl VersionCmdParams {
     ///   version_released: Some(true),
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: None, page_offset: None },
-    ///   output: OutputArgs { output: None},
+    ///   output: OutputArgs { output_format: None, output_type: None },
     ///   transition_issues: None,
     ///   transition_assignee: None,
     /// };
@@ -847,7 +847,7 @@ impl From<&VersionArgs> for VersionCmdParams {
     ///   version_released: None,
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(10), page_offset: Some(0) },
-    ///   output: OutputArgs { output: None},
+    ///   output: OutputArgs { output_format: None, output_type: None },
     ///   transition_issues: None,
     ///   transition_assignee: None,
     /// };

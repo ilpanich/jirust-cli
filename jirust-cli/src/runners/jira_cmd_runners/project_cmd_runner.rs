@@ -279,7 +279,7 @@ impl From<&ProjectArgs> for ProjectCmdParams {
     ///     project_key: Some("project_key".to_string()),
     ///     project_issue_type: Some("project_issue_type".to_string()),
     ///     pagination: PaginationArgs { page_size: Some(10), page_offset: None },
-    ///     output: OutputArgs { output: None },
+    ///     output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let params = ProjectCmdParams::from(&project_args);

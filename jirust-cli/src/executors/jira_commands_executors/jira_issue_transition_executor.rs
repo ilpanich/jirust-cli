@@ -55,7 +55,7 @@ impl IssueTransitionExecutor {
     /// let issue_transition_args = TransitionArgs {
     ///    transition_act: TransitionActionValues::List,
     ///    issue_key: "ISSUE-123".to_string(),
-    ///    output: OutputArgs { output: None },
+    ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let issue_transition_executor = IssueTransitionExecutor::new(cfg_data, TransitionActionValues::List, issue_transition_args);
@@ -102,7 +102,7 @@ impl ExecJiraCommand for IssueTransitionExecutor {
     /// let issue_transition_args = TransitionArgs {
     ///   transition_act: TransitionActionValues::List,
     ///   issue_key: "ISSUE-123".to_string(),
-    ///   output: OutputArgs { output: None },
+    ///   output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let issue_transition_executor = IssueTransitionExecutor::new(cfg_data, TransitionActionValues::List, issue_transition_args);

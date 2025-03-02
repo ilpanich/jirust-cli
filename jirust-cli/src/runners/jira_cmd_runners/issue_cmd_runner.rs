@@ -479,7 +479,7 @@ impl From<&IssueArgs> for IssueCmdParams {
     ///    transition_to: Some("transition_to".to_string()),
     ///    assignee: Some("assignee".to_string()),
     ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
-    ///    output: OutputArgs { output: None },
+    ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let params = IssueCmdParams::from(&issue_args);
@@ -572,7 +572,7 @@ impl From<&TransitionArgs> for IssueTransitionCmdParams {
     /// let transition_args = TransitionArgs {
     ///    transition_act: TransitionActionValues::List,
     ///    issue_key: "issue_key".to_string(),
-    ///    output: OutputArgs { output: None },
+    ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let params = IssueTransitionCmdParams::from(&transition_args);

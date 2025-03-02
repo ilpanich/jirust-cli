@@ -64,7 +64,7 @@ impl VersionExecutor {
     ///   version_released: None,
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
-    ///   output: OutputArgs { output: None },
+    ///   output: OutputArgs { output_format: None, output_type: None },
     ///   transition_assignee: None,
     ///   transition_issues: None,
     /// };
@@ -123,7 +123,7 @@ impl ExecJiraCommand for VersionExecutor {
     ///   version_released: None,
     ///   changelog_file: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
-    ///   output: OutputArgs { output: None },
+    ///   output: OutputArgs { output_format: None, output_type: None },
     ///   transition_assignee: None,
     ///   transition_issues: None,
     /// };

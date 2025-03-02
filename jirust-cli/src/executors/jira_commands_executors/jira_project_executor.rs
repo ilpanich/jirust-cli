@@ -58,7 +58,7 @@ impl ProjectExecutor {
     ///     project_key: Some("project_key".to_string()),
     ///     project_issue_type: None,
     ///     pagination: PaginationArgs { page_size: Some(20), page_offset: None },
-    ///     output: OutputArgs { output: None },
+    ///     output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let project_executor = ProjectExecutor::new(cfg_data, project_action, project_args);
@@ -108,7 +108,7 @@ impl ExecJiraCommand for ProjectExecutor {
     ///     project_key: Some("project_key".to_string()),
     ///     project_issue_type: None,
     ///     pagination: PaginationArgs { page_size: Some(20), page_offset: None },
-    ///     output: OutputArgs { output: None },
+    ///     output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let project_executor = ProjectExecutor::new(cfg_data, project_action, project_args);
