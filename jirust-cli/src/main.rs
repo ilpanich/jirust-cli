@@ -2,8 +2,11 @@ extern crate prettytable;
 
 use std::env;
 
-use jirust_cli::args::commands::{Commands, ConfigActionValues, ConfigArgs};
+use jirust_cli::args::commands::{
+    Commands, ConfigActionValues, ConfigArgs, OutputTypes, OutputValues,
+};
 use jirust_cli::config::config_file::ConfigFile;
+use jirust_cli::utils::{OutputType, print_data};
 use jirust_cli::{manage_config, process_command};
 
 /// Jirust CLI main function
@@ -33,9 +36,33 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
             }
         },
     };
-    let res = process_command(opts, config_file_path, cfg_data).await;
-    match res {
-        Ok(_) => Ok(()),
+    match process_command(opts.clone(), config_file_path, cfg_data).await {
+        Ok(result) => {
+            let (output_format, output_type) = match opts {
+                Commands::Config(_) => (OutputValues::Json, OutputType::Full),
+                Commands::Issue(args) => (
+                    args.output.output_format.unwrap_or(OutputValues::Json),
+                    OutputType::from(args.output.output_type.unwrap_or(OutputTypes::Full)),
+                ),
+                Commands::Link(_) => (OutputValues::Json, OutputType::Full),
+                Commands::Project(args) => (
+                    args.output.output_format.unwrap_or(OutputValues::Json),
+                    OutputType::from(args.output.output_type.unwrap_or(OutputTypes::Full)),
+                ),
+                Commands::Transition(args) => (
+                    args.output.output_format.unwrap_or(OutputValues::Json),
+                    OutputType::from(args.output.output_type.unwrap_or(OutputTypes::Full)),
+                ),
+                Commands::Version(args) => (
+                    args.output.output_format.unwrap_or(OutputValues::Json),
+                    OutputType::from(args.output.output_type.unwrap_or(OutputTypes::Full)),
+                ),
+            };
+            for elem in result {
+                print_data(elem, output_format, output_type.clone());
+            }
+            Ok(())
+        }
         Err(err) => Err(err),
     }
 }

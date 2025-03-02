@@ -9,7 +9,7 @@ use jira_v3_openapi::models::{
 };
 use serde_json::Value;
 
-use crate::args::commands::OutputValues;
+use crate::args::commands::{OutputTypes, OutputValues};
 
 /// Enum to hold the different types of data that can be printed in a table
 ///
@@ -49,10 +49,21 @@ pub enum PrintableData {
     },
 }
 
+#[derive(Clone)]
 pub enum OutputType {
     Full,
     Basic,
     Single,
+}
+
+impl From<OutputTypes> for OutputType {
+    fn from(output_type: OutputTypes) -> Self {
+        match output_type {
+            OutputTypes::Full => OutputType::Full,
+            OutputTypes::Basic => OutputType::Basic,
+            OutputTypes::Single => OutputType::Single,
+        }
+    }
 }
 
 pub fn print_data(data: PrintableData, output_format: OutputValues, output_type: OutputType) {
