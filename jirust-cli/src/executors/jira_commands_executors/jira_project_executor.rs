@@ -1,8 +1,8 @@
 use crate::{
-    args::commands::{OutputValues, ProjectActionValues, ProjectArgs},
+    args::commands::{ProjectActionValues, ProjectArgs},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdParams, ProjectCmdRunner},
-    utils::{OutputType, PrintableData, print_data},
+    utils::PrintableData,
 };
 
 use std::io::{Error, ErrorKind};
@@ -118,7 +118,7 @@ impl ExecJiraCommand for ProjectExecutor {
     /// # })
     /// # }
     ///
-    async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
+    async fn exec_jira_command(&self) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
         match self.project_action {
             ProjectActionValues::List => {
                 match self
@@ -126,17 +126,7 @@ impl ExecJiraCommand for ProjectExecutor {
                     .list_jira_projects(ProjectCmdParams::from(&self.project_args))
                     .await
                 {
-                    Ok(projects) => {
-                        print_data(
-                            PrintableData::Project { projects },
-                            self.project_args
-                                .output
-                                .output
-                                .unwrap_or(OutputValues::Json),
-                            OutputType::Full,
-                        );
-                        Ok(())
-                    }
+                    Ok(projects) => Ok(vec![PrintableData::Project { projects }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error listing projects: {}", err),
@@ -149,17 +139,7 @@ impl ExecJiraCommand for ProjectExecutor {
                     .get_jira_project_issue_types(ProjectCmdParams::from(&self.project_args))
                     .await
                 {
-                    Ok(issue_types) => {
-                        print_data(
-                            PrintableData::IssueType { issue_types },
-                            self.project_args
-                                .output
-                                .output
-                                .unwrap_or(OutputValues::Json),
-                            OutputType::Full,
-                        );
-                        Ok(())
-                    }
+                    Ok(issue_types) => Ok(vec![PrintableData::IssueType { issue_types }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error listing issue types: {}", err),
@@ -173,15 +153,7 @@ impl ExecJiraCommand for ProjectExecutor {
                     .await
                 {
                     Ok(issue_type_fields) => {
-                        print_data(
-                            PrintableData::IssueTypeField { issue_type_fields },
-                            self.project_args
-                                .output
-                                .output
-                                .unwrap_or(OutputValues::Json),
-                            OutputType::Full,
-                        );
-                        Ok(())
+                        Ok(vec![PrintableData::IssueTypeField { issue_type_fields }])
                     }
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,

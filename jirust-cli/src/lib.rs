@@ -14,6 +14,7 @@ use executors::jira_commands_executors::jira_issue_transition_executor::IssueTra
 use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
 use std::env::Args;
 use std::io::{Error, ErrorKind};
+use utils::PrintableData;
 
 pub mod args;
 pub mod config;
@@ -126,7 +127,7 @@ pub async fn process_command(
     command: Commands,
     config_file_path: String,
     cfg_data: ConfigFile,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
     match command {
         Commands::Config(args) => {
             let config_executor = ConfigExecutor::new(config_file_path, args.cfg_act);

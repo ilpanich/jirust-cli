@@ -1,8 +1,8 @@
 use crate::{
-    args::commands::{OutputValues, TransitionActionValues, TransitionArgs},
+    args::commands::{TransitionActionValues, TransitionArgs},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueTransitionCmdParams},
-    utils::{OutputType, PrintableData, print_data},
+    utils::PrintableData,
 };
 
 use std::io::{Error, ErrorKind};
@@ -111,7 +111,7 @@ impl ExecJiraCommand for IssueTransitionExecutor {
     /// # })
     /// # }
     /// ```
-    async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
+    async fn exec_jira_command(&self) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
         match self.issue_transition_action {
             TransitionActionValues::List => {
                 match self
@@ -121,19 +121,9 @@ impl ExecJiraCommand for IssueTransitionExecutor {
                     ))
                     .await
                 {
-                    Ok(issue_transitions) => {
-                        print_data(
-                            PrintableData::IssueTransitions {
-                                transitions: issue_transitions.transitions.unwrap_or(vec![]),
-                            },
-                            self.issue_transition_args
-                                .output
-                                .output
-                                .unwrap_or(OutputValues::Json),
-                            OutputType::Full,
-                        );
-                        Ok(())
-                    }
+                    Ok(issue_transitions) => Ok(vec![PrintableData::IssueTransitions {
+                        transitions: issue_transitions.transitions.unwrap_or(vec![]),
+                    }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error listing issue transitions: {}", err),

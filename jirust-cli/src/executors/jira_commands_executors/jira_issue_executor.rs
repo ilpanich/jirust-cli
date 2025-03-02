@@ -1,8 +1,8 @@
 use crate::{
-    args::commands::{IssueActionValues, IssueArgs, OutputValues},
+    args::commands::{IssueActionValues, IssueArgs},
     config::config_file::ConfigFile,
     runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdParams, IssueCmdRunner},
-    utils::{OutputType, PrintableData, print_data},
+    utils::PrintableData,
 };
 
 use std::io::{Error, ErrorKind};
@@ -124,7 +124,7 @@ impl ExecJiraCommand for IssueExecutor {
     /// # })
     /// # }
     /// ```
-    async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
+    async fn exec_jira_command(&self) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
         match self.issue_action {
             IssueActionValues::Assign => {
                 match self
@@ -132,7 +132,11 @@ impl ExecJiraCommand for IssueExecutor {
                     .assign_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(_) => Ok(()),
+                    Ok(_) => Ok(vec![PrintableData::Generic {
+                        data: vec![serde_json::Value::String(
+                            "Issue assigned successfully".to_string(),
+                        )],
+                    }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error assinging issue: {}", err),
@@ -145,16 +149,9 @@ impl ExecJiraCommand for IssueExecutor {
                     .create_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(issue) => {
-                        print_data(
-                            PrintableData::IssueCreated {
-                                issues: (vec![issue]),
-                            },
-                            self.issue_args.output.output.unwrap_or(OutputValues::Json),
-                            OutputType::Basic,
-                        );
-                        Ok(())
-                    }
+                    Ok(issue) => Ok(vec![PrintableData::IssueCreated {
+                        issues: (vec![issue]),
+                    }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error creating issue: {}", err),
@@ -167,7 +164,11 @@ impl ExecJiraCommand for IssueExecutor {
                     .delete_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(_) => Ok(()),
+                    Ok(_) => Ok(vec![PrintableData::Generic {
+                        data: vec![serde_json::Value::String(
+                            "Issue deleted successfully".to_string(),
+                        )],
+                    }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error deleting issue: {}", err),
@@ -180,16 +181,9 @@ impl ExecJiraCommand for IssueExecutor {
                     .get_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(issue) => {
-                        print_data(
-                            PrintableData::IssueData {
-                                issues: vec![issue],
-                            },
-                            self.issue_args.output.output.unwrap_or(OutputValues::Json),
-                            OutputType::Single,
-                        );
-                        Ok(())
-                    }
+                    Ok(issue) => Ok(vec![PrintableData::IssueData {
+                        issues: vec![issue],
+                    }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error retrieving issue: {}", err),
@@ -202,7 +196,11 @@ impl ExecJiraCommand for IssueExecutor {
                     .transition_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(_) => Ok(()),
+                    Ok(_) => Ok(vec![PrintableData::Generic {
+                        data: vec![serde_json::Value::String(
+                            "Issue transitioned successfully".to_string(),
+                        )],
+                    }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error transitioning issue: {}", err),
@@ -215,7 +213,11 @@ impl ExecJiraCommand for IssueExecutor {
                     .update_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(_) => Ok(()),
+                    Ok(_) => Ok(vec![PrintableData::Generic {
+                        data: vec![serde_json::Value::String(
+                            "Issue updated successfully".to_string(),
+                        )],
+                    }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error updating issue: {}", err),
