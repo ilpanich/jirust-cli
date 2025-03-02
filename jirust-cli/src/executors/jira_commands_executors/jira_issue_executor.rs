@@ -125,7 +125,6 @@ impl ExecJiraCommand for IssueExecutor {
     /// # }
     /// ```
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let result: Result<(), Box<dyn std::error::Error>>;
         match self.issue_action {
             IssueActionValues::Assign => {
                 match self
@@ -133,13 +132,11 @@ impl ExecJiraCommand for IssueExecutor {
                     .assign_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(_) => result = Ok(()),
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error assinging issue: {}", err),
-                        )))
-                    }
+                    Ok(_) => Ok(()),
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error assinging issue: {}", err),
+                    ))),
                 }
             }
             IssueActionValues::Create => {
@@ -156,14 +153,12 @@ impl ExecJiraCommand for IssueExecutor {
                             self.issue_args.output.output.unwrap_or(OutputValues::Json),
                             OutputType::Basic,
                         );
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error creating issue: {}", err),
-                        )))
-                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error creating issue: {}", err),
+                    ))),
                 }
             }
             IssueActionValues::Delete => {
@@ -172,13 +167,11 @@ impl ExecJiraCommand for IssueExecutor {
                     .delete_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(_) => result = Ok(()),
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error deleting issue: {}", err),
-                        )))
-                    }
+                    Ok(_) => Ok(()),
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error deleting issue: {}", err),
+                    ))),
                 }
             }
             IssueActionValues::Get => {
@@ -195,14 +188,12 @@ impl ExecJiraCommand for IssueExecutor {
                             self.issue_args.output.output.unwrap_or(OutputValues::Json),
                             OutputType::Single,
                         );
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error retrieving issue: {}", err),
-                        )))
-                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error retrieving issue: {}", err),
+                    ))),
                 }
             }
             IssueActionValues::Transition => {
@@ -211,13 +202,11 @@ impl ExecJiraCommand for IssueExecutor {
                     .transition_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(_) => result = Ok(()),
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error transitioning issue: {}", err),
-                        )))
-                    }
+                    Ok(_) => Ok(()),
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error transitioning issue: {}", err),
+                    ))),
                 }
             }
             IssueActionValues::Update => {
@@ -226,16 +215,13 @@ impl ExecJiraCommand for IssueExecutor {
                     .update_jira_issue(IssueCmdParams::from(&self.issue_args))
                     .await
                 {
-                    Ok(_) => result = Ok(()),
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error updating issue: {}", err),
-                        )))
-                    }
+                    Ok(_) => Ok(()),
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error updating issue: {}", err),
+                    ))),
                 }
             }
         }
-        result
     }
 }

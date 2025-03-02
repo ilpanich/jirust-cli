@@ -121,7 +121,6 @@ impl ExecJiraCommand for LinkIssueExecutor {
     /// # }
     /// ```
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let result: Result<(), Box<dyn std::error::Error>>;
         match self.link_issue_action {
             LinkIssueActionValues::Create => {
                 match self
@@ -135,17 +134,14 @@ impl ExecJiraCommand for LinkIssueExecutor {
                             OutputValues::Json,
                             OutputType::Single,
                         );
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error linking issues: {}", err),
-                        )))
-                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error linking issues: {}", err),
+                    ))),
                 }
             }
         }
-        result
     }
 }

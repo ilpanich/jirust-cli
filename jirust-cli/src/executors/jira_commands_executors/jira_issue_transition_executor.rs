@@ -112,7 +112,6 @@ impl ExecJiraCommand for IssueTransitionExecutor {
     /// # }
     /// ```
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let result: Result<(), Box<dyn std::error::Error>>;
         match self.issue_transition_action {
             TransitionActionValues::List => {
                 match self
@@ -133,17 +132,14 @@ impl ExecJiraCommand for IssueTransitionExecutor {
                                 .unwrap_or(OutputValues::Json),
                             OutputType::Full,
                         );
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error listing issue transitions: {}", err),
-                        )))
-                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error listing issue transitions: {}", err),
+                    ))),
                 }
             }
         }
-        result
     }
 }

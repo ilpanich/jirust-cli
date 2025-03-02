@@ -140,7 +140,7 @@ impl ExecJiraCommand for VersionExecutor {
         let result: Result<(), Box<dyn std::error::Error>>;
         match self.version_action {
             VersionActionValues::Create => {
-                match self
+                result = match self
                     .version_cmd_runner
                     .create_jira_version(VersionCmdParams::from(&self.version_args))
                     .await
@@ -169,18 +169,16 @@ impl ExecJiraCommand for VersionExecutor {
                                 OutputType::Full,
                             );
                         }
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error creating version: {}", err),
-                        )))
-                    }
-                }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error creating version: {}", err),
+                    ))),
+                };
             }
             VersionActionValues::List => {
-                match self
+                result = match self
                     .version_cmd_runner
                     .list_jira_versions(VersionCmdParams::from(&self.version_args))
                     .await
@@ -194,14 +192,12 @@ impl ExecJiraCommand for VersionExecutor {
                                 .unwrap_or(OutputValues::Json),
                             OutputType::Full,
                         );
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error listing versions: {}", err),
-                        )))
-                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error listing versions: {}", err),
+                    ))),
                 }
             }
             VersionActionValues::Update => {
@@ -250,21 +246,19 @@ impl ExecJiraCommand for VersionExecutor {
                 }
             }
             VersionActionValues::Delete => {
-                let res = self
+                result = match self
                     .version_cmd_runner
                     .delete_jira_version(VersionCmdParams::from(&self.version_args))
-                    .await;
-                match res {
+                    .await
+                {
                     Ok(_) => {
                         println!("Version deleted successfully");
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error deleting version: {}", err),
-                        )))
-                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error deleting version: {}", err),
+                    ))),
                 }
             }
             VersionActionValues::Release => {

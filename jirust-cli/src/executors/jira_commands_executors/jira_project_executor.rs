@@ -119,7 +119,6 @@ impl ExecJiraCommand for ProjectExecutor {
     /// # }
     ///
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let result: Result<(), Box<dyn std::error::Error>>;
         match self.project_action {
             ProjectActionValues::List => {
                 match self
@@ -127,23 +126,21 @@ impl ExecJiraCommand for ProjectExecutor {
                     .list_jira_projects(ProjectCmdParams::from(&self.project_args))
                     .await
                 {
-                    Ok(version) => {
+                    Ok(projects) => {
                         print_data(
-                            PrintableData::Project { projects: version },
+                            PrintableData::Project { projects },
                             self.project_args
                                 .output
                                 .output
                                 .unwrap_or(OutputValues::Json),
                             OutputType::Full,
                         );
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error listing projects: {}", err),
-                        )))
-                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error listing projects: {}", err),
+                    ))),
                 }
             }
             ProjectActionValues::GetIssueTypes => {
@@ -161,14 +158,12 @@ impl ExecJiraCommand for ProjectExecutor {
                                 .unwrap_or(OutputValues::Json),
                             OutputType::Full,
                         );
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error listing issue types: {}", err),
-                        )))
-                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error listing issue types: {}", err),
+                    ))),
                 }
             }
             ProjectActionValues::GetIssueTypeFields => {
@@ -186,17 +181,14 @@ impl ExecJiraCommand for ProjectExecutor {
                                 .unwrap_or(OutputValues::Json),
                             OutputType::Full,
                         );
-                        result = Ok(());
+                        Ok(())
                     }
-                    Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error listing issue type fields: {}", err),
-                        )))
-                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error listing issue type fields: {}", err),
+                    ))),
                 }
             }
         }
-        result
     }
 }
