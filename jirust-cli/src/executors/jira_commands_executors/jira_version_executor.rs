@@ -1,9 +1,9 @@
 use std::io::{Error, ErrorKind};
 
-use crate::args::commands::{OutputValues, VersionActionValues, VersionArgs};
+use crate::args::commands::{VersionActionValues, VersionArgs};
 use crate::config::config_file::ConfigFile;
 use crate::runners::jira_cmd_runners::version_cmd_runner::{VersionCmdParams, VersionCmdRunner};
-use crate::utils::{OutputType, PrintableData, print_data};
+use crate::utils::PrintableData;
 
 use super::ExecJiraCommand;
 
@@ -136,8 +136,8 @@ impl ExecJiraCommand for VersionExecutor {
     /// # })
     /// # }
     /// ```
-    async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let result: Result<(), Box<dyn std::error::Error>>;
+    async fn exec_jira_command(&self) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
+        let result: Result<Vec<PrintableData>, Box<dyn std::error::Error>>;
         match self.version_action {
             VersionActionValues::Create => {
                 result = match self
@@ -146,30 +146,16 @@ impl ExecJiraCommand for VersionExecutor {
                     .await
                 {
                     Ok((version, transitions)) => {
-                        println!("Version created successfully");
-                        print_data(
-                            PrintableData::Version {
-                                versions: vec![version],
-                            },
-                            self.version_args
-                                .output
-                                .output
-                                .unwrap_or(OutputValues::Json),
-                            OutputType::Single,
-                        );
+                        let mut res = Vec::new();
+                        res.push(PrintableData::Version {
+                            versions: vec![version],
+                        });
                         if Option::is_some(&transitions) {
-                            print_data(
-                                PrintableData::TransitionedIssue {
-                                    issues: transitions.unwrap_or(vec![]),
-                                },
-                                self.version_args
-                                    .output
-                                    .output
-                                    .unwrap_or(OutputValues::Json),
-                                OutputType::Full,
-                            );
+                            res.push(PrintableData::TransitionedIssue {
+                                issues: transitions.unwrap_or(vec![]),
+                            });
                         }
-                        Ok(())
+                        Ok(res)
                     }
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
@@ -183,17 +169,7 @@ impl ExecJiraCommand for VersionExecutor {
                     .list_jira_versions(VersionCmdParams::from(&self.version_args))
                     .await
                 {
-                    Ok(version) => {
-                        print_data(
-                            PrintableData::Version { versions: version },
-                            self.version_args
-                                .output
-                                .output
-                                .unwrap_or(OutputValues::Json),
-                            OutputType::Full,
-                        );
-                        Ok(())
-                    }
+                    Ok(version) => Ok(vec![PrintableData::Version { versions: version }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error listing versions: {}", err),
@@ -216,18 +192,9 @@ impl ExecJiraCommand for VersionExecutor {
                             .await;
                         match res {
                             Ok(res) => {
-                                println!("Version updated successfully");
-                                print_data(
-                                    PrintableData::Version {
-                                        versions: vec![res],
-                                    },
-                                    self.version_args
-                                        .output
-                                        .output
-                                        .unwrap_or(OutputValues::Json),
-                                    OutputType::Single,
-                                );
-                                result = Ok(());
+                                result = Ok(vec![PrintableData::Version {
+                                    versions: vec![res],
+                                }]);
                             }
                             Err(err) => {
                                 result = Err(Box::new(Error::new(
@@ -251,10 +218,11 @@ impl ExecJiraCommand for VersionExecutor {
                     .delete_jira_version(VersionCmdParams::from(&self.version_args))
                     .await
                 {
-                    Ok(_) => {
-                        println!("Version deleted successfully");
-                        Ok(())
-                    }
+                    Ok(_) => Ok(vec![PrintableData::Generic {
+                        data: vec![serde_json::Value::String(
+                            "Version deleted successfully".to_string(),
+                        )],
+                    }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error deleting version: {}", err),
@@ -274,18 +242,9 @@ impl ExecJiraCommand for VersionExecutor {
                             .await;
                         match res {
                             Ok(res) => {
-                                println!("Version released successfully");
-                                print_data(
-                                    PrintableData::Version {
-                                        versions: vec![res],
-                                    },
-                                    self.version_args
-                                        .output
-                                        .output
-                                        .unwrap_or(OutputValues::Json),
-                                    OutputType::Single,
-                                );
-                                result = Ok(());
+                                result = Ok(vec![PrintableData::Version {
+                                    versions: vec![res],
+                                }]);
                             }
                             Err(err) => {
                                 result = Err(Box::new(Error::new(
@@ -316,18 +275,9 @@ impl ExecJiraCommand for VersionExecutor {
                             .await;
                         match res {
                             Ok(res) => {
-                                println!("Version archived successfully");
-                                print_data(
-                                    PrintableData::Version {
-                                        versions: vec![res],
-                                    },
-                                    self.version_args
-                                        .output
-                                        .output
-                                        .unwrap_or(OutputValues::Json),
-                                    OutputType::Single,
-                                );
-                                result = Ok(());
+                                result = Ok(vec![PrintableData::Version {
+                                    versions: vec![res],
+                                }]);
                             }
                             Err(err) => {
                                 result = Err(Box::new(Error::new(

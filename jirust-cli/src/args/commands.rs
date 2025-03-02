@@ -15,7 +15,7 @@ pub struct JirustCliArgs {
 
 /// Available CLI commands
 /// Config, Issue, Project, Transition, Version
-#[derive(Subcommand, Debug)]
+#[derive(Subcommand, Clone, Debug)]
 pub enum Commands {
     /// Configuration management
     Config(ConfigArgs),
@@ -35,7 +35,7 @@ pub enum Commands {
 ///
 /// * page_size: Option<i32>
 /// * page_offset: Option<i64>
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 pub struct PaginationArgs {
     /// page size for lists
     #[clap(
@@ -71,20 +71,48 @@ pub enum OutputValues {
     Json,
 }
 
+/// Available output types
+/// Table, Json
+///
+/// * Basic: Print basic output
+/// * Single: Print single row output
+/// * Full: Print full output
+#[derive(ValueEnum, Debug, Clone, Copy)]
+#[value(rename_all = "kebab-case")]
+pub enum OutputTypes {
+    /// Print basic output
+    #[value(name = "basic", help = "Print basic output")]
+    Basic,
+    /// Print single row output
+    #[value(name = "single", help = "Print single row output")]
+    Single,
+    /// Print full output
+    #[value(name = "full", help = "Print full output")]
+    Full,
+}
+
 /// Available output values
 ///
 /// * output: Option<OutputValues> - Output format
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 pub struct OutputArgs {
     /// Output format
     #[clap(long, short = 'o', value_name = "table|json", help = "Output format")]
-    pub output: Option<OutputValues>,
+    pub output_format: Option<OutputValues>,
+    /// Output type
+    #[clap(
+        long,
+        short = 'z',
+        value_name = "basic|single|full",
+        help = "Output type"
+    )]
+    pub output_type: Option<OutputTypes>,
 }
 
 /// Available configuration command line arguments
 /// cfg_act: ConfigActionValues
 ///    Auth, Jira, Setup, Show
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 pub struct ConfigArgs {
     /// Configuration action
     #[arg(
@@ -138,7 +166,7 @@ pub enum ConfigActionValues {
 /// * pagination: PaginationArgs - Jira Project version pagination
 /// * output: OutputArgs - Jira Project version actions result output format
 ///
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 pub struct VersionArgs {
     /// Version action
     #[arg(
@@ -285,7 +313,7 @@ pub enum VersionActionValues {
 /// * project_issue_type: Option<String> - Jira Project issue type ID
 /// * pagination: PaginationArgs - Jira Project pagination
 /// * output: OutputArgs - Jira Project actions result output format
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 pub struct ProjectArgs {
     /// Project action
     #[arg(
@@ -354,7 +382,7 @@ pub enum ProjectActionValues {
 /// * assignee: Option<String> - Jira Project issue assignee
 /// * pagination: PaginationArgs - Jira Project issue pagination
 /// * output: OutputArgs - Jira Project issue actions result output format
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 pub struct IssueArgs {
     /// Issue action
     #[arg(
@@ -450,7 +478,7 @@ pub enum IssueActionValues {
 /// * destination_issue_key: Option<String> - Jira destination issue link key
 /// * link_type: String - Jira issue link type
 /// * changelog_file: Option<String> - Jira Project version changelog file
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 pub struct LinkIssueArgs {
     // Jira link issue command available actions
     #[arg(
@@ -519,7 +547,7 @@ pub enum LinkIssueActionValues {
 /// * transition_act: TransitionActionValues - Transition action
 /// * issue_key: String - Jira issue key
 /// * output: OutputArgs - Jira issue output format
-#[derive(Args, Debug)]
+#[derive(Args, Clone, Debug)]
 pub struct TransitionArgs {
     /// Transition action
     #[arg(value_name = "list", help_heading = "Jira issue transition list")]

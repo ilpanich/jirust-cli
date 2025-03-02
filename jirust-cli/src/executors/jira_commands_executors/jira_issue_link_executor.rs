@@ -1,9 +1,9 @@
-use crate::args::commands::{LinkIssueActionValues, LinkIssueArgs, OutputValues};
+use crate::args::commands::{LinkIssueActionValues, LinkIssueArgs};
 use crate::config::config_file::ConfigFile;
 use crate::runners::jira_cmd_runners::link_issue_cmd_runner::{
     LinkIssueCmdParams, LinkIssueCmdRunner,
 };
-use crate::utils::{OutputType, PrintableData, print_data};
+use crate::utils::PrintableData;
 
 use std::io::{Error, ErrorKind};
 
@@ -120,7 +120,7 @@ impl ExecJiraCommand for LinkIssueExecutor {
     /// # })
     /// # }
     /// ```
-    async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
+    async fn exec_jira_command(&self) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
         match self.link_issue_action {
             LinkIssueActionValues::Create => {
                 match self
@@ -128,14 +128,7 @@ impl ExecJiraCommand for LinkIssueExecutor {
                     .link_jira_issues(LinkIssueCmdParams::from(&self.link_issue_args))
                     .await
                 {
-                    Ok(res) => {
-                        print_data(
-                            PrintableData::Generic { data: vec![res] },
-                            OutputValues::Json,
-                            OutputType::Single,
-                        );
-                        Ok(())
-                    }
+                    Ok(res) => Ok(vec![PrintableData::Generic { data: vec![res] }]),
                     Err(err) => Err(Box::new(Error::new(
                         ErrorKind::Other,
                         format!("Error linking issues: {}", err),

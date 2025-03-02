@@ -1,6 +1,6 @@
-use crate::args::commands::ConfigActionValues;
 use crate::config::config_file::ConfigFile;
 use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
+use crate::{args::commands::ConfigActionValues, utils::PrintableData};
 
 use std::io::{Error, ErrorKind};
 
@@ -92,33 +92,36 @@ impl ConfigExecutor {
     pub async fn exec_config_command(
         &self,
         cfg_data: ConfigFile,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
         match self.config_action {
             ConfigActionValues::Auth => match self.config_cmd_runner.set_cfg_auth(cfg_data) {
-                Ok(_) => {
-                    println!("Authentication configuration stored successfully");
-                    Ok(())
-                }
+                Ok(_) => Ok(vec![PrintableData::Generic {
+                    data: vec![serde_json::Value::String(
+                        "Authentication configuration stored successfully".to_string(),
+                    )],
+                }]),
                 Err(err) => Err(Box::new(Error::new(
                     ErrorKind::Other,
                     format!("Error storing authentication configuration: {}", err),
                 ))),
             },
             ConfigActionValues::Jira => match self.config_cmd_runner.set_cfg_jira(cfg_data) {
-                Ok(_) => {
-                    println!("Initialization configuration stored successfully");
-                    Ok(())
-                }
+                Ok(_) => Ok(vec![PrintableData::Generic {
+                    data: vec![serde_json::Value::String(
+                        "Initialization configuration stored successfully".to_string(),
+                    )],
+                }]),
                 Err(err) => Err(Box::new(Error::new(
                     ErrorKind::Other,
                     format!("Error storing initialization configuration: {}", err),
                 ))),
             },
             ConfigActionValues::Setup => match self.config_cmd_runner.setup_cfg(cfg_data) {
-                Ok(_) => {
-                    println!("Configuration setup successfully");
-                    Ok(())
-                }
+                Ok(_) => Ok(vec![PrintableData::Generic {
+                    data: vec![serde_json::Value::String(
+                        "Configuration setup successfully".to_string(),
+                    )],
+                }]),
                 Err(err) => Err(Box::new(Error::new(
                     ErrorKind::Other,
                     format!("Error setting up configuration: {}", err),
@@ -126,7 +129,9 @@ impl ConfigExecutor {
             },
             ConfigActionValues::Show => {
                 self.config_cmd_runner.show_cfg(cfg_data);
-                Ok(())
+                Ok(vec![PrintableData::Generic {
+                    data: vec![serde_json::Value::String("DONE!".to_string())],
+                }])
             }
         }
     }
