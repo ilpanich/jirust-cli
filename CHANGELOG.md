@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+
+## [0.13.0] 2025-03-02
 ### Changed
 - Improved overall error handling
 - Moved printing logic from the lib to the bin
