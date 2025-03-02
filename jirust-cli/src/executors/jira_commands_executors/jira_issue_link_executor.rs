@@ -5,6 +5,8 @@ use crate::runners::jira_cmd_runners::link_issue_cmd_runner::{
 };
 use crate::utils::{OutputType, PrintableData, print_data};
 
+use std::io::{Error, ErrorKind};
+
 use super::ExecJiraCommand;
 
 /// LinkIssueExecutor is responsible for executing the Jira link-issue-related commands
@@ -121,17 +123,25 @@ impl ExecJiraCommand for LinkIssueExecutor {
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
         match self.link_issue_action {
             LinkIssueActionValues::Create => {
-                let res = self
+                match self
                     .link_issue_cmd_runner
                     .link_jira_issues(LinkIssueCmdParams::from(&self.link_issue_args))
-                    .await?;
-                print_data(
-                    PrintableData::Generic { data: vec![res] },
-                    OutputValues::Json,
-                    OutputType::Single,
-                );
+                    .await
+                {
+                    Ok(res) => {
+                        print_data(
+                            PrintableData::Generic { data: vec![res] },
+                            OutputValues::Json,
+                            OutputType::Single,
+                        );
+                        Ok(())
+                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error linking issues: {}", err),
+                    ))),
+                }
             }
         }
-        Ok(())
     }
 }

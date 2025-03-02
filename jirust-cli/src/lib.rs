@@ -130,29 +130,28 @@ pub async fn process_command(
     match command {
         Commands::Config(args) => {
             let config_executor = ConfigExecutor::new(config_file_path, args.cfg_act);
-            config_executor.exec_config_command(cfg_data).await?
+            config_executor.exec_config_command(cfg_data).await
         }
         Commands::Version(args) => {
             let version_executor = VersionExecutor::new(cfg_data, args.version_act, args);
-            version_executor.exec_jira_command().await?
+            version_executor.exec_jira_command().await
         }
         Commands::Project(args) => {
             let project_executor = ProjectExecutor::new(cfg_data, args.project_act, args);
-            project_executor.exec_jira_command().await?
+            project_executor.exec_jira_command().await
         }
         Commands::Issue(args) => {
             let issue_executor = IssueExecutor::new(cfg_data, args.issue_act, args);
-            issue_executor.exec_jira_command().await?
+            issue_executor.exec_jira_command().await
         }
         Commands::Transition(args) => {
             let issue_transition_executor =
                 IssueTransitionExecutor::new(cfg_data, args.transition_act, args);
-            issue_transition_executor.exec_jira_command().await?
+            issue_transition_executor.exec_jira_command().await
         }
         Commands::Link(args) => {
             let link_issue_executor = LinkIssueExecutor::new(cfg_data, args.link_act, args);
-            link_issue_executor.exec_jira_command().await?
+            link_issue_executor.exec_jira_command().await
         }
     }
-    Ok(())
 }

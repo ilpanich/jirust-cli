@@ -33,6 +33,9 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
             }
         },
     };
-    let _res = process_command(opts, config_file_path, cfg_data).await;
-    Ok(())
+    let res = process_command(opts, config_file_path, cfg_data).await;
+    match res {
+        Ok(_) => Ok(()),
+        Err(err) => Err(err),
+    }
 }

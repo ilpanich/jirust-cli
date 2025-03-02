@@ -5,6 +5,8 @@ use crate::{
     utils::{OutputType, PrintableData, print_data},
 };
 
+use std::io::{Error, ErrorKind};
+
 use super::ExecJiraCommand;
 
 /// IssueExecutor is responsible for executing the Jira issue-related command
@@ -125,53 +127,101 @@ impl ExecJiraCommand for IssueExecutor {
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
         match self.issue_action {
             IssueActionValues::Assign => {
-                let _res = self
+                match self
                     .issue_cmd_runner
                     .assign_jira_issue(IssueCmdParams::from(&self.issue_args))
-                    .await?;
+                    .await
+                {
+                    Ok(_) => Ok(()),
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error assinging issue: {}", err),
+                    ))),
+                }
             }
             IssueActionValues::Create => {
-                let res = self
+                match self
                     .issue_cmd_runner
                     .create_jira_issue(IssueCmdParams::from(&self.issue_args))
-                    .await?;
-                print_data(
-                    PrintableData::IssueCreated {
-                        issues: (vec![res]),
-                    },
-                    self.issue_args.output.output.unwrap_or(OutputValues::Json),
-                    OutputType::Basic,
-                )
+                    .await
+                {
+                    Ok(issue) => {
+                        print_data(
+                            PrintableData::IssueCreated {
+                                issues: (vec![issue]),
+                            },
+                            self.issue_args.output.output.unwrap_or(OutputValues::Json),
+                            OutputType::Basic,
+                        );
+                        Ok(())
+                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error creating issue: {}", err),
+                    ))),
+                }
             }
             IssueActionValues::Delete => {
-                self.issue_cmd_runner
+                match self
+                    .issue_cmd_runner
                     .delete_jira_issue(IssueCmdParams::from(&self.issue_args))
-                    .await?;
+                    .await
+                {
+                    Ok(_) => Ok(()),
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error deleting issue: {}", err),
+                    ))),
+                }
             }
             IssueActionValues::Get => {
-                let res = self
+                match self
                     .issue_cmd_runner
                     .get_jira_issue(IssueCmdParams::from(&self.issue_args))
-                    .await?;
-                print_data(
-                    PrintableData::IssueData { issues: vec![res] },
-                    self.issue_args.output.output.unwrap_or(OutputValues::Json),
-                    OutputType::Single,
-                )
+                    .await
+                {
+                    Ok(issue) => {
+                        print_data(
+                            PrintableData::IssueData {
+                                issues: vec![issue],
+                            },
+                            self.issue_args.output.output.unwrap_or(OutputValues::Json),
+                            OutputType::Single,
+                        );
+                        Ok(())
+                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error retrieving issue: {}", err),
+                    ))),
+                }
             }
             IssueActionValues::Transition => {
-                let _res = self
+                match self
                     .issue_cmd_runner
                     .transition_jira_issue(IssueCmdParams::from(&self.issue_args))
-                    .await?;
+                    .await
+                {
+                    Ok(_) => Ok(()),
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error transitioning issue: {}", err),
+                    ))),
+                }
             }
             IssueActionValues::Update => {
-                let _res = self
+                match self
                     .issue_cmd_runner
                     .update_jira_issue(IssueCmdParams::from(&self.issue_args))
-                    .await?;
+                    .await
+                {
+                    Ok(_) => Ok(()),
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error updating issue: {}", err),
+                    ))),
+                }
             }
         }
-        Ok(())
     }
 }

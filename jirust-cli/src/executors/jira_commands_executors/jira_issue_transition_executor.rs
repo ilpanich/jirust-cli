@@ -5,6 +5,8 @@ use crate::{
     utils::{OutputType, PrintableData, print_data},
 };
 
+use std::io::{Error, ErrorKind};
+
 use super::ExecJiraCommand;
 
 /// IssueTransitionExecutor is responsible for executing the Jira issue transition-related command
@@ -112,24 +114,32 @@ impl ExecJiraCommand for IssueTransitionExecutor {
     async fn exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>> {
         match self.issue_transition_action {
             TransitionActionValues::List => {
-                let res = self
+                match self
                     .issue_transition_cmd_runner
                     .get_issue_available_transitions(IssueTransitionCmdParams::from(
                         &self.issue_transition_args,
                     ))
-                    .await?;
-                print_data(
-                    PrintableData::IssueTransitions {
-                        transitions: res.transitions.unwrap_or(vec![]),
-                    },
-                    self.issue_transition_args
-                        .output
-                        .output
-                        .unwrap_or(OutputValues::Json),
-                    OutputType::Full,
-                )
+                    .await
+                {
+                    Ok(issue_transitions) => {
+                        print_data(
+                            PrintableData::IssueTransitions {
+                                transitions: issue_transitions.transitions.unwrap_or(vec![]),
+                            },
+                            self.issue_transition_args
+                                .output
+                                .output
+                                .unwrap_or(OutputValues::Json),
+                            OutputType::Full,
+                        );
+                        Ok(())
+                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error listing issue transitions: {}", err),
+                    ))),
+                }
             }
         }
-        Ok(())
     }
 }
