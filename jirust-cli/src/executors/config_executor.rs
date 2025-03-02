@@ -2,6 +2,8 @@ use crate::args::commands::ConfigActionValues;
 use crate::config::config_file::ConfigFile;
 use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
 
+use std::io::{Error, ErrorKind};
+
 /// ConfigExecutor struct
 ///
 /// # Fields
@@ -92,34 +94,40 @@ impl ConfigExecutor {
         cfg_data: ConfigFile,
     ) -> Result<(), Box<dyn std::error::Error>> {
         match self.config_action {
-            ConfigActionValues::Auth => {
-                match self.config_cmd_runner.set_cfg_auth(cfg_data) {
-                    Ok(_) => println!("Authentication configuration stored successfully"),
-                    Err(err) => {
-                        eprintln!("Error storing authentication configuration: {}", err);
-                    }
-                };
-            }
-            ConfigActionValues::Jira => {
-                match self.config_cmd_runner.set_cfg_jira(cfg_data) {
-                    Ok(_) => println!("Initialization configuration stored successfully"),
-                    Err(err) => {
-                        eprintln!("Error storing initialization configuration: {}", err);
-                    }
-                };
-            }
-            ConfigActionValues::Setup => {
-                match self.config_cmd_runner.setup_cfg(cfg_data) {
-                    Ok(_) => println!("Configuration setup successfully"),
-                    Err(err) => {
-                        eprintln!("Error setting up configuration: {}", err);
-                    }
-                };
-            }
+            ConfigActionValues::Auth => match self.config_cmd_runner.set_cfg_auth(cfg_data) {
+                Ok(_) => {
+                    println!("Authentication configuration stored successfully");
+                    Ok(())
+                }
+                Err(err) => Err(Box::new(Error::new(
+                    ErrorKind::Other,
+                    format!("Error storing authentication configuration: {}", err),
+                ))),
+            },
+            ConfigActionValues::Jira => match self.config_cmd_runner.set_cfg_jira(cfg_data) {
+                Ok(_) => {
+                    println!("Initialization configuration stored successfully");
+                    Ok(())
+                }
+                Err(err) => Err(Box::new(Error::new(
+                    ErrorKind::Other,
+                    format!("Error storing initialization configuration: {}", err),
+                ))),
+            },
+            ConfigActionValues::Setup => match self.config_cmd_runner.setup_cfg(cfg_data) {
+                Ok(_) => {
+                    println!("Configuration setup successfully");
+                    Ok(())
+                }
+                Err(err) => Err(Box::new(Error::new(
+                    ErrorKind::Other,
+                    format!("Error setting up configuration: {}", err),
+                ))),
+            },
             ConfigActionValues::Show => {
                 self.config_cmd_runner.show_cfg(cfg_data);
+                Ok(())
             }
         }
-        Ok(())
     }
 }
