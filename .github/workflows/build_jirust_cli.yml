@@ -30,14 +30,14 @@ jobs:
           mkdir builds
 
       - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
+        uses: mozilla-actions/sccache-action@v0.0.8
 
       - name: Run tests
         env:
           SCCACHE_GHA_ENABLED: "true"
           RUSTC_WRAPPER: "sccache"
         run: cargo test -p jirust-cli
-        
+
       - name: Cargo deny check
         env:
           SCCACHE_GHA_ENABLED: "true"
@@ -45,7 +45,7 @@ jobs:
         run: |
           cargo install cargo-deny
           cargo deny check
-          
+
       - name: Build Win64
         env:
           SCCACHE_GHA_ENABLED: "true"
@@ -55,7 +55,7 @@ jobs:
           mkdir builds/jirust-cli-win64
           cp target/x86_64-pc-windows-gnu/release/jirust-cli.exe builds/jirust-cli-win64
           tar -C builds -czvf dist/jirust-cli-win64.tar.gz jirust-cli-win64
-      
+
       - name: Build Linux
         env:
           SCCACHE_GHA_ENABLED: "true"
@@ -65,17 +65,17 @@ jobs:
           mkdir builds/jirust-cli-linux
           cp target/x86_64-unknown-linux-gnu/release/jirust-cli builds/jirust-cli-linux
           tar -C builds -czvf dist/jirust-cli-linux.tar.gz jirust-cli-linux
-          
+
       - name: Extract release notes
         id: extract-release-notes
         uses: ffurrer2/extract-release-notes@v2
-      
+
       - name: Set output
         id: vars
         run: |
           TAG=$(echo ${{ github.ref_name }} | cut -d '_' -f 2)
           echo "final_tag=$TAG" >> $GITHUB_OUTPUT
-      
+
       - name: Upload release
         uses: softprops/action-gh-release@v1
         with:
@@ -107,10 +107,10 @@ jobs:
       - name: Attest provenance
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: 'builds/jirust-cli-*'
+          subject-path: "builds/jirust-cli-*"
 
       - name: Attest SBOM
         uses: actions/attest-sbom@v1
         with:
-          subject-path: 'builds/jirust-cli-*'
-          sbom-path: 'builds/sbom.spdx.json'
+          subject-path: "builds/jirust-cli-*"
+          sbom-path: "builds/sbom.spdx.json"
