@@ -73,7 +73,7 @@ impl VersionCmdRunner {
                 .unwrap_or(Value::Null),
             resolution_comment: serde_json::from_str(
                 format!(
-                    "{{body: {}}}",
+                    "{{\"body\": {}}}",
                     jira_doc_std_field!(cfg_file.get_standard_resolution_comment().as_str())
                 )
                 .as_str(),
