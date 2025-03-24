@@ -843,7 +843,7 @@ dependencies = [
 
 [[package]]
 name = "jirust-cli"
-version = "0.13.2"
+version = "0.13.3"
 dependencies = [
  "base64",
  "chrono",

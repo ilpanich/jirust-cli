@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.13.3] 2025-03-25
+### Fixed
+- Fixed a bug in the version creation command that causes the automatic resolution to fail
+
+### Changed
+- Updated dependencies (includes a potential security issue fix)
+
 ## [0.13.2] 2025-03-14
 ### Changed
 - Updated dependencies (includes a potential security issue fix)
