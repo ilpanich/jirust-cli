@@ -129,13 +129,16 @@ pub async fn process_command(
     cfg_data: ConfigFile,
 ) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
     match command {
-        Commands::Config(args) => {
-            let config_executor = ConfigExecutor::new(
-                config_file_path.expect("Config file path must be set to run config command!"),
-                args.cfg_act,
-            );
-            config_executor.exec_config_command(cfg_data).await
-        }
+        Commands::Config(args) => match config_file_path {
+            Some(path) => {
+                let config_executor = ConfigExecutor::new(path, args.cfg_act);
+                config_executor.exec_config_command(cfg_data).await
+            }
+            None => Err(Box::new(Error::new(
+                ErrorKind::NotFound,
+                "Missing config file path!",
+            ))),
+        },
         Commands::Version(args) => {
             let version_executor = VersionExecutor::new(cfg_data, args.version_act, args);
             version_executor.exec_jira_command().await
