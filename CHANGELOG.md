@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Changed
+- Made the config_file_path optional in the process_command function
+- Updated dependencies
 
 ## [0.13.3] 2025-03-25
 ### Fixed
