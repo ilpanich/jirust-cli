@@ -83,7 +83,7 @@ pub fn manage_config(
 ///
 /// # Arguments
 /// * `command` - The command to execute
-/// * `config_file_path` - The path to the configuration file
+/// * `config_file_path` - The path to the configuration file (optional, for Jira commands but mandatory to setup config)
 /// * `cfg_data` - The configuration file data
 ///
 /// # Returns
@@ -125,12 +125,15 @@ pub fn manage_config(
 /// ```
 pub async fn process_command(
     command: Commands,
-    config_file_path: String,
+    config_file_path: Option<String>,
     cfg_data: ConfigFile,
 ) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
     match command {
         Commands::Config(args) => {
-            let config_executor = ConfigExecutor::new(config_file_path, args.cfg_act);
+            let config_executor = ConfigExecutor::new(
+                config_file_path.expect("Config file path must be set to run config command!"),
+                args.cfg_act,
+            );
             config_executor.exec_config_command(cfg_data).await
         }
         Commands::Version(args) => {

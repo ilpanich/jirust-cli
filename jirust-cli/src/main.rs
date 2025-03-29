@@ -36,7 +36,7 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
             }
         },
     };
-    match process_command(opts.clone(), config_file_path, cfg_data).await {
+    match process_command(opts.clone(), Some(config_file_path), cfg_data).await {
         Ok(result) => {
             let (output_format, output_type) = match opts {
                 Commands::Config(_) => (OutputValues::Json, OutputType::Full),
