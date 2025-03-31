@@ -2,8 +2,9 @@ extern crate prettytable;
 
 use std::env;
 
+use clap::Parser;
 use jirust_cli::args::commands::{
-    Commands, ConfigActionValues, ConfigArgs, OutputTypes, OutputValues,
+    Commands, ConfigActionValues, ConfigArgs, JirustCliArgs, OutputTypes, OutputValues,
 };
 use jirust_cli::config::config_file::ConfigFile;
 use jirust_cli::utils::{OutputType, print_data};
@@ -17,28 +18,35 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
         Some(home) => format!("{}/.jirust-cli/jirust-cli.toml", home.to_string_lossy()),
         None => ".jirust-cli/jirust-cli.toml".to_string(),
     };
-    let (cfg_data, opts) = match manage_config(config_file_path.clone(), std::env::args()) {
-        Ok((cfg, opts)) => (cfg, opts),
+    let mut opts = match JirustCliArgs::try_parse_from(std::env::args()) {
+        Ok(opts) => opts,
+        Err(err) => {
+            eprintln!("Error: {}", err);
+            err.exit();
+        }
+    };
+    let cfg_data = match manage_config(config_file_path.clone()) {
+        Ok(cfg) => cfg,
         Err(err) => match err.kind() {
             std::io::ErrorKind::NotFound => {
                 eprintln!("Error: Missing config file, setup mandatory!");
-                let subcmd = Commands::Config(ConfigArgs {
+                opts.subcmd = Commands::Config(ConfigArgs {
                     cfg_act: ConfigActionValues::Setup,
                 });
-                (ConfigFile::default(), subcmd)
+                ConfigFile::default()
             }
             _ => {
                 eprintln!("Error: Missing config file, setup mandatory!");
-                let subcmd = Commands::Config(ConfigArgs {
+                opts.subcmd = Commands::Config(ConfigArgs {
                     cfg_act: ConfigActionValues::Setup,
                 });
-                (ConfigFile::default(), subcmd)
+                ConfigFile::default()
             }
         },
     };
-    match process_command(opts.clone(), Some(config_file_path), cfg_data).await {
+    match process_command(opts.subcmd.clone(), Some(config_file_path), cfg_data).await {
         Ok(result) => {
-            let (output_format, output_type) = match opts {
+            let (output_format, output_type) = match opts.subcmd {
                 Commands::Config(_) => (OutputValues::Json, OutputType::Full),
                 Commands::Issue(args) => (
                     args.output.output_format.unwrap_or(OutputValues::Json),
