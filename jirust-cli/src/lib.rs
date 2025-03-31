@@ -1,10 +1,9 @@
 #[macro_use]
 extern crate prettytable;
 
-use crate::args::commands::{Commands, JirustCliArgs};
+use crate::args::commands::Commands;
 
 use crate::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
-use clap::Parser;
 use config::config_file::ConfigFile;
 use executors::config_executor::ConfigExecutor;
 use executors::jira_commands_executors::ExecJiraCommand;
@@ -12,7 +11,6 @@ use executors::jira_commands_executors::jira_issue_executor::IssueExecutor;
 use executors::jira_commands_executors::jira_issue_link_executor::LinkIssueExecutor;
 use executors::jira_commands_executors::jira_issue_transition_executor::IssueTransitionExecutor;
 use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
-use std::env::Args;
 use std::io::{Error, ErrorKind};
 use utils::PrintableData;
 
@@ -44,22 +42,11 @@ pub mod utils;
 ///
 /// # fn main() -> Result<(), std::io::Error> {
 /// let config_file_path = String::from("config.json");
-/// let args = std::env::args();
-/// let (cfg_data, command) = manage_config(config_file_path, args)?;
+/// let cfg_data = manage_config(config_file_path)?;
 /// # Ok(())
 /// # }
 /// ```
-pub fn manage_config(
-    config_file_path: String,
-    args: Args,
-) -> Result<(ConfigFile, Commands), Error> {
-    let opts = match JirustCliArgs::try_parse_from(args) {
-        Ok(opts) => opts,
-        Err(err) => {
-            eprintln!("Error: {}", err);
-            err.exit();
-        }
-    };
+pub fn manage_config(config_file_path: String) -> Result<ConfigFile, Error> {
     let cfg_data = match ConfigFile::read_from_file(config_file_path.as_str()) {
         Ok(cfg) => cfg,
         Err(_) => {
@@ -75,7 +62,7 @@ pub fn manage_config(
             "Missing basic configuration, setup mandatory!",
         ))
     } else {
-        Ok((cfg_data, opts.subcmd))
+        Ok(cfg_data)
     }
 }
 
@@ -100,7 +87,6 @@ pub fn manage_config(
 /// use jirust_cli::args::commands::{Commands, VersionArgs, VersionActionValues, PaginationArgs, OutputArgs};
 ///
 /// # fn main() -> Result<(), std::io::Error> {
-/// let config_file_path = String::from("config.json");
 /// let args = VersionArgs {
 ///   version_act: VersionActionValues::List,
 ///   project_key: "project_key".to_string(),
@@ -119,7 +105,7 @@ pub fn manage_config(
 ///   transition_issues: None,
 /// };
 ///
-/// let result = process_command(Commands::Version(args), config_file_path, ConfigFile::default());
+/// let result = process_command(Commands::Version(args), None, ConfigFile::default());
 /// # Ok(())
 /// # }
 /// ```
