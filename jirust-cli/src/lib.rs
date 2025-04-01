@@ -13,6 +13,7 @@ use executors::jira_commands_executors::jira_issue_transition_executor::IssueTra
 use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
 use std::io::{Error, ErrorKind};
 use utils::PrintableData;
+use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
 pub mod args;
 pub mod config;
@@ -146,5 +147,32 @@ pub async fn process_command(
             let link_issue_executor = LinkIssueExecutor::new(cfg_data, args.link_act, args);
             link_issue_executor.exec_jira_command().await
         }
+    }
+}
+
+pub fn set_panic_hook() {
+    #[cfg(feature = "console_error_panic_hook")]
+    console_error_panic_hook::set_once();
+}
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    pub fn log(s: &str);
+}
+
+#[wasm_bindgen]
+pub async fn run(js_args: JsValue, js_cfg: JsValue) -> JsValue {
+    set_panic_hook();
+
+    let command = serde_wasm_bindgen::from_value(js_args).expect("Command must be set!");
+
+    let cfg_data: ConfigFile = serde_wasm_bindgen::from_value(js_cfg).expect("Config must be set!");
+
+    let result = process_command(command, None, cfg_data).await;
+
+    match result {
+        Ok(data) => serde_wasm_bindgen::to_value(&data).unwrap_or(JsValue::NULL),
+        Err(_) => JsValue::NULL,
     }
 }
