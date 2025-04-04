@@ -47,7 +47,7 @@ Name | Type | Description  | Required | Notes
 
 ## delete_comment
 
-> delete_comment(issue_id_or_key, id, parent_id)
+> delete_comment(issue_id_or_key, id)
 Delete comment
 
 Deletes a comment.  **[Permissions](#permissions) required:**   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue containing the comment is in.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.  *  *Delete all comments*[ project permission](https://confluence.atlassian.com/x/yodKLg) to delete any comment or *Delete own comments* to delete comment created by the user,  *  If the comment has visibility restrictions, the user belongs to the group or has the role visibility is restricted to.
@@ -59,7 +59,6 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **issue_id_or_key** | **String** | The ID or key of the issue. | [required] |
 **id** | **String** | The ID of the comment. | [required] |
-**parent_id** | Option<**String**> |  |  |
 
 ### Return type
 

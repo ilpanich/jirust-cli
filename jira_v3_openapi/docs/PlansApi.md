@@ -46,7 +46,7 @@ Name | Type | Description  | Required | Notes
 
 ## create_plan
 
-> i64 create_plan(create_plan_request)
+> i64 create_plan(create_plan_request, use_group_id)
 Create plan
 
 Creates a plan.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
@@ -57,6 +57,7 @@ Creates a plan.  **[Permissions](#permissions) required:** *Administer Jira* [gl
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **create_plan_request** | [**CreatePlanRequest**](CreatePlanRequest.md) |  | [required] |
+**use_group_id** | Option<**bool**> | Whether to accept group IDs instead of group names. Group names are deprecated. |  |[default to false]
 
 ### Return type
 
@@ -107,7 +108,7 @@ Name | Type | Description  | Required | Notes
 
 ## get_plan
 
-> models::GetPlanResponse get_plan(plan_id)
+> models::GetPlanResponse get_plan(plan_id, use_group_id)
 Get plan
 
 Returns a plan.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
@@ -118,6 +119,7 @@ Returns a plan.  **[Permissions](#permissions) required:** *Administer Jira* [gl
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **plan_id** | **i64** | The ID of the plan. | [required] |
+**use_group_id** | Option<**bool**> | Whether to return group IDs instead of group names. Group names are deprecated. |  |[default to false]
 
 ### Return type
 
@@ -200,7 +202,7 @@ Name | Type | Description  | Required | Notes
 
 ## update_plan
 
-> serde_json::Value update_plan(plan_id, body)
+> serde_json::Value update_plan(plan_id, body, use_group_id)
 Update plan
 
 Updates any of the following details of a plan using [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902).   *  name  *  leadAccountId  *  scheduling           *  estimation with StoryPoints, Days or Hours as possible values      *  startDate                   *  type with DueDate, TargetStartDate, TargetEndDate or DateCustomField as possible values          *  dateCustomFieldId      *  endDate                   *  type with DueDate, TargetStartDate, TargetEndDate or DateCustomField as possible values          *  dateCustomFieldId      *  inferredDates with None, SprintDates or ReleaseDates as possible values      *  dependencies with Sequential or Concurrent as possible values  *  issueSources           *  type with Board, Project or Filter as possible values      *  value  *  exclusionRules           *  numberOfDaysToShowCompletedIssues      *  issueIds      *  workStatusIds      *  workStatusCategoryIds      *  issueTypeIds      *  releaseIds  *  crossProjectReleases           *  name      *  releaseIds  *  customFields           *  customFieldId      *  filter  *  permissions           *  type with View or Edit as possible values      *  holder                   *  type with Group or AccountId as possible values          *  value  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).  *Note that \"add\" operations do not respect array indexes in target locations. Call the \"Get plan\" endpoint to find out the order of array elements.*
@@ -212,6 +214,7 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **plan_id** | **i64** | The ID of the plan. | [required] |
 **body** | **serde_json::Value** |  | [required] |
+**use_group_id** | Option<**bool**> | Whether to accept group IDs instead of group names. Group names are deprecated. |  |[default to false]
 
 ### Return type
 

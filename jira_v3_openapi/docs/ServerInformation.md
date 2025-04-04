@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 **health_checks** | Option<[**Vec<models::HealthCheckResult>**](HealthCheckResult.md)> | Jira instance health check results. Deprecated and no longer returned. | [optional]
 **scm_info** | Option<**String**> | The unique identifier of the Jira version. | [optional]
 **server_time** | Option<**String**> | The time in Jira when this request was responded to. | [optional]
-**server_time_zone** | Option<[**models::ServerInformationServerTimeZone**](ServerInformation_serverTimeZone.md)> |  | [optional]
+**server_time_zone** | Option<**String**> | The default timezone of the Jira server. In a format known as Olson Time Zones, IANA Time Zones or TZ Database Time Zones. | [optional]
 **server_title** | Option<**String**> | The name of the Jira instance. | [optional]
 **version** | Option<**String**> | The version of Jira. | [optional]
 **version_numbers** | Option<**Vec<i32>**> | The major, minor, and revision version numbers of the Jira version. | [optional]

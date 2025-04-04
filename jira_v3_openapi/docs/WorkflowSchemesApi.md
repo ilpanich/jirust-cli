@@ -11,6 +11,7 @@ Method | HTTP request | Description
 [**delete_workflow_scheme_issue_type**](WorkflowSchemesApi.md#delete_workflow_scheme_issue_type) | **DELETE** /rest/api/3/workflowscheme/{id}/issuetype/{issueType} | Delete workflow for issue type in workflow scheme
 [**get_all_workflow_schemes**](WorkflowSchemesApi.md#get_all_workflow_schemes) | **GET** /rest/api/3/workflowscheme | Get all workflow schemes
 [**get_default_workflow**](WorkflowSchemesApi.md#get_default_workflow) | **GET** /rest/api/3/workflowscheme/{id}/default | Get default workflow
+[**get_project_usages_for_workflow_scheme**](WorkflowSchemesApi.md#get_project_usages_for_workflow_scheme) | **GET** /rest/api/3/workflowscheme/{workflowSchemeId}/projectUsages | Get projects which are using a given workflow scheme
 [**get_workflow**](WorkflowSchemesApi.md#get_workflow) | **GET** /rest/api/3/workflowscheme/{id}/workflow | Get issue types for workflows in workflow scheme
 [**get_workflow_scheme**](WorkflowSchemesApi.md#get_workflow_scheme) | **GET** /rest/api/3/workflowscheme/{id} | Get workflow scheme
 [**get_workflow_scheme_issue_type**](WorkflowSchemesApi.md#get_workflow_scheme_issue_type) | **GET** /rest/api/3/workflowscheme/{id}/issuetype/{issueType} | Get workflow for issue type in workflow scheme
@@ -241,6 +242,38 @@ Name | Type | Description  | Required | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
+## get_project_usages_for_workflow_scheme
+
+> models::WorkflowSchemeProjectUsageDto get_project_usages_for_workflow_scheme(workflow_scheme_id, next_page_token, max_results)
+Get projects which are using a given workflow scheme
+
+Returns a page of projects using a given workflow scheme.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**workflow_scheme_id** | **String** | The workflow scheme ID | [required] |
+**next_page_token** | Option<**String**> | The cursor for pagination |  |
+**max_results** | Option<**i32**> | The maximum number of results to return. Must be an integer between 1 and 200. |  |[default to 50]
+
+### Return type
+
+[**models::WorkflowSchemeProjectUsageDto**](WorkflowSchemeProjectUsageDTO.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
 ## get_workflow
 
 > models::IssueTypesWorkflowMapping get_workflow(id, workflow_name, return_draft_if_exists)
@@ -349,7 +382,7 @@ Returns a list of workflow schemes by providing workflow scheme IDs or project I
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **workflow_scheme_read_request** | [**WorkflowSchemeReadRequest**](WorkflowSchemeReadRequest.md) |  | [required] |
-**expand** | Option<**String**> | Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `workflows.usages` Returns the project and issue types that each workflow in the workflow scheme is associated with. |  |
+**expand** | Option<**String**> | Deprecated. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/changelog/#CHANGE-2298) for details.  Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `workflows.usages` Returns the project and issue types that each workflow in the workflow scheme is associated with. |  |
 
 ### Return type
 

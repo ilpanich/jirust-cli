@@ -629,7 +629,7 @@ Name | Type | Description  | Required | Notes
 
 ## get_issue_limit_report
 
-> models::IssueLimitReportResponseBean get_issue_limit_report(issue_limit_report_request, is_returning_keys)
+> models::IssueLimitReportResponseBean get_issue_limit_report(is_returning_keys)
 Get issue limit report
 
 Returns all issues breaching and approaching per-issue limits.  **[Permissions](#permissions) required:**   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) is required for the project the issues are in. Results may be incomplete otherwise  *  *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
@@ -639,7 +639,6 @@ Returns all issues breaching and approaching per-issue limits.  **[Permissions](
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**issue_limit_report_request** | [**IssueLimitReportRequest**](IssueLimitReportRequest.md) |  | [required] |
 **is_returning_keys** | Option<**bool**> | Return issue keys instead of issue ids in the response.  Usage: Add `?isReturningKeys=true` to the end of the path to request issue keys. |  |[default to false]
 
 ### Return type
@@ -652,7 +651,7 @@ Name | Type | Description  | Required | Notes
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
+- **Content-Type**: Not defined
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
