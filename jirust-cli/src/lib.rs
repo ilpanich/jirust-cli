@@ -4,6 +4,8 @@ extern crate prettytable;
 use crate::args::commands::Commands;
 
 use crate::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
+use args::commands::JirustCliArgs;
+use clap::Parser;
 use config::config_file::ConfigFile;
 use executors::config_executor::ConfigExecutor;
 use executors::jira_commands_executors::ExecJiraCommand;
@@ -14,6 +16,7 @@ use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
 use std::io::{Error, ErrorKind};
 use utils::PrintableData;
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
+use wasm_bindgen_futures::js_sys;
 
 pub mod args;
 pub mod config;
@@ -161,15 +164,38 @@ extern "C" {
     pub fn log(s: &str);
 }
 
+#[wasm_bindgen(module = "fs")]
+extern "C" {
+    #[wasm_bindgen(js_name = readFileSync, catch)]
+    pub fn read_file(path: &str, encoding: &str) -> Result<String, JsValue>;
+
+    #[wasm_bindgen(js_name = writeFileSync, catch)]
+    pub fn write_file(path: &str, content: &str) -> Result<(), JsValue>;
+
+    #[wasm_bindgen(js_name = lstatSync, catch)]
+    pub fn lstat(path: &str) -> Result<JsValue, JsValue>;
+
+    #[wasm_bindgen(js_name = existsSync, catch)]
+    pub fn exists(path: &str) -> Result<bool, JsValue>;
+}
+
 #[wasm_bindgen]
-pub async fn run(js_args: JsValue, js_cfg: JsValue) -> JsValue {
+pub async fn run(js_args: js_sys::Array, js_cfg: JsValue) -> JsValue {
     set_panic_hook();
 
-    let command = serde_wasm_bindgen::from_value(js_args).expect("Command must be set!");
+    let args: Vec<String> = js_args.iter().filter_map(|el| el.as_string()).collect();
+
+    let opts = match JirustCliArgs::try_parse_from(args) {
+        Ok(opts) => opts,
+        Err(err) => {
+            let err_s = format!("Error: {}", err);
+            return serde_wasm_bindgen::to_value(&err_s).unwrap_or(JsValue::NULL);
+        }
+    };
 
     let cfg_data: ConfigFile = serde_wasm_bindgen::from_value(js_cfg).expect("Config must be set!");
 
-    let result = process_command(command, None, cfg_data).await;
+    let result = process_command(opts.subcmd, None, cfg_data).await;
 
     match result {
         Ok(data) => serde_wasm_bindgen::to_value(&data).unwrap_or(JsValue::NULL),
