@@ -159,31 +159,15 @@ pub fn set_panic_hook() {
 }
 
 #[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    pub fn log(s: &str);
-}
-
-#[wasm_bindgen(module = "fs")]
-extern "C" {
-    #[wasm_bindgen(js_name = readFileSync, catch)]
-    pub fn read_file(path: &str, encoding: &str) -> Result<String, JsValue>;
-
-    #[wasm_bindgen(js_name = writeFileSync, catch)]
-    pub fn write_file(path: &str, content: &str) -> Result<(), JsValue>;
-
-    #[wasm_bindgen(js_name = lstatSync, catch)]
-    pub fn lstat(path: &str) -> Result<JsValue, JsValue>;
-
-    #[wasm_bindgen(js_name = existsSync, catch)]
-    pub fn exists(path: &str) -> Result<bool, JsValue>;
-}
-
-#[wasm_bindgen]
 pub async fn run(js_args: js_sys::Array, js_cfg: JsValue) -> JsValue {
     set_panic_hook();
 
-    let args: Vec<String> = js_args.iter().filter_map(|el| el.as_string()).collect();
+    // Initialize the command-line arguments vector
+    // The first argument is the program name in CLI, so to correctly manage the CLI arguments with `clap` crate we must add it to the head of the vector
+    let mut args: Vec<String> = vec!["jirust-cli".to_string()];
+
+    // Then we add the arguments from the JavaScript array to the args vector
+    args.append(&mut js_args.iter().filter_map(|el| el.as_string()).collect());
 
     let opts = match JirustCliArgs::try_parse_from(args) {
         Ok(opts) => opts,
@@ -199,6 +183,9 @@ pub async fn run(js_args: js_sys::Array, js_cfg: JsValue) -> JsValue {
 
     match result {
         Ok(data) => serde_wasm_bindgen::to_value(&data).unwrap_or(JsValue::NULL),
-        Err(_) => JsValue::NULL,
+        Err(err) => {
+            let err_s = format!("Error: {}", err);
+            return serde_wasm_bindgen::to_value(&err_s).unwrap_or(JsValue::NULL);
+        }
     }
 }
