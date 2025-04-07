@@ -196,7 +196,7 @@ Name | Type | Description  | Required | Notes
 **group_id** | Option<**String**> | The ID of the group. This parameter cannot be used with the `groupName` parameter. |  |
 **include_inactive_users** | Option<**bool**> | Include inactive users. |  |[default to false]
 **start_at** | Option<**i64**> | The index of the first item to return in a page of results (page offset). |  |[default to 0]
-**max_results** | Option<**i32**> | The maximum number of items to return per page. |  |[default to 50]
+**max_results** | Option<**i32**> | The maximum number of items to return per page (number should be between 1 and 50). |  |[default to 50]
 
 ### Return type
 

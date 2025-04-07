@@ -11,6 +11,8 @@ Method | HTTP request | Description
 [**submit_bulk_edit**](IssueBulkOperationsApi.md#submit_bulk_edit) | **POST** /rest/api/3/bulk/issues/fields | Bulk edit issues
 [**submit_bulk_move**](IssueBulkOperationsApi.md#submit_bulk_move) | **POST** /rest/api/3/bulk/issues/move | Bulk move issues
 [**submit_bulk_transition**](IssueBulkOperationsApi.md#submit_bulk_transition) | **POST** /rest/api/3/bulk/issues/transition | Bulk transition issue statuses
+[**submit_bulk_unwatch**](IssueBulkOperationsApi.md#submit_bulk_unwatch) | **POST** /rest/api/3/bulk/issues/unwatch | Bulk unwatch issues
+[**submit_bulk_watch**](IssueBulkOperationsApi.md#submit_bulk_watch) | **POST** /rest/api/3/bulk/issues/watch | Bulk watch issues
 
 
 
@@ -212,6 +214,66 @@ Use this API to submit a bulk issue status transition request. You can transitio
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **issue_bulk_transition_payload** | [**IssueBulkTransitionPayload**](IssueBulkTransitionPayload.md) | The request body containing the issues to be transitioned. | [required] |
+
+### Return type
+
+[**models::SubmittedBulkOperation**](SubmittedBulkOperation.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## submit_bulk_unwatch
+
+> models::SubmittedBulkOperation submit_bulk_unwatch(issue_bulk_watch_or_unwatch_payload)
+Bulk unwatch issues
+
+Use this API to submit a bulk unwatch request. You can unwatch up to 1,000 issues in a single operation.  **[Permissions](#permissions) required:**   *  Global bulk change [permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-global-permissions/).  *  Browse [project permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-project-permissions/) in all projects that contain the selected issues.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**issue_bulk_watch_or_unwatch_payload** | [**IssueBulkWatchOrUnwatchPayload**](IssueBulkWatchOrUnwatchPayload.md) | The request body containing the issues to be unwatched. | [required] |
+
+### Return type
+
+[**models::SubmittedBulkOperation**](SubmittedBulkOperation.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## submit_bulk_watch
+
+> models::SubmittedBulkOperation submit_bulk_watch(issue_bulk_watch_or_unwatch_payload)
+Bulk watch issues
+
+Use this API to submit a bulk watch request. You can watch up to 1,000 issues in a single operation.  **[Permissions](#permissions) required:**   *  Global bulk change [permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-global-permissions/).  *  Browse [project permission](https://support.atlassian.com/jira-cloud-administration/docs/manage-project-permissions/) in all projects that contain the selected issues.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**issue_bulk_watch_or_unwatch_payload** | [**IssueBulkWatchOrUnwatchPayload**](IssueBulkWatchOrUnwatchPayload.md) | The request body containing the issues to be watched. | [required] |
 
 ### Return type
 

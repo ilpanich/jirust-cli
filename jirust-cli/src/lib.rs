@@ -4,6 +4,8 @@ extern crate prettytable;
 use crate::args::commands::Commands;
 
 use crate::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
+use args::commands::JirustCliArgs;
+use clap::Parser;
 use config::config_file::ConfigFile;
 use executors::config_executor::ConfigExecutor;
 use executors::jira_commands_executors::ExecJiraCommand;
@@ -13,6 +15,8 @@ use executors::jira_commands_executors::jira_issue_transition_executor::IssueTra
 use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
 use std::io::{Error, ErrorKind};
 use utils::PrintableData;
+use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
+use wasm_bindgen_futures::js_sys;
 
 pub mod args;
 pub mod config;
@@ -145,6 +149,43 @@ pub async fn process_command(
         Commands::Link(args) => {
             let link_issue_executor = LinkIssueExecutor::new(cfg_data, args.link_act, args);
             link_issue_executor.exec_jira_command().await
+        }
+    }
+}
+
+pub fn set_panic_hook() {
+    #[cfg(feature = "console_error_panic_hook")]
+    console_error_panic_hook::set_once();
+}
+
+#[wasm_bindgen]
+pub async fn run(js_args: js_sys::Array, js_cfg: JsValue) -> JsValue {
+    set_panic_hook();
+
+    // Initialize the command-line arguments vector
+    // The first argument is the program name in CLI, so to correctly manage the CLI arguments with `clap` crate we must add it to the head of the vector
+    let mut args: Vec<String> = vec!["jirust-cli".to_string()];
+
+    // Then we add the arguments from the JavaScript array to the args vector
+    args.append(&mut js_args.iter().filter_map(|el| el.as_string()).collect());
+
+    let opts = match JirustCliArgs::try_parse_from(args) {
+        Ok(opts) => opts,
+        Err(err) => {
+            let err_s = format!("Error: {}", err);
+            return serde_wasm_bindgen::to_value(&err_s).unwrap_or(JsValue::NULL);
+        }
+    };
+
+    let cfg_data: ConfigFile = serde_wasm_bindgen::from_value(js_cfg).expect("Config must be set!");
+
+    let result = process_command(opts.subcmd, None, cfg_data).await;
+
+    match result {
+        Ok(data) => serde_wasm_bindgen::to_value(&data).unwrap_or(JsValue::NULL),
+        Err(err) => {
+            let err_s = format!("Error: {}", err);
+            return serde_wasm_bindgen::to_value(&err_s).unwrap_or(JsValue::NULL);
         }
     }
 }

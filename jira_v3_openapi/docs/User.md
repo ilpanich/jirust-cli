@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 **locale** | Option<**String**> | The locale of the user. Depending on the user’s privacy setting, this may be returned as null. | [optional][readonly]
 **name** | Option<**String**> | This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details. | [optional]
 **param_self** | Option<**String**> | The URL of the user. | [optional][readonly]
-**time_zone** | Option<**String**> | The time zone specified in the user's profile. Depending on the user’s privacy setting, this may be returned as null. | [optional][readonly]
+**time_zone** | Option<**String**> | The time zone specified in the user's profile. If the user's time zone is not visible to the current user (due to user's profile setting), or if a time zone has not been set, the instance's default time zone will be returned. | [optional][readonly]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

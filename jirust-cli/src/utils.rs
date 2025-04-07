@@ -7,6 +7,7 @@ use jira_v3_openapi::models::{
     CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition, IssueTypeIssueCreateMetadata,
     Project, Version,
 };
+use serde::Serialize;
 use serde_json::Value;
 
 use crate::args::commands::{OutputTypes, OutputValues};
@@ -19,6 +20,7 @@ use crate::args::commands::{OutputTypes, OutputValues};
 /// * `IssueTypeField` - Fields available for a specific issue type in a project data
 /// * `Project` - Projects available in Jira data
 /// * `Version` - Versions available in a project data
+#[derive(Serialize)]
 pub enum PrintableData {
     Generic {
         data: Vec<Value>,

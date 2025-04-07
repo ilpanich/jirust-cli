@@ -1,4 +1,5 @@
 #![cfg(feature = "common")]
+
 use std::error;
 use std::fmt;
 
@@ -12,7 +13,6 @@ pub struct ResponseContent<T> {
 #[derive(Debug)]
 pub enum Error<T> {
     Reqwest(reqwest::Error),
-    ReqwestMiddleware(reqwest_middleware::Error),
     Serde(serde_json::Error),
     Io(std::io::Error),
     ResponseError(ResponseContent<T>),
@@ -22,7 +22,6 @@ impl<T> fmt::Display for Error<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
             Error::Reqwest(e) => ("reqwest", e.to_string()),
-            Error::ReqwestMiddleware(e) => ("reqwest-middleware", e.to_string()),
             Error::Serde(e) => ("serde", e.to_string()),
             Error::Io(e) => ("IO", e.to_string()),
             Error::ResponseError(e) => ("response", format!("status code {}", e.status)),
@@ -35,7 +34,6 @@ impl<T: fmt::Debug> error::Error for Error<T> {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         Some(match self {
             Error::Reqwest(e) => e,
-            Error::ReqwestMiddleware(e) => e,
             Error::Serde(e) => e,
             Error::Io(e) => e,
             Error::ResponseError(_) => return None,
@@ -46,12 +44,6 @@ impl<T: fmt::Debug> error::Error for Error<T> {
 impl<T> From<reqwest::Error> for Error<T> {
     fn from(e: reqwest::Error) -> Self {
         Error::Reqwest(e)
-    }
-}
-
-impl<T> From<reqwest_middleware::Error> for Error<T> {
-    fn from(e: reqwest_middleware::Error) -> Self {
-        Error::ReqwestMiddleware(e)
     }
 }
 
@@ -120,6 +112,7 @@ pub mod issue_attachments_api;
 pub mod issue_bulk_operations_api;
 pub mod issue_comment_properties_api;
 pub mod issue_comments_api;
+pub mod issue_custom_field_associations_api;
 pub mod issue_custom_field_configuration_apps_api;
 pub mod issue_custom_field_contexts_api;
 pub mod issue_custom_field_options_api;
@@ -185,6 +178,7 @@ pub mod time_tracking_api;
 pub mod ui_modifications_apps_api;
 pub mod user_properties_api;
 pub mod user_search_api;
+pub mod usernavproperties_api;
 pub mod users_api;
 pub mod webhooks_api;
 pub mod workflow_scheme_drafts_api;

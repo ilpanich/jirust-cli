@@ -1,6 +1,7 @@
 use crate::jira_doc_std_field;
 use clap::{ArgAction, Args, Parser, Subcommand, ValueEnum};
 use regex::Regex;
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 
 /// Command line arguments base
@@ -15,7 +16,7 @@ pub struct JirustCliArgs {
 
 /// Available CLI commands
 /// Config, Issue, Project, Transition, Version
-#[derive(Subcommand, Clone, Debug)]
+#[derive(Subcommand, Clone, Debug, Serialize, Deserialize)]
 pub enum Commands {
     /// Configuration management
     Config(ConfigArgs),
@@ -35,7 +36,7 @@ pub enum Commands {
 ///
 /// * page_size: Option<i32>
 /// * page_offset: Option<i64>
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct PaginationArgs {
     /// page size for lists
     #[clap(
@@ -60,7 +61,7 @@ pub struct PaginationArgs {
 ///
 /// * Table: Print output in table format
 /// * Json: Print output in json format
-#[derive(ValueEnum, Debug, Clone, Copy)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum OutputValues {
     /// Print output in table format
@@ -77,7 +78,7 @@ pub enum OutputValues {
 /// * Basic: Print basic output
 /// * Single: Print single row output
 /// * Full: Print full output
-#[derive(ValueEnum, Debug, Clone, Copy)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum OutputTypes {
     /// Print basic output
@@ -94,7 +95,7 @@ pub enum OutputTypes {
 /// Available output values
 ///
 /// * output: Option<OutputValues> - Output format
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct OutputArgs {
     /// Output format
     #[clap(long, short = 'o', value_name = "table|json", help = "Output format")]
@@ -112,7 +113,7 @@ pub struct OutputArgs {
 /// Available configuration command line arguments
 /// cfg_act: ConfigActionValues
 ///    Auth, Jira, Setup, Show
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct ConfigArgs {
     /// Configuration action
     #[arg(
@@ -129,7 +130,7 @@ pub struct ConfigArgs {
 /// * Jira: Set Jira API base URL
 /// * Setup: Setup Jira API configuration (authentication data, jira base URL, etc.)
 /// * Show: Show current configuration
-#[derive(ValueEnum, Debug, Clone, Copy)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum ConfigActionValues {
     /// Set Jira API authentication (username, apikey)
@@ -166,7 +167,7 @@ pub enum ConfigActionValues {
 /// * pagination: PaginationArgs - Jira Project version pagination
 /// * output: OutputArgs - Jira Project version actions result output format
 ///
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct VersionArgs {
     /// Version action
     #[arg(
@@ -283,7 +284,7 @@ pub struct VersionArgs {
 /// * List: List Jira Project versions
 /// * Release: Release a Jira Project version
 /// * Update: Update a Jira Project version
-#[derive(ValueEnum, Debug, Clone, Copy)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum VersionActionValues {
     /// Archive a Jira Project version
@@ -313,7 +314,7 @@ pub enum VersionActionValues {
 /// * project_issue_type: Option<String> - Jira Project issue type ID
 /// * pagination: PaginationArgs - Jira Project pagination
 /// * output: OutputArgs - Jira Project actions result output format
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct ProjectArgs {
     /// Project action
     #[arg(
@@ -327,8 +328,7 @@ pub struct ProjectArgs {
         long,
         short = 'k',
         value_name = "project_key",
-        help = "Jira Project key",
-        required = true
+        help = "Jira Project key"
     )]
     pub project_key: Option<String>,
     /// Jira Project issue type ID
@@ -352,7 +352,7 @@ pub struct ProjectArgs {
 /// * GetIssueTypes: Get Jira Project issue types by Jira project key
 /// * GetIssueTypeFields: Get Jira Project issue type fields by Jira project key and issue type ID
 /// * List: List Jira Projects
-#[derive(ValueEnum, Debug, Clone, Copy)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum ProjectActionValues {
     /// Get Jira Project issue types by Jira project key
@@ -382,7 +382,7 @@ pub enum ProjectActionValues {
 /// * assignee: Option<String> - Jira Project issue assignee
 /// * pagination: PaginationArgs - Jira Project issue pagination
 /// * output: OutputArgs - Jira Project issue actions result output format
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct IssueArgs {
     /// Issue action
     #[arg(
@@ -447,7 +447,7 @@ pub struct IssueArgs {
 /// * Get: Get a specific Jira Project issue
 /// * Transition: Transition a Jira Project issue
 /// * Update: Update a Jira Project issue
-#[derive(ValueEnum, Debug, Clone, Copy)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum IssueActionValues {
     /// Assign a Jira Project issue
@@ -478,7 +478,7 @@ pub enum IssueActionValues {
 /// * destination_issue_key: Option<String> - Jira destination issue link key
 /// * link_type: String - Jira issue link type
 /// * changelog_file: Option<String> - Jira Project version changelog file
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct LinkIssueArgs {
     // Jira link issue command available actions
     #[arg(
@@ -534,7 +534,7 @@ pub struct LinkIssueArgs {
 /// Available link issue action values
 ///
 /// * Create: Create a Jira link between issues
-#[derive(ValueEnum, Debug, Clone, Copy)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum LinkIssueActionValues {
     /// Create a Jira link between issues
@@ -547,7 +547,7 @@ pub enum LinkIssueActionValues {
 /// * transition_act: TransitionActionValues - Transition action
 /// * issue_key: String - Jira issue key
 /// * output: OutputArgs - Jira issue output format
-#[derive(Args, Clone, Debug)]
+#[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct TransitionArgs {
     /// Transition action
     #[arg(value_name = "list", help_heading = "Jira issue transition list")]
@@ -569,7 +569,7 @@ pub struct TransitionArgs {
 /// Available transition action values
 ///
 /// * List: List Jira issue available transitions
-#[derive(ValueEnum, Debug, Clone, Copy)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum TransitionActionValues {
     /// List Jira issue available transitions

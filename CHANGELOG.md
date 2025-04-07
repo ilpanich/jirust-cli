@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Added
+- Added support for WASM target
+
+### Changed
+- Updated dependencies
+- Refactor of the whole library code
 
 ## [0.13.4] 2025-03-31
 ### Changed

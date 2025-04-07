@@ -66,6 +66,18 @@ jobs:
           cp target/x86_64-unknown-linux-gnu/release/jirust-cli builds/jirust-cli-linux
           tar -C builds -czvf dist/jirust-cli-linux.tar.gz jirust-cli-linux
 
+      - name: WASM Pack
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
+        run: |
+          cargo install wasm-pack
+          cd jirust-cli
+          wasm-pack build --release --target nodejs
+          wasm-pack pack pkg
+          mkdir builds/jirust-cli-wasm
+          cp pkg/jirust-cli-*.tgz dist/jirust-cli-wasm.tgz
+
       - name: Extract release notes
         id: extract-release-notes
         uses: ffurrer2/extract-release-notes@v2
@@ -84,6 +96,7 @@ jobs:
           files: |
             dist/jirust-cli-win64.tar.gz
             dist/jirust-cli-linux.tar.gz
+            dist/jirust-cli-wasm.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
 
@@ -95,6 +108,16 @@ jobs:
         run: |
           cargo login "$CARGO_ACCESS_TOKEN"
           cargo publish -p jirust-cli
+          cargo publish -p jirust-cli-wasm
+
+      - name: Publish WASM package on npmjs
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
+          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_ACCESS_TOKEN}" > ~/.npmrc
+          wasm-pack publish
 
       - name: Generate SBOM
         env:

@@ -1,4 +1,5 @@
 .gitignore
+.openapi-generator-ignore
 .travis.yml
 Cargo.toml
 README.md
@@ -26,6 +27,7 @@ docs/ArchivedIssuesFilterRequest.md
 docs/AssociateFieldConfigurationsWithIssueTypesRequest.md
 docs/AssociateSecuritySchemeWithProjectDetails.md
 docs/AssociatedItemBean.md
+docs/AssociationContextObject.md
 docs/Attachment.md
 docs/AttachmentArchive.md
 docs/AttachmentArchiveEntry.md
@@ -208,6 +210,7 @@ docs/ExportArchivedIssuesTaskProgressResponse.md
 docs/FailedWebhook.md
 docs/FailedWebhooks.md
 docs/Field.md
+docs/FieldAssociationsRequest.md
 docs/FieldChangedClause.md
 docs/FieldConfiguration.md
 docs/FieldConfigurationDetails.md
@@ -220,6 +223,8 @@ docs/FieldConfigurationSchemeProjects.md
 docs/FieldConfigurationToIssueTypeMapping.md
 docs/FieldCreateMetadata.md
 docs/FieldDetails.md
+docs/FieldIdIdentifier.md
+docs/FieldIdentifierObject.md
 docs/FieldLastUsed.md
 docs/FieldMetadata.md
 docs/FieldReferenceData.md
@@ -282,6 +287,7 @@ docs/IssueBulkMovePayload.md
 docs/IssueBulkOperationsApi.md
 docs/IssueBulkTransitionForWorkflow.md
 docs/IssueBulkTransitionPayload.md
+docs/IssueBulkWatchOrUnwatchPayload.md
 docs/IssueChangeLog.md
 docs/IssueChangelogIds.md
 docs/IssueCommentListRequestBean.md
@@ -289,6 +295,7 @@ docs/IssueCommentPropertiesApi.md
 docs/IssueCommentsApi.md
 docs/IssueContextVariable.md
 docs/IssueCreateMetadata.md
+docs/IssueCustomFieldAssociationsApi.md
 docs/IssueCustomFieldConfigurationAppsApi.md
 docs/IssueCustomFieldContextsApi.md
 docs/IssueCustomFieldOptionsApi.md
@@ -306,7 +313,6 @@ docs/IssueFieldOptionScopeBean.md
 docs/IssueFieldsApi.md
 docs/IssueFilterForBulkPropertyDelete.md
 docs/IssueFilterForBulkPropertySet.md
-docs/IssueLimitReportRequest.md
 docs/IssueLimitReportResponseBean.md
 docs/IssueLink.md
 docs/IssueLinkType.md
@@ -608,6 +614,7 @@ docs/ProjectFeature.md
 docs/ProjectFeatureState.md
 docs/ProjectFeaturesApi.md
 docs/ProjectId.md
+docs/ProjectIdAssociationContext.md
 docs/ProjectIdentifierBean.md
 docs/ProjectIdentifiers.md
 docs/ProjectIds.md
@@ -634,6 +641,8 @@ docs/ProjectRolesApi.md
 docs/ProjectScopeBean.md
 docs/ProjectType.md
 docs/ProjectTypesApi.md
+docs/ProjectUsage.md
+docs/ProjectUsagePage.md
 docs/ProjectVersionsApi.md
 docs/ProjectWithDataPolicy.md
 docs/ProjectsApi.md
@@ -691,7 +700,6 @@ docs/SecuritySchemeWithProjects.md
 docs/SecuritySchemes.md
 docs/ServerInfoApi.md
 docs/ServerInformation.md
-docs/ServerInformationServerTimeZone.md
 docs/ServiceManagementNavigationInfo.md
 docs/ServiceRegistry.md
 docs/ServiceRegistryApi.md
@@ -721,10 +729,18 @@ docs/StatusMapping.md
 docs/StatusMappingDto.md
 docs/StatusMetadata.md
 docs/StatusMigration.md
-docs/StatusReferenceAndPort.md
+docs/StatusProjectIssueTypeUsage.md
+docs/StatusProjectIssueTypeUsageDto.md
+docs/StatusProjectIssueTypeUsagePage.md
+docs/StatusProjectUsage.md
+docs/StatusProjectUsageDto.md
+docs/StatusProjectUsagePage.md
 docs/StatusScope.md
 docs/StatusUpdate.md
 docs/StatusUpdateRequest.md
+docs/StatusWorkflowUsageDto.md
+docs/StatusWorkflowUsagePage.md
+docs/StatusWorkflowUsageWorkflow.md
 docs/StatusesPerWorkflow.md
 docs/SubmittedBulkOperation.md
 docs/SuggestedIssue.md
@@ -784,10 +800,12 @@ docs/UserFilter.md
 docs/UserKey.md
 docs/UserList.md
 docs/UserMigrationBean.md
+docs/UserNavPropertyJsonBean.md
 docs/UserPermission.md
 docs/UserPickerUser.md
 docs/UserPropertiesApi.md
 docs/UserSearchApi.md
+docs/UsernavpropertiesApi.md
 docs/UsersApi.md
 docs/ValidationOptionsForCreate.md
 docs/ValidationOptionsForUpdate.md
@@ -826,6 +844,10 @@ docs/WorkflowLayout.md
 docs/WorkflowMetadataAndIssueTypeRestModel.md
 docs/WorkflowMetadataRestModel.md
 docs/WorkflowOperations.md
+docs/WorkflowProjectIssueTypeUsage.md
+docs/WorkflowProjectIssueTypeUsageDto.md
+docs/WorkflowProjectIssueTypeUsagePage.md
+docs/WorkflowProjectUsageDto.md
 docs/WorkflowReadRequest.md
 docs/WorkflowReadResponse.md
 docs/WorkflowReferenceStatus.md
@@ -840,16 +862,20 @@ docs/WorkflowSchemeDraftsApi.md
 docs/WorkflowSchemeIdName.md
 docs/WorkflowSchemeProjectAssociation.md
 docs/WorkflowSchemeProjectAssociationsApi.md
+docs/WorkflowSchemeProjectUsageDto.md
 docs/WorkflowSchemeReadRequest.md
 docs/WorkflowSchemeReadResponse.md
 docs/WorkflowSchemeUpdateRequest.md
 docs/WorkflowSchemeUpdateRequiredMappingsRequest.md
 docs/WorkflowSchemeUpdateRequiredMappingsResponse.md
+docs/WorkflowSchemeUsage.md
+docs/WorkflowSchemeUsageDto.md
+docs/WorkflowSchemeUsagePage.md
 docs/WorkflowSchemesApi.md
 docs/WorkflowScope.md
+docs/WorkflowSearchResponse.md
 docs/WorkflowSimpleCondition.md
 docs/WorkflowStatus.md
-docs/WorkflowStatusAndPort.md
 docs/WorkflowStatusCategoriesApi.md
 docs/WorkflowStatusLayout.md
 docs/WorkflowStatusUpdate.md
@@ -900,6 +926,7 @@ src/apis/issue_attachments_api.rs
 src/apis/issue_bulk_operations_api.rs
 src/apis/issue_comment_properties_api.rs
 src/apis/issue_comments_api.rs
+src/apis/issue_custom_field_associations_api.rs
 src/apis/issue_custom_field_configuration_apps_api.rs
 src/apis/issue_custom_field_contexts_api.rs
 src/apis/issue_custom_field_options_api.rs
@@ -966,6 +993,7 @@ src/apis/time_tracking_api.rs
 src/apis/ui_modifications_apps_api.rs
 src/apis/user_properties_api.rs
 src/apis/user_search_api.rs
+src/apis/usernavproperties_api.rs
 src/apis/users_api.rs
 src/apis/webhooks_api.rs
 src/apis/workflow_scheme_drafts_api.rs
@@ -996,6 +1024,7 @@ src/models/archived_issues_filter_request.rs
 src/models/associate_field_configurations_with_issue_types_request.rs
 src/models/associate_security_scheme_with_project_details.rs
 src/models/associated_item_bean.rs
+src/models/association_context_object.rs
 src/models/attachment.rs
 src/models/attachment_archive.rs
 src/models/attachment_archive_entry.rs
@@ -1173,6 +1202,7 @@ src/models/export_archived_issues_task_progress_response.rs
 src/models/failed_webhook.rs
 src/models/failed_webhooks.rs
 src/models/field.rs
+src/models/field_associations_request.rs
 src/models/field_changed_clause.rs
 src/models/field_configuration.rs
 src/models/field_configuration_details.rs
@@ -1185,6 +1215,8 @@ src/models/field_configuration_scheme_projects.rs
 src/models/field_configuration_to_issue_type_mapping.rs
 src/models/field_create_metadata.rs
 src/models/field_details.rs
+src/models/field_id_identifier.rs
+src/models/field_identifier_object.rs
 src/models/field_last_used.rs
 src/models/field_metadata.rs
 src/models/field_reference_data.rs
@@ -1241,6 +1273,7 @@ src/models/issue_bulk_edit_payload.rs
 src/models/issue_bulk_move_payload.rs
 src/models/issue_bulk_transition_for_workflow.rs
 src/models/issue_bulk_transition_payload.rs
+src/models/issue_bulk_watch_or_unwatch_payload.rs
 src/models/issue_change_log.rs
 src/models/issue_changelog_ids.rs
 src/models/issue_comment_list_request_bean.rs
@@ -1256,7 +1289,6 @@ src/models/issue_field_option_create_bean.rs
 src/models/issue_field_option_scope_bean.rs
 src/models/issue_filter_for_bulk_property_delete.rs
 src/models/issue_filter_for_bulk_property_set.rs
-src/models/issue_limit_report_request.rs
 src/models/issue_limit_report_response_bean.rs
 src/models/issue_link.rs
 src/models/issue_link_type.rs
@@ -1522,6 +1554,7 @@ src/models/project_email_address.rs
 src/models/project_feature.rs
 src/models/project_feature_state.rs
 src/models/project_id.rs
+src/models/project_id_association_context.rs
 src/models/project_identifier_bean.rs
 src/models/project_identifiers.rs
 src/models/project_ids.rs
@@ -1542,6 +1575,8 @@ src/models/project_role_group.rs
 src/models/project_role_user.rs
 src/models/project_scope_bean.rs
 src/models/project_type.rs
+src/models/project_usage.rs
+src/models/project_usage_page.rs
 src/models/project_with_data_policy.rs
 src/models/property_key.rs
 src/models/property_keys.rs
@@ -1592,7 +1627,6 @@ src/models/security_scheme_members_request.rs
 src/models/security_scheme_with_projects.rs
 src/models/security_schemes.rs
 src/models/server_information.rs
-src/models/server_information_server_time_zone.rs
 src/models/service_management_navigation_info.rs
 src/models/service_registry.rs
 src/models/service_registry_tier.rs
@@ -1620,10 +1654,18 @@ src/models/status_mapping.rs
 src/models/status_mapping_dto.rs
 src/models/status_metadata.rs
 src/models/status_migration.rs
-src/models/status_reference_and_port.rs
+src/models/status_project_issue_type_usage.rs
+src/models/status_project_issue_type_usage_dto.rs
+src/models/status_project_issue_type_usage_page.rs
+src/models/status_project_usage.rs
+src/models/status_project_usage_dto.rs
+src/models/status_project_usage_page.rs
 src/models/status_scope.rs
 src/models/status_update.rs
 src/models/status_update_request.rs
+src/models/status_workflow_usage_dto.rs
+src/models/status_workflow_usage_page.rs
+src/models/status_workflow_usage_workflow.rs
 src/models/statuses_per_workflow.rs
 src/models/submitted_bulk_operation.rs
 src/models/suggested_issue.rs
@@ -1679,6 +1721,7 @@ src/models/user_filter.rs
 src/models/user_key.rs
 src/models/user_list.rs
 src/models/user_migration_bean.rs
+src/models/user_nav_property_json_bean.rs
 src/models/user_permission.rs
 src/models/user_picker_user.rs
 src/models/validation_options_for_create.rs
@@ -1717,6 +1760,10 @@ src/models/workflow_layout.rs
 src/models/workflow_metadata_and_issue_type_rest_model.rs
 src/models/workflow_metadata_rest_model.rs
 src/models/workflow_operations.rs
+src/models/workflow_project_issue_type_usage.rs
+src/models/workflow_project_issue_type_usage_dto.rs
+src/models/workflow_project_issue_type_usage_page.rs
+src/models/workflow_project_usage_dto.rs
 src/models/workflow_read_request.rs
 src/models/workflow_read_response.rs
 src/models/workflow_reference_status.rs
@@ -1729,15 +1776,19 @@ src/models/workflow_scheme_association.rs
 src/models/workflow_scheme_associations.rs
 src/models/workflow_scheme_id_name.rs
 src/models/workflow_scheme_project_association.rs
+src/models/workflow_scheme_project_usage_dto.rs
 src/models/workflow_scheme_read_request.rs
 src/models/workflow_scheme_read_response.rs
 src/models/workflow_scheme_update_request.rs
 src/models/workflow_scheme_update_required_mappings_request.rs
 src/models/workflow_scheme_update_required_mappings_response.rs
+src/models/workflow_scheme_usage.rs
+src/models/workflow_scheme_usage_dto.rs
+src/models/workflow_scheme_usage_page.rs
 src/models/workflow_scope.rs
+src/models/workflow_search_response.rs
 src/models/workflow_simple_condition.rs
 src/models/workflow_status.rs
-src/models/workflow_status_and_port.rs
 src/models/workflow_status_layout.rs
 src/models/workflow_status_update.rs
 src/models/workflow_transition.rs

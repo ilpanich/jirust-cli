@@ -6,7 +6,10 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**create_statuses**](StatusApi.md#create_statuses) | **POST** /rest/api/3/statuses | Bulk create statuses
 [**delete_statuses_by_id**](StatusApi.md#delete_statuses_by_id) | **DELETE** /rest/api/3/statuses | Bulk delete Statuses
+[**get_project_issue_type_usages_for_status**](StatusApi.md#get_project_issue_type_usages_for_status) | **GET** /rest/api/3/statuses/{statusId}/project/{projectId}/issueTypeUsages | Get issue type usages by status and project
+[**get_project_usages_for_status**](StatusApi.md#get_project_usages_for_status) | **GET** /rest/api/3/statuses/{statusId}/projectUsages | Get project usages by status
 [**get_statuses_by_id**](StatusApi.md#get_statuses_by_id) | **GET** /rest/api/3/statuses | Bulk get statuses
+[**get_workflow_usages_for_status**](StatusApi.md#get_workflow_usages_for_status) | **GET** /rest/api/3/statuses/{statusId}/workflowUsages | Get workflow usages by status
 [**search**](StatusApi.md#search) | **GET** /rest/api/3/statuses/search | Search statuses paginated
 [**update_statuses**](StatusApi.md#update_statuses) | **PUT** /rest/api/3/statuses | Bulk update statuses
 
@@ -72,6 +75,71 @@ Name | Type | Description  | Required | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
+## get_project_issue_type_usages_for_status
+
+> models::StatusProjectIssueTypeUsageDto get_project_issue_type_usages_for_status(status_id, project_id, next_page_token, max_results)
+Get issue type usages by status and project
+
+Returns a page of issue types in a project using a given status.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**status_id** | **String** | The statusId to fetch issue type usages for | [required] |
+**project_id** | **String** | The projectId to fetch issue type usages for | [required] |
+**next_page_token** | Option<**String**> | The cursor for pagination |  |
+**max_results** | Option<**i32**> | The maximum number of results to return. Must be an integer between 1 and 200. |  |[default to 50]
+
+### Return type
+
+[**models::StatusProjectIssueTypeUsageDto**](StatusProjectIssueTypeUsageDTO.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## get_project_usages_for_status
+
+> models::StatusProjectUsageDto get_project_usages_for_status(status_id, next_page_token, max_results)
+Get project usages by status
+
+Returns a page of projects using a given status.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**status_id** | **String** | The statusId to fetch project usages for | [required] |
+**next_page_token** | Option<**String**> | The cursor for pagination |  |
+**max_results** | Option<**i32**> | The maximum number of results to return. Must be an integer between 1 and 200. |  |[default to 50]
+
+### Return type
+
+[**models::StatusProjectUsageDto**](StatusProjectUsageDTO.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
 ## get_statuses_by_id
 
 > Vec<models::JiraStatus> get_statuses_by_id(id, expand)
@@ -85,11 +153,43 @@ Returns a list of the statuses specified by one or more status IDs.  **[Permissi
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **id** | [**Vec<String>**](String.md) | The list of status IDs. To include multiple IDs, provide an ampersand-separated list. For example, id=10000&id=10001.  Min items `1`, Max items `50` | [required] |
-**expand** | Option<**String**> | Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `usages` Returns the project and issue types that use the status in their workflow.  *  `workflowUsages` Returns the workflows that use the status. |  |
+**expand** | Option<**String**> | Deprecated. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/changelog/#CHANGE-2298) for details.  Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `usages` Returns the project and issue types that use the status in their workflow.  *  `workflowUsages` Returns the workflows that use the status. |  |
 
 ### Return type
 
 [**Vec<models::JiraStatus>**](JiraStatus.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## get_workflow_usages_for_status
+
+> models::StatusWorkflowUsageDto get_workflow_usages_for_status(status_id, next_page_token, max_results)
+Get workflow usages by status
+
+Returns a page of workflows using a given status.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**status_id** | **String** | The statusId to fetch workflow usages for | [required] |
+**next_page_token** | Option<**String**> | The cursor for pagination |  |
+**max_results** | Option<**i32**> | The maximum number of results to return. Must be an integer between 1 and 200. |  |[default to 50]
+
+### Return type
+
+[**models::StatusWorkflowUsageDto**](StatusWorkflowUsageDTO.md)
 
 ### Authorization
 
@@ -115,7 +215,7 @@ Returns a [paginated](https://developer.atlassian.com/cloud/jira/platform/rest/v
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**expand** | Option<**String**> | Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `usages` Returns the project and issue types that use the status in their workflow.  *  `workflowUsages` Returns the workflows that use the status. |  |
+**expand** | Option<**String**> | Deprecated. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/changelog/#CHANGE-2298) for details.  Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `usages` Returns the project and issue types that use the status in their workflow.  *  `workflowUsages` Returns the workflows that use the status. |  |
 **project_id** | Option<**String**> | The project the status is part of or null for global statuses. |  |
 **start_at** | Option<**i64**> | The index of the first item to return in a page of results (page offset). |  |[default to 0]
 **max_results** | Option<**i32**> | The maximum number of items to return per page. |  |[default to 200]

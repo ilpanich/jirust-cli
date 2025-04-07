@@ -15,5 +15,5 @@ pub trait ExecJiraCommand {
     /// * A Result with a unit type or a Box with a dyn std::error::Error trait.
     fn exec_jira_command(
         &self,
-    ) -> impl std::future::Future<Output = Result<Vec<PrintableData>, Box<dyn std::error::Error>>> + Send;
+    ) -> impl std::future::Future<Output = Result<Vec<PrintableData>, Box<dyn std::error::Error>>>;
 }

@@ -5,7 +5,7 @@ authors = [
     "Atlassian OpenAPI <ecosystem@atlassian.com>",
     "Emanuele Panigati <ilpanich@gmail.com>",
 ]
-description = "Jira Cloud platform REST API lib (OpenAPI document version: 1001.0.0-SNAPSHOT-4168ca0e5efc137ea4ff4f0cf29358bf64e26f02)"
+description = "Jira Cloud platform REST API lib (OpenAPI document version: 1001.0.0-SNAPSHOT-1461af1efd5cc75bf21cb8256a8b42f9bd4278be)"
 keywords = ["jira", "openapi"]
 repository = "https://github.com/ilpanich/jirust-cli"
 license = "Apache-2.0"
@@ -25,9 +25,8 @@ serde_with = { version = "^3.8", default-features = false, features = [
 serde_json = "^1.0"
 serde_repr = "0.1.19"
 url = "^2.5"
-uuid = { version = "^1.8", default-features = false, features = ["serde", "v4"] }
+uuid = { version = "^1.8", default-features = false, features = ["serde", "v4", "js"] }
 reqwest = { version = "^0.12", default-features = false, features = ["json", "multipart", "rustls-tls"] }
-reqwest-middleware = { version = "^0.3", default-features = false, features = ["json", "multipart"] }
 
 [profile.release]
 opt-level = "s"
