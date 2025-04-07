@@ -4,10 +4,10 @@
 Project is currently being developed and it is in beta phase.
 Only last beta version will be supported, fixes and dependencies upgrade won't be backported to previous releases.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.13.x   | :white_check_mark: |
-| < 0.13.0   | :x:                |
+| Version    | Supported             |
+| ---------- | ------------------ |
+| 0.14.x     | :white_check_mark: |
+| < 0.14.0   | :x:                |
 
 ## Reporting a Vulnerability
 
