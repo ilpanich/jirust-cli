@@ -1,6 +1,6 @@
 import { run } from "./pkg/jirust_cli.js";
 
-let cmd = run(["jirust-cli", "project", "list"], {
+let cmd = run(["project", "list"], {
   auth: {
     auth_token: "jira_auth_token",
   },
