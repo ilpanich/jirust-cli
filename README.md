@@ -26,8 +26,7 @@ To use the CLI, simply run:
 jirust-cli --help
 ```
 
-Starting from version 0.14.0 a WASM version of the library is available to be used in node.js; you can refer too the following sample code (see the rust-lang version docs for all the available options and parameters):
-
+Starting from version 0.14.0 a WASM version of the library is available to be used in node.js; you can refer to the following sample code (see the rust-lang version docs for all the available options and parameters):
 ```javascript
 import { run } from "./pkg/jirust_cli.js";
 
