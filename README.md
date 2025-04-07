@@ -2,9 +2,9 @@
 
 # JiRust-CLI
 
-| Component | Build | Crate | docs | rust-clippy |
-|:---------:|:-----:|:-----:|:----:|:-----------:|
-| jirust-cli | [![build and release jirust-cli](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml) | [![Crate](https://img.shields.io/crates/v/jirust-cli.svg)](https://crates.io/crates/jirust-cli) | [![API](https://docs.rs/jirust-cli/badge.svg)](https://docs.rs/jirust-cli)|[![rust-clippy analyze](https://github.com/ilpanich/jirust-cli/actions/workflows/rust-clippy.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/rust-clippy.yml)
+| Component | Build | Crate | docs | rust-clippy | npm |
+|:---------:|:-----:|:-----:|:----:|:-----------:|:---:|
+| jirust-cli | [![build and release jirust-cli](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml) | [![Crate](https://img.shields.io/crates/v/jirust-cli.svg)](https://crates.io/crates/jirust-cli) | [![API](https://docs.rs/jirust-cli/badge.svg)](https://docs.rs/jirust-cli)|[![rust-clippy analyze](https://github.com/ilpanich/jirust-cli/actions/workflows/rust-clippy.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/rust-clippy.yml)|[![npm](https://img.shields.io/npm/v/jirust-cli.svg)](https://www.npmjs.com/package/jirust-cli)
 | jira_v3_openapi | [![build and release jira_v3_openapi](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jira_v3.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jira_v3.yml) | [![Crate](https://img.shields.io/crates/v/jira_v3_openapi.svg)](https://crates.io/crates/jira_v3_openapi) | [![API](https://docs.rs/jira_v3_openapi/badge.svg)](https://docs.rs/jira_v3_openapi) |
 
 JiRust-CLI will be a simple Jira CLI developed in rust languages.
@@ -21,10 +21,43 @@ cargo install jirust-cli
 ```
 
 ## Usage
-To use it simply run:
+To use th CLI it simply run:
 ```bash
 jirust-cli --help
 ```
+
+Starting from version 0.14.0 a WASM version of the library is available to be used in node.js; you can refer too the following sample code (see the rust-lang version docs for all the available options and parameters):
+
+```javascript
+import { run } from "./pkg/jirust_cli.js";
+
+let cmd = run(["project", "list"], {
+  auth: {
+    auth_token: "jira_auth_token",
+  },
+  jira: {
+    jira_url: "https://jira.atlassian.net",
+    standard_resolution: '{"name": "Done"}',
+    standard_resolution_comment: "Autoresolved",
+    transitions_names: { resolve: ["Resolve Issue"] },
+  },
+}).then((v, err) => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log(JSON.stringify(v));
+    console.log("Done");
+  }
+});
+```
+
+And then you can run this node.js script using:
+
+```bash
+node jirust-cli-example.js
+```
+
+The sample code file is also included in the repository.
 
 And you will see the help message.
 
@@ -89,7 +122,7 @@ Everything is currently released upon the [crates.io](https://crates.io) platfor
 
 ## Roadmap
 Next features to be integrated and supported are:
-* Update issue management operation has to be fixed since it is not working correctly at the moment, but I have to design the solution properly; the main issue is related to managing complex Jira fields.
+* Create a project from scratch
 
 Those are mandatory for my work and I will prioritize them; other features will be added as needed.
 You can request a feature by opening an issue or you can provide an implementation compliant with what is currently developed in a PR.
