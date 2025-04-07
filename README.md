@@ -21,7 +21,7 @@ cargo install jirust-cli
 ```
 
 ## Usage
-To use th CLI it simply run:
+To use the CLI, simply run:
 ```bash
 jirust-cli --help
 ```
