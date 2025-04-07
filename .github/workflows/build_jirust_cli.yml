@@ -71,6 +71,8 @@ jobs:
           SCCACHE_GHA_ENABLED: "true"
           RUSTC_WRAPPER: "sccache"
         run: |
+          cargo install wasm-pack
+          cd jirust-cli
           wasm-pack build --release --target nodejs
           wasm-pack pack pkg
           mkdir builds/jirust-cli-wasm
@@ -106,6 +108,16 @@ jobs:
         run: |
           cargo login "$CARGO_ACCESS_TOKEN"
           cargo publish -p jirust-cli
+          cargo publish -p jirust-cli-wasm
+
+      - name: Publish WASM package on npmjs
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
+          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_ACCESS_TOKEN}" > ~/.npmrc
+          wasm-pack publish
 
       - name: Generate SBOM
         env:
