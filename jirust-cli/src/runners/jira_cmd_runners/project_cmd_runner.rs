@@ -4,7 +4,8 @@ use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::issues_api::{
     get_create_issue_meta_issue_type_id, get_create_issue_meta_issue_types,
 };
-use jira_v3_openapi::apis::projects_api::search_projects;
+use jira_v3_openapi::apis::projects_api::{create_project, search_projects};
+use jira_v3_openapi::models::{CreateProjectDetails, ProjectIdentifiers};
 use jira_v3_openapi::models::{
     FieldCreateMetadata, IssueTypeIssueCreateMetadata, project::Project,
 };
@@ -53,6 +54,18 @@ impl ProjectCmdRunner {
         config.base_path = cfg_file.get_jira_url().to_string();
         config.basic_auth = Some((auth_data.0, Some(auth_data.1)));
         ProjectCmdRunner { cfg: config }
+    }
+
+    pub async fn create_project(
+        &self,
+        params: ProjectCmdParams,
+    ) -> Result<ProjectIdentifiers, Box<dyn std::error::Error>> {
+        let mut project_data = CreateProjectDetails::new(
+            params.project_key.expect("Project key is required!"),
+            params.project_name.expect("Project name is required!"),
+        );
+        project_data.description = params.project_description;
+        Ok(create_project(&self.cfg, project_data).await?)
     }
 
     /// Lists Jira projects.
@@ -221,6 +234,19 @@ impl ProjectCmdRunner {
 pub struct ProjectCmdParams {
     pub project_key: Option<String>,
     pub project_issue_type: Option<String>,
+    pub project_name: Option<String>,
+    pub project_description: Option<String>,
+    pub project_field_configuration_id: Option<i64>,
+    pub project_issue_security_scheme_id: Option<i64>,
+    pub project_issue_type_scheme_id: Option<i64>,
+    pub project_issue_type_screen_scheme_id: Option<i64>,
+    pub project_notification_scheme_id: Option<i64>,
+    pub project_permission_scheme_id: Option<i64>,
+    pub project_workflow_scheme_id: Option<i64>,
+    pub project_lead_account_id: Option<String>,
+    pub project_assignee_type: Option<String>,
+    pub project_type_key: Option<String>,
+    pub project_template_key: Option<String>,
     pub projects_page_size: Option<i32>,
     pub projects_page_offset: Option<i32>,
 }
@@ -249,6 +275,19 @@ impl ProjectCmdParams {
         ProjectCmdParams {
             project_key: None,
             project_issue_type: None,
+            project_name: None,
+            project_description: None,
+            project_field_configuration_id: None,
+            project_issue_security_scheme_id: None,
+            project_issue_type_scheme_id: None,
+            project_issue_type_screen_scheme_id: None,
+            project_notification_scheme_id: None,
+            project_permission_scheme_id: None,
+            project_workflow_scheme_id: None,
+            project_lead_account_id: None,
+            project_assignee_type: None,
+            project_type_key: None,
+            project_template_key: None,
             projects_page_size: None,
             projects_page_offset: None,
         }
@@ -293,6 +332,19 @@ impl From<&ProjectArgs> for ProjectCmdParams {
         ProjectCmdParams {
             project_key: value.project_key.clone(),
             project_issue_type: value.project_issue_type.clone(),
+            project_name: value.project_name.clone(),
+            project_description: value.project_description.clone(),
+            project_field_configuration_id: value.project_field_configuration_id.clone(),
+            project_issue_security_scheme_id: value.project_issue_security_scheme_id.clone(),
+            project_issue_type_scheme_id: value.project_issue_type_scheme_id.clone(),
+            project_issue_type_screen_scheme_id: value.project_issue_type_screen_scheme_id.clone(),
+            project_notification_scheme_id: value.project_notification_scheme_id.clone(),
+            project_permission_scheme_id: value.project_permission_scheme_id.clone(),
+            project_workflow_scheme_id: value.project_workflow_scheme_id.clone(),
+            project_lead_account_id: value.project_lead_account_id.clone(),
+            project_assignee_type: value.project_assignee_type.clone(),
+            project_type_key: value.project_type_key.clone(),
+            project_template_key: value.project_template_key.clone(),
             projects_page_size: value.pagination.page_size,
             projects_page_offset: Some(
                 i32::try_from(value.pagination.page_offset.unwrap_or(0))

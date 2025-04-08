@@ -339,6 +339,89 @@ pub struct ProjectArgs {
         help = "Jira Project issue type ID"
     )]
     pub project_issue_type: Option<String>,
+    /// Jira Project name
+    #[clap(long, value_name = "project_name", help = "Jira Project name")]
+    pub project_name: Option<String>,
+    /// Jira Project description
+    #[clap(
+        long,
+        value_name = "project_description",
+        help = "Jira Project description"
+    )]
+    pub project_description: Option<String>,
+    /// Jira Project field configuration ID
+    #[clap(
+        long,
+        value_name = "project_field_configuration_id",
+        help = "Jira Project field configuration ID"
+    )]
+    pub project_field_configuration_id: Option<i64>,
+    /// Jira Project issue security scheme ID
+    #[clap(
+        long,
+        value_name = "project_issue_security_scheme_id",
+        help = "Jira Project issue security scheme ID"
+    )]
+    pub project_issue_security_scheme_id: Option<i64>,
+    /// Jira Project issue type scheme ID
+    #[clap(
+        long,
+        value_name = "project_issue_type_scheme_id",
+        help = "Jira Project issue type scheme ID"
+    )]
+    pub project_issue_type_scheme_id: Option<i64>,
+    /// Jira Project issue type screen scheme ID
+    #[clap(
+        long,
+        value_name = "project_issue_type_screen_scheme_id",
+        help = "Jira Project issue type screen scheme ID"
+    )]
+    pub project_issue_type_screen_scheme_id: Option<i64>,
+    /// Jira Project notification scheme ID
+    #[clap(
+        long,
+        value_name = "project_notification_scheme_id",
+        help = "Jira Project notification scheme ID"
+    )]
+    pub project_notification_scheme_id: Option<i64>,
+    /// Jira Project permission scheme ID
+    #[clap(
+        long,
+        value_name = "project_permission_scheme_id",
+        help = "Jira Project permission scheme ID"
+    )]
+    pub project_permission_scheme_id: Option<i64>,
+    // Jira project workflow scheme ID
+    #[clap(
+        long,
+        value_name = "project_workflow_scheme_id",
+        help = "Jira Project workflow scheme ID"
+    )]
+    pub project_workflow_scheme_id: Option<i64>,
+    /// Jira Project lead account ID
+    #[clap(
+        long,
+        value_name = "project_lead_account_id",
+        help = "Jira Project lead account ID"
+    )]
+    pub project_lead_account_id: Option<String>,
+    /// Jira Project Assignee Type
+    #[clap(
+        long,
+        value_name = "project_assignee_type",
+        help = "Jira Project Assignee Type"
+    )]
+    pub project_assignee_type: Option<String>,
+    /// Jira Project Type Key
+    #[clap(long, value_name = "project_type_key", help = "Jira Project Type Key")]
+    pub project_type_key: Option<String>,
+    /// Jira Project Template Key
+    #[clap(
+        long,
+        value_name = "project_template_key",
+        help = "Jira Project Template Key"
+    )]
+    pub project_template_key: Option<String>,
     /// Jira Project pagination
     #[clap(flatten)]
     pub pagination: PaginationArgs,
