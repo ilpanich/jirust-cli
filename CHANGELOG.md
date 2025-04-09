@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.14.2] 2025-04-09
+### Fixed
+- Removed a debug print forgotten in the previous release
+
 ## [0.14.1] 2025-04-09
 ### Added
 - Added support for WASM target
