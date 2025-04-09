@@ -225,7 +225,6 @@ pub async fn create_project(
 
     let local_var_status = local_var_resp.status();
     let local_var_content = local_var_resp.text().await?;
-    eprintln!("Response: {}", local_var_content);
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         serde_json::from_str(&local_var_content).map_err(Error::from)
