@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+
+## [0.14.0] 2025-04-09
 ### Added
 - Added support for WASM target
 - Added create Jira Project command
