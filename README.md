@@ -80,6 +80,7 @@ Currently the basic version management is implemented and you can:
 * update a version
 * release a version
 * archive a version
+* create a new project
 * list all the projects
 * list all the issue types available in a given project
 * list all the fields available in a given project for a given issue type
@@ -121,7 +122,7 @@ Everything is currently released upon the [crates.io](https://crates.io) platfor
 
 ## Roadmap
 Next features to be integrated and supported are:
-* Create a project from scratch
+* Update Jira issue: check if it works correctly
 
 Those are mandatory for my work and I will prioritize them; other features will be added as needed.
 You can request a feature by opening an issue or you can provide an implementation compliant with what is currently developed in a PR.
