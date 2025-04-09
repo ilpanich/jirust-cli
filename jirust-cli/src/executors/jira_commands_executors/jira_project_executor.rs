@@ -1,3 +1,5 @@
+use jira_v3_openapi::models::Project;
+
 use crate::{
     args::commands::{ProjectActionValues, ProjectArgs},
     config::config_file::ConfigFile,
@@ -55,8 +57,19 @@ impl ProjectExecutor {
     /// let project_action = ProjectActionValues::List;
     /// let project_args = ProjectArgs {
     ///     project_act: project_action.clone(),
-    ///     project_key: Some("project_key".to_string()),
+    ///     project_key: None,
     ///     project_issue_type: None,
+    ///     project_name: None,
+    ///     project_description: None,
+    ///     project_field_configuration_id: None,
+    ///     project_issue_security_scheme_id: None,
+    ///     project_issue_type_scheme_id: None,
+    ///     project_issue_type_screen_scheme_id: None,
+    ///     project_notification_scheme_id: None,
+    ///     project_permission_scheme_id: None,
+    ///     project_workflow_scheme_id: None,
+    ///     project_lead_account_id: None,
+    ///     project_assignee_type: None,
     ///     pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///     output: OutputArgs { output_format: None, output_type: None },
     /// };
@@ -105,8 +118,19 @@ impl ExecJiraCommand for ProjectExecutor {
     /// let project_action = ProjectActionValues::List;
     /// let project_args = ProjectArgs {
     ///     project_act: project_action.clone(),
-    ///     project_key: Some("project_key".to_string()),
+    ///     project_key: None,
     ///     project_issue_type: None,
+    ///     project_name: None,
+    ///     project_description: None,
+    ///     project_field_configuration_id: None,
+    ///     project_issue_security_scheme_id: None,
+    ///     project_issue_type_scheme_id: None,
+    ///     project_issue_type_screen_scheme_id: None,
+    ///     project_notification_scheme_id: None,
+    ///     project_permission_scheme_id: None,
+    ///     project_workflow_scheme_id: None,
+    ///     project_lead_account_id: None,
+    ///     project_assignee_type: None,
     ///     pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///     output: OutputArgs { output_format: None, output_type: None },
     /// };
@@ -120,6 +144,26 @@ impl ExecJiraCommand for ProjectExecutor {
     ///
     async fn exec_jira_command(&self) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
         match self.project_action {
+            ProjectActionValues::Create => {
+                match self
+                    .project_cmd_runner
+                    .create_jira_project(ProjectCmdParams::from(&self.project_args))
+                    .await
+                {
+                    Ok(new_project) => {
+                        let mut project = Project::new();
+                        project.id = Some(format!("{}", new_project.id));
+                        project.key = Some(new_project.key);
+                        Ok(vec![PrintableData::Project {
+                            projects: vec![project],
+                        }])
+                    }
+                    Err(err) => Err(Box::new(Error::new(
+                        ErrorKind::Other,
+                        format!("Error creating project: {}", err),
+                    ))),
+                }
+            }
             ProjectActionValues::List => {
                 match self
                     .project_cmd_runner

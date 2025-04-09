@@ -185,7 +185,7 @@ pub async fn run(js_args: js_sys::Array, js_cfg: JsValue) -> JsValue {
         Ok(data) => serde_wasm_bindgen::to_value(&data).unwrap_or(JsValue::NULL),
         Err(err) => {
             let err_s = format!("Error: {}", err);
-            return serde_wasm_bindgen::to_value(&err_s).unwrap_or(JsValue::NULL);
+            serde_wasm_bindgen::to_value(&err_s).unwrap_or(JsValue::NULL)
         }
     }
 }

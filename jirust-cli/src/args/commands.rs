@@ -312,13 +312,24 @@ pub enum VersionActionValues {
 /// * project_act: ProjectActionValues - Project action
 /// * project_key: Option<String> - Jira Project key
 /// * project_issue_type: Option<String> - Jira Project issue type ID
+/// * project_name: Option<String> - Jira Project name
+/// * project_description: Option<String> - Jira Project description
+/// * project_field_configuration_id: Option<i64> - Jira Project field configuration ID
+/// * project_issue_security_scheme_id: Option<i64> - Jira Project issue security scheme ID
+/// * project_permission_scheme_id: Option<i64> - Jira Project permission scheme ID
+/// * project_issue_type_scheme_id: Option<i64> - Jira Project issue type scheme ID
+/// * project_issue_type_screen_scheme_id: Option<i64> - Jira Project issue type screen scheme ID
+/// * project_notification_scheme_id: Option<i64> - Jira Project notification scheme ID
+/// * project_workflow_scheme_id: Option<i64> - Jira Project workflow scheme ID
+/// * project_lead_account_id: Option<String> - Jira Project lead account ID
+/// * project_assignee_type: Option<String> - Jira Project assignee type
 /// * pagination: PaginationArgs - Jira Project pagination
 /// * output: OutputArgs - Jira Project actions result output format
 #[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct ProjectArgs {
     /// Project action
     #[arg(
-        value_name = "get-issue-types|get-issue-type-fields|list",
+        value_name = "create|get-issue-types|get-issue-type-fields|list",
         help_heading = "Jira Project management",
         required = true
     )]
@@ -339,6 +350,79 @@ pub struct ProjectArgs {
         help = "Jira Project issue type ID"
     )]
     pub project_issue_type: Option<String>,
+    /// Jira Project name
+    #[clap(long, value_name = "project_name", help = "Jira Project name")]
+    pub project_name: Option<String>,
+    /// Jira Project description
+    #[clap(
+        long,
+        value_name = "project_description",
+        help = "Jira Project description"
+    )]
+    pub project_description: Option<String>,
+    /// Jira Project field configuration ID
+    #[clap(
+        long,
+        value_name = "project_field_configuration_id",
+        help = "Jira Project field configuration ID"
+    )]
+    pub project_field_configuration_id: Option<i64>,
+    /// Jira Project issue security scheme ID
+    #[clap(
+        long,
+        value_name = "project_issue_security_scheme_id",
+        help = "Jira Project issue security scheme ID"
+    )]
+    pub project_issue_security_scheme_id: Option<i64>,
+    /// Jira Project issue type scheme ID
+    #[clap(
+        long,
+        value_name = "project_issue_type_scheme_id",
+        help = "Jira Project issue type scheme ID"
+    )]
+    pub project_issue_type_scheme_id: Option<i64>,
+    /// Jira Project issue type screen scheme ID
+    #[clap(
+        long,
+        value_name = "project_issue_type_screen_scheme_id",
+        help = "Jira Project issue type screen scheme ID"
+    )]
+    pub project_issue_type_screen_scheme_id: Option<i64>,
+    /// Jira Project notification scheme ID
+    #[clap(
+        long,
+        value_name = "project_notification_scheme_id",
+        help = "Jira Project notification scheme ID"
+    )]
+    pub project_notification_scheme_id: Option<i64>,
+    /// Jira Project permission scheme ID
+    #[clap(
+        long,
+        value_name = "project_permission_scheme_id",
+        help = "Jira Project permission scheme ID"
+    )]
+    pub project_permission_scheme_id: Option<i64>,
+    // Jira project workflow scheme ID
+    #[clap(
+        long,
+        value_name = "project_workflow_scheme_id",
+        help = "Jira Project workflow scheme ID"
+    )]
+    pub project_workflow_scheme_id: Option<i64>,
+    /// Jira Project lead account ID
+    #[clap(
+        long,
+        value_name = "project_lead_account_id",
+        help = "Jira Project lead account ID"
+    )]
+    pub project_lead_account_id: Option<String>,
+    /// Jira Project Assignee Type
+    #[clap(
+        long,
+        value_name = "project_assignee_type",
+        help = "Jira Project Assignee Type"
+    )]
+    pub project_assignee_type: Option<String>,
     /// Jira Project pagination
     #[clap(flatten)]
     pub pagination: PaginationArgs,
@@ -349,12 +433,16 @@ pub struct ProjectArgs {
 
 /// Available project action values
 ///
+/// * Create: Create new Jira Project
 /// * GetIssueTypes: Get Jira Project issue types by Jira project key
 /// * GetIssueTypeFields: Get Jira Project issue type fields by Jira project key and issue type ID
 /// * List: List Jira Projects
 #[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum ProjectActionValues {
+    /// Create new Jira Project
+    #[value(name = "create", help = "Create new Jira Project")]
+    Create,
     /// Get Jira Project issue types by Jira project key
     #[value(
         name = "get-issue-types",

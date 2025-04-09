@@ -7,6 +7,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [Unreleased]
 ### Added
 - Added support for WASM target
+- Added create Jira Project command
 
 ### Changed
 - Updated dependencies
