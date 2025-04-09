@@ -5,7 +5,7 @@ use jira_v3_openapi::apis::issues_api::{
     get_create_issue_meta_issue_type_id, get_create_issue_meta_issue_types,
 };
 use jira_v3_openapi::apis::projects_api::{create_project, search_projects};
-use jira_v3_openapi::models::create_project_details::AssigneeType;
+use jira_v3_openapi::models::create_project_details::{AssigneeType, ProjectTypeKey};
 use jira_v3_openapi::models::{CreateProjectDetails, ProjectIdentifiers};
 use jira_v3_openapi::models::{
     FieldCreateMetadata, IssueTypeIssueCreateMetadata, project::Project,
@@ -117,6 +117,7 @@ impl ProjectCmdRunner {
         } else {
             Some(AssigneeType::Unassigned)
         };
+        project_data.project_type_key = Some(ProjectTypeKey::Software);
         Ok(create_project(&self.cfg, project_data).await?)
     }
 
