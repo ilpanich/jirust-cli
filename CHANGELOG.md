@@ -6,11 +6,15 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
-## [0.14.0] 2025-04-09
+## [0.14.1] 2025-04-09
 ### Added
 - Added support for WASM target
 - Added create Jira Project command
 
+### Fixed
+- Fixed a bug in the github actions that causes builds to fail
+
+## [0.14.0] 2025-04-09
 ### Changed
 - Updated dependencies
 - Refactor of the whole library code
