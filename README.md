@@ -7,11 +7,11 @@
 | jirust-cli | [![build and release jirust-cli](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jirust_cli.yml) | [![Crate](https://img.shields.io/crates/v/jirust-cli.svg)](https://crates.io/crates/jirust-cli) | [![API](https://docs.rs/jirust-cli/badge.svg)](https://docs.rs/jirust-cli)|[![rust-clippy analyze](https://github.com/ilpanich/jirust-cli/actions/workflows/rust-clippy.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/rust-clippy.yml)|[![npm](https://img.shields.io/npm/v/jirust-cli.svg)](https://www.npmjs.com/package/jirust-cli)
 | jira_v3_openapi | [![build and release jira_v3_openapi](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jira_v3.yml/badge.svg)](https://github.com/ilpanich/jirust-cli/actions/workflows/build_jira_v3.yml) | [![Crate](https://img.shields.io/crates/v/jira_v3_openapi.svg)](https://crates.io/crates/jira_v3_openapi) | [![API](https://docs.rs/jira_v3_openapi/badge.svg)](https://docs.rs/jira_v3_openapi) |
 
-JiRust-CLI will be a simple Jira CLI developed in rust languages.
+JiRust-CLI will be a simple Jira CLI developed in Rust language.
 The main goals are
 * to provide a simple and easy way to interact with Jira using the terminal
-* to experience myself with rust language
-* to provide an implementation of the Jira API in rust I cannot find at the moment
+* to experience myself with Rust language
+* to provide an implementation of the Jira API in Rust I cannot find at the moment
 
 ## Installation
 To install it simply run:
@@ -26,7 +26,9 @@ To use the CLI, simply run:
 jirust-cli --help
 ```
 
-Starting from version 0.14.0 a WASM version of the library is available to be used in node.js; you can refer to the following sample code (see the rust-lang version docs for all the available options and parameters):
+And you will see the help message.
+
+Starting from version 0.14.0 a WASM version of the library is available to be used in Node.js; you can refer to the following sample code (see the Rust  docs for all the available options and parameters):
 ```javascript
 import { run } from "./pkg/jirust_cli.js";
 
@@ -57,8 +59,6 @@ node jirust-cli-example.js
 ```
 
 The sample code file is also included in the repository.
-
-And you will see the help message.
 
 ### Configuration
 To configure the CLI you need to create a configuration file in your home directory called `.jirust-cli/jirust-cli.toml`.
