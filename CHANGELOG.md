@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.14.5] 2025-04-28
+### Fixed
+- Issue with the `webpki-roots` license type change
+
+### Changed
+- Updated dependencies
+
 ## [0.14.4] 2025-04-28
 ### Changed
 - Updated dependencies
