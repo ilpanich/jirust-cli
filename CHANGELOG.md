@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.14.4] 2025-04-28
+### Changed
+- Updated dependencies
+
 ## [0.14.3] 2025-04-18
 ### Changed
 - Updated dependencies
