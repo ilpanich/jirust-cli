@@ -16,6 +16,8 @@ on:
   push:
     tags:
       - "jirust-cli_*.*.*"
+  schedule:
+    - cron: "30 23 * * 2"
 
 jobs:
   rust-clippy-analyze:
