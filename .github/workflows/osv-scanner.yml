@@ -6,6 +6,8 @@ on:
   push:
     tags:
       - "*" # triggers only if push new tag version, like `0.8.4` or else
+  schedule:
+    - cron: "45 23 * * 2"
 
 permissions:
   # Required to upload SARIF file to CodeQL. See: https://github.com/github/codeql-action/issues/2117
