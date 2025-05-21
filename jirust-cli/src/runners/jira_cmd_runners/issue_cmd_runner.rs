@@ -56,7 +56,7 @@ impl IssueCmdRunner {
     ///
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// ```
     pub fn new(cfg_file: &ConfigFile) -> IssueCmdRunner {
         let mut config = Configuration::new();
@@ -86,7 +86,7 @@ impl IssueCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.assignee = Some("assignee".to_string());
     ///
@@ -137,7 +137,7 @@ impl IssueCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let params = IssueCmdParams::new();
     ///
     /// let result = issue_cmd_runner.create_jira_issue(params).await?;
@@ -184,7 +184,7 @@ impl IssueCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.issue_key = Some("issue_key".to_string());
     ///
@@ -229,7 +229,7 @@ impl IssueCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.issue_key = Some("issue_key".to_string());
     ///
@@ -273,7 +273,7 @@ impl IssueCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     ///
     /// let mut params = IssueCmdParams::new();
     /// params.transition = Some("transition_id".to_string());
@@ -339,7 +339,7 @@ impl IssueCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let params = IssueCmdParams::new();
     ///
     /// let result = issue_cmd_runner.update_jira_issue(params).await?;
@@ -400,7 +400,7 @@ impl IssueCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueTransitionCmdParams::new();
     /// params.issue_key = "issue_key".to_string();
     ///

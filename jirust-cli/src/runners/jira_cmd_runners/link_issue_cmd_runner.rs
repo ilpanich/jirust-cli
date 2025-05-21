@@ -48,7 +48,7 @@ impl LinkIssueCmdRunner {
     ///
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(cfg_file);
+    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(&cfg_file);
     /// ```
     pub fn new(cfg_file: &ConfigFile) -> LinkIssueCmdRunner {
         let mut config = Configuration::new();
@@ -79,7 +79,7 @@ impl LinkIssueCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(cfg_file);
+    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(&cfg_file);
     /// let mut params = LinkIssueCmdParams::new();
     /// params.origin_issue_key = "ISSUE-1".to_string();
     /// params.destination_issue_key = Some("ISSUE-2".to_string());

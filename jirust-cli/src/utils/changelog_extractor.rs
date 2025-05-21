@@ -98,7 +98,8 @@ impl ChangelogExtractor {
     /// let changelog_extractor = ChangelogExtractor::new("CHANGELOG.md".to_string());
     ///
     /// let version_changelog_text = changelog_extractor.extract_version_changelog();
-    /// let issues = changelog_extractor.extract_issues_from_changelog(version_changelog_text.unwrap(), "JIR".to_string());
+    /// let project_key = "JIR".to_string();
+    /// let issues = changelog_extractor.extract_issues_from_changelog(&version_changelog_text.unwrap(), &project_key);
     /// ```
     pub fn extract_issues_from_changelog(
         &self,

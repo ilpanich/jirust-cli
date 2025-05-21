@@ -60,7 +60,7 @@ impl VersionCmdRunner {
     ///
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// ```
     pub fn new(cfg_file: &ConfigFile) -> VersionCmdRunner {
         let mut config = Configuration::new();
@@ -107,7 +107,7 @@ impl VersionCmdRunner {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let version = version_cmd_runner.create_jira_version(params).await?;
@@ -346,7 +346,7 @@ impl VersionCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let version = version_cmd_runner.get_jira_version(params).await?;
@@ -393,7 +393,7 @@ impl VersionCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let versions = version_cmd_runner.list_jira_versions(params).await?;
@@ -452,7 +452,7 @@ impl VersionCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let version = version_cmd_runner.update_jira_version(params).await?;
@@ -514,7 +514,7 @@ impl VersionCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let status = version_cmd_runner.delete_jira_version(params).await?;

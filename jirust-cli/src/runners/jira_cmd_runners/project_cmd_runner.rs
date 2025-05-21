@@ -49,7 +49,7 @@ impl ProjectCmdRunner {
     ///
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     /// ```
     pub fn new(cfg_file: &ConfigFile) -> ProjectCmdRunner {
         let mut config = Configuration::new();
@@ -77,7 +77,7 @@ impl ProjectCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     ///
     /// let mut params = ProjectCmdParams::new();
     /// params.project_key = Some("TEST".to_string());
@@ -157,7 +157,7 @@ impl ProjectCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     /// let params = ProjectCmdParams::new();
     ///
     /// let projects = project_cmd_runner.list_jira_projects(params).await?;
@@ -214,7 +214,7 @@ impl ProjectCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     /// let params = ProjectCmdParams::new();
     ///
     /// let issue_types = project_cmd_runner.get_jira_project_issue_types(params).await?;
@@ -265,7 +265,7 @@ impl ProjectCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     /// let params = ProjectCmdParams::new();
     ///
     /// let issue_fields = project_cmd_runner.get_jira_project_issue_type_id(params).await?;
