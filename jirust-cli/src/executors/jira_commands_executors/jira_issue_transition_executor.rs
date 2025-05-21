@@ -65,7 +65,7 @@ impl IssueTransitionExecutor {
         issue_transition_action: TransitionActionValues,
         issue_transition_args: TransitionArgs,
     ) -> Self {
-        let issue_transition_cmd_runner = IssueCmdRunner::new(cfg_data.clone());
+        let issue_transition_cmd_runner = IssueCmdRunner::new(&cfg_data);
         Self {
             issue_transition_cmd_runner,
             issue_transition_action,
