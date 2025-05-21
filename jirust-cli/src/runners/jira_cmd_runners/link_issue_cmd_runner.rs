@@ -1,3 +1,5 @@
+use std::io::ErrorKind;
+
 use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::issue_links_api::link_issues;
@@ -48,7 +50,7 @@ impl LinkIssueCmdRunner {
     ///
     /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(cfg_file);
     /// ```
-    pub fn new(cfg_file: ConfigFile) -> LinkIssueCmdRunner {
+    pub fn new(cfg_file: &ConfigFile) -> LinkIssueCmdRunner {
         let mut config = Configuration::new();
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
@@ -118,6 +120,14 @@ impl LinkIssueCmdRunner {
             };
             link_requests.push(link_request);
         } else {
+            let p_key = if let Some(key) = &params.project_key {
+                key.as_str()
+            } else {
+                return Err(Box::new(std::io::Error::new(
+                    ErrorKind::Other,
+                    format!("Error linking issues: Empty project key"),
+                )));
+            };
             let changelog_extractor = ChangelogExtractor::new(params.changelog_file.unwrap());
             let version_data: Option<String> = Some(
                 changelog_extractor
@@ -126,10 +136,7 @@ impl LinkIssueCmdRunner {
             );
             if version_data.is_some() {
                 let issues = changelog_extractor
-                    .extract_issues_from_changelog(
-                        version_data.clone().unwrap(),
-                        params.project_key.clone().expect("Project key is required"),
-                    )
+                    .extract_issues_from_changelog(&version_data.unwrap(), &p_key.to_string())
                     .unwrap_or_default();
                 link_requests = issues
                     .iter()

@@ -4,6 +4,7 @@ use jira_v3_openapi::models::{CreatedIssue, IssueBean, IssueTransition, Transiti
 use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDetails};
 use serde_json::Value;
 use std::collections::HashMap;
+use std::io::{Error, ErrorKind};
 
 use crate::args::commands::TransitionArgs;
 use crate::{
@@ -57,7 +58,7 @@ impl IssueCmdRunner {
     ///
     /// let issue_cmd_runner = IssueCmdRunner::new(cfg_file);
     /// ```
-    pub fn new(cfg_file: ConfigFile) -> IssueCmdRunner {
+    pub fn new(cfg_file: &ConfigFile) -> IssueCmdRunner {
         let mut config = Configuration::new();
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
@@ -104,12 +105,16 @@ impl IssueCmdRunner {
             ..Default::default()
         };
 
-        Ok(assign_issue(
-            &self.cfg,
-            params.issue_key.unwrap_or("".to_string()).as_str(),
-            user_data,
-        )
-        .await?)
+        let i_key = if let Some(key) = &params.issue_key {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::new(
+                ErrorKind::Other,
+                format!("Error assinging issue: Empty issue key"),
+            )));
+        };
+
+        Ok(assign_issue(&self.cfg, i_key, user_data).await?)
     }
 
     /// Creates a Jira issue
@@ -192,12 +197,16 @@ impl IssueCmdRunner {
         &self,
         params: IssueCmdParams,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        Ok(delete_issue(
-            &self.cfg,
-            params.issue_key.expect("Issue key is required!").as_str(),
-            Some("true"),
-        )
-        .await?)
+        let i_key = if let Some(key) = &params.issue_key {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::new(
+                ErrorKind::Other,
+                format!("Error deleting issue: Empty issue key"),
+            )));
+        };
+
+        Ok(delete_issue(&self.cfg, i_key, Some("true")).await?)
     }
 
     /// Gets a Jira issue
@@ -233,17 +242,15 @@ impl IssueCmdRunner {
         &self,
         params: IssueCmdParams,
     ) -> Result<IssueBean, Box<dyn std::error::Error>> {
-        Ok(get_issue(
-            &self.cfg,
-            params.issue_key.expect("Issue key is required!").as_str(),
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-        )
-        .await?)
+        let i_key = if let Some(key) = &params.issue_key {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::new(
+                ErrorKind::Other,
+                format!("Error retrieving issue: Empty issue key"),
+            )));
+        };
+        Ok(get_issue(&self.cfg, i_key, None, None, None, None, None, None).await?)
     }
 
     /// Transitions a Jira issue
@@ -280,8 +287,26 @@ impl IssueCmdRunner {
         &self,
         params: IssueCmdParams,
     ) -> Result<Value, Box<dyn std::error::Error>> {
+        let i_key = if let Some(key) = &params.issue_key {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::new(
+                ErrorKind::Other,
+                format!("Error with issue transition: Empty issue key"),
+            )));
+        };
+
+        let trans = if let Some(transition) = &params.transition {
+            transition.as_str()
+        } else {
+            return Err(Box::new(Error::new(
+                ErrorKind::Other,
+                format!("Error with issue transition: Empty transition"),
+            )));
+        };
+
         let transition = IssueTransition {
-            id: Some(params.transition.expect("Transition is required!")),
+            id: Some(trans.to_string()),
             ..Default::default()
         };
         let issue_data = IssueUpdateDetails {
@@ -291,12 +316,7 @@ impl IssueCmdRunner {
             transition: Some(transition),
             update: None,
         };
-        Ok(do_transition(
-            &self.cfg,
-            params.issue_key.expect("Issue key is required").as_str(),
-            issue_data,
-        )
-        .await?)
+        Ok(do_transition(&self.cfg, i_key, issue_data).await?)
     }
 
     /// Updates a Jira issue
@@ -331,6 +351,15 @@ impl IssueCmdRunner {
         &self,
         params: IssueCmdParams,
     ) -> Result<Value, Box<dyn std::error::Error>> {
+        let i_key = if let Some(key) = &params.issue_key {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::new(
+                ErrorKind::Other,
+                format!("Error updating issue: Empty issue key"),
+            )));
+        };
+
         let issue_data = IssueUpdateDetails {
             fields: params.issue_fields,
             history_metadata: None,
@@ -340,7 +369,7 @@ impl IssueCmdRunner {
         };
         Ok(edit_issue(
             &self.cfg,
-            params.issue_key.expect("Issue key is required!").as_str(),
+            i_key,
             issue_data,
             None,
             None,

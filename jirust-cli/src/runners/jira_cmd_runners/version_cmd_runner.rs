@@ -62,7 +62,7 @@ impl VersionCmdRunner {
     ///
     /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
     /// ```
-    pub fn new(cfg_file: ConfigFile) -> VersionCmdRunner {
+    pub fn new(cfg_file: &ConfigFile) -> VersionCmdRunner {
         let mut config = Configuration::new();
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
@@ -120,7 +120,7 @@ impl VersionCmdRunner {
         params: VersionCmdParams,
     ) -> Result<(Version, Option<Vec<(String, String, String, String)>>), Box<dyn std::error::Error>>
     {
-        let version_description;
+        let version_description: Option<String>;
         let mut resolved_issues = vec![];
         let mut transitioned_issue: Vec<(String, String, String, String)> = vec![];
         if Option::is_some(&params.changelog_file) {
@@ -135,8 +135,8 @@ impl VersionCmdRunner {
             if Option::is_some(&params.transition_issues) && params.transition_issues.unwrap() {
                 resolved_issues = changelog_extractor
                     .extract_issues_from_changelog(
-                        version_description.clone().unwrap(),
-                        params.project.clone(),
+                        &version_description.clone().unwrap(),
+                        &params.project,
                     )
                     .unwrap_or_default();
             }
