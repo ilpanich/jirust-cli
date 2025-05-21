@@ -19,28 +19,53 @@ use super::PrintableData;
 pub fn print_json(data: PrintableData) {
     match data {
         PrintableData::Generic { data } => {
-            println!("{}", serde_json::to_string_pretty(&data).unwrap());
+            if let Ok(output) = serde_json::to_string_pretty(&data) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
         }
         PrintableData::IssueTransitions { transitions } => {
-            println!("{}", serde_json::to_string_pretty(&transitions).unwrap());
+            if let Ok(output) = serde_json::to_string_pretty(&transitions) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
         }
         PrintableData::IssueCreated { issues } => {
-            println!("{}", serde_json::to_string_pretty(&issues).unwrap());
+            if let Ok(output) = serde_json::to_string_pretty(&issues) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
         }
         PrintableData::IssueData { issues } => {
-            println!("{}", serde_json::to_string_pretty(&issues).unwrap());
+            if let Ok(output) = serde_json::to_string_pretty(&issues) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
         }
         PrintableData::IssueType { issue_types } => {
-            println!("{}", serde_json::to_string_pretty(&issue_types).unwrap());
+            if let Ok(output) = serde_json::to_string_pretty(&issue_types) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
         }
         PrintableData::IssueTypeField { issue_type_fields } => {
-            println!(
-                "{}",
-                serde_json::to_string_pretty(&issue_type_fields).unwrap()
-            );
+            if let Ok(output) = serde_json::to_string_pretty(&issue_type_fields) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
         }
         PrintableData::Project { projects } => {
-            println!("{}", serde_json::to_string_pretty(&projects).unwrap());
+            if let Ok(output) = serde_json::to_string_pretty(&projects) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
         }
         PrintableData::TransitionedIssue { issues } => {
             let printable = issues
@@ -54,10 +79,18 @@ pub fn print_json(data: PrintableData) {
                     })
                 })
                 .collect::<Vec<_>>();
-            println!("{}", serde_json::to_string_pretty(&printable).unwrap());
+            if let Ok(output) = serde_json::to_string_pretty(&printable) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
         }
         PrintableData::Version { versions } => {
-            println!("{}", serde_json::to_string_pretty(&versions).unwrap());
+            if let Ok(output) = serde_json::to_string_pretty(&versions) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
         }
     }
 }

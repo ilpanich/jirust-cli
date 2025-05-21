@@ -102,13 +102,13 @@ impl ChangelogExtractor {
     /// ```
     pub fn extract_issues_from_changelog(
         &self,
-        version_string: String,
-        project_key: String,
+        version_string: &String,
+        project_key: &String,
     ) -> Result<Vec<String>, Box<dyn Error>> {
-        let issue_re = Regex::new(format!(r"({}\-\d+)", project_key).as_str()).unwrap();
+        let issue_re = Regex::new(format!(r"({}\-\d+)", *project_key).as_str()).unwrap();
         let mut issues: Vec<String> = vec![];
         for (_, [issue]) in issue_re
-            .captures_iter(version_string.as_str())
+            .captures_iter((*version_string).as_str())
             .map(|issue| issue.extract())
         {
             issues.push(issue.to_string());
