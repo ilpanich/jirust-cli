@@ -138,7 +138,7 @@ impl ExecJiraCommand for IssueExecutor {
                         )],
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error assinging issue: {}",
+                        "Error assigning issue: {}",
                         err
                     )))),
                 }

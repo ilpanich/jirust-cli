@@ -109,7 +109,7 @@ impl IssueCmdRunner {
             key.as_str()
         } else {
             return Err(Box::new(Error::other(
-                "Error assinging issue: Empty issue key".to_string(),
+                "Error assigning issue: Empty issue key".to_string(),
             )));
         };
 
