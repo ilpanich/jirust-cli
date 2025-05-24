@@ -60,9 +60,9 @@ impl VersionCmdRunner {
     ///
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// ```
-    pub fn new(cfg_file: ConfigFile) -> VersionCmdRunner {
+    pub fn new(cfg_file: &ConfigFile) -> VersionCmdRunner {
         let mut config = Configuration::new();
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
@@ -107,7 +107,7 @@ impl VersionCmdRunner {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let version = version_cmd_runner.create_jira_version(params).await?;
@@ -120,7 +120,7 @@ impl VersionCmdRunner {
         params: VersionCmdParams,
     ) -> Result<(Version, Option<Vec<(String, String, String, String)>>), Box<dyn std::error::Error>>
     {
-        let version_description;
+        let version_description: Option<String>;
         let mut resolved_issues = vec![];
         let mut transitioned_issue: Vec<(String, String, String, String)> = vec![];
         if Option::is_some(&params.changelog_file) {
@@ -135,8 +135,8 @@ impl VersionCmdRunner {
             if Option::is_some(&params.transition_issues) && params.transition_issues.unwrap() {
                 resolved_issues = changelog_extractor
                     .extract_issues_from_changelog(
-                        version_description.clone().unwrap(),
-                        params.project.clone(),
+                        &version_description.clone().unwrap(),
+                        &params.project,
                     )
                     .unwrap_or_default();
             }
@@ -346,7 +346,7 @@ impl VersionCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let version = version_cmd_runner.get_jira_version(params).await?;
@@ -393,7 +393,7 @@ impl VersionCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let versions = version_cmd_runner.list_jira_versions(params).await?;
@@ -452,7 +452,7 @@ impl VersionCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let version = version_cmd_runner.update_jira_version(params).await?;
@@ -514,7 +514,7 @@ impl VersionCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let version_cmd_runner = VersionCmdRunner::new(cfg_file);
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
     /// let status = version_cmd_runner.delete_jira_version(params).await?;

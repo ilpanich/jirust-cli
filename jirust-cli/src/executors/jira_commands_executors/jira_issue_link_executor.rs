@@ -69,7 +69,7 @@ impl LinkIssueExecutor {
         link_issue_action: LinkIssueActionValues,
         link_issue_args: LinkIssueArgs,
     ) -> Self {
-        let link_issue_cmd_runner = LinkIssueCmdRunner::new(cfg_data.clone());
+        let link_issue_cmd_runner = LinkIssueCmdRunner::new(&cfg_data);
         Self {
             link_issue_cmd_runner,
             link_issue_action,

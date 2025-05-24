@@ -71,7 +71,7 @@ impl IssueExecutor {
         issue_action: IssueActionValues,
         issue_args: IssueArgs,
     ) -> Self {
-        let issue_cmd_runner = IssueCmdRunner::new(cfg_data.clone());
+        let issue_cmd_runner = IssueCmdRunner::new(&cfg_data);
         Self {
             issue_cmd_runner,
             issue_action,

@@ -76,7 +76,7 @@ impl VersionExecutor {
         version_action: VersionActionValues,
         version_args: VersionArgs,
     ) -> Self {
-        let version_cmd_runner = VersionCmdRunner::new(cfg_data.clone());
+        let version_cmd_runner = VersionCmdRunner::new(&cfg_data);
         Self {
             version_cmd_runner,
             version_action,

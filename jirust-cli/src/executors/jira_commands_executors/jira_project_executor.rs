@@ -81,7 +81,7 @@ impl ProjectExecutor {
         project_action: ProjectActionValues,
         project_args: ProjectArgs,
     ) -> Self {
-        let project_cmd_runner = ProjectCmdRunner::new(cfg_data.clone());
+        let project_cmd_runner = ProjectCmdRunner::new(&cfg_data);
         Self {
             project_cmd_runner,
             project_action,

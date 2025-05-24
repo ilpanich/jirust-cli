@@ -1,3 +1,5 @@
+use std::io::ErrorKind;
+
 use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::issue_links_api::link_issues;
@@ -46,9 +48,9 @@ impl LinkIssueCmdRunner {
     ///
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(cfg_file);
+    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(&cfg_file);
     /// ```
-    pub fn new(cfg_file: ConfigFile) -> LinkIssueCmdRunner {
+    pub fn new(cfg_file: &ConfigFile) -> LinkIssueCmdRunner {
         let mut config = Configuration::new();
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
@@ -77,7 +79,7 @@ impl LinkIssueCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(cfg_file);
+    /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(&cfg_file);
     /// let mut params = LinkIssueCmdParams::new();
     /// params.origin_issue_key = "ISSUE-1".to_string();
     /// params.destination_issue_key = Some("ISSUE-2".to_string());
@@ -118,18 +120,23 @@ impl LinkIssueCmdRunner {
             };
             link_requests.push(link_request);
         } else {
+            let p_key = if let Some(key) = &params.project_key {
+                key
+            } else {
+                return Err(Box::new(std::io::Error::new(
+                    ErrorKind::Other,
+                    "Error linking issues: Empty project key".to_string(),
+                )));
+            };
             let changelog_extractor = ChangelogExtractor::new(params.changelog_file.unwrap());
             let version_data: Option<String> = Some(
                 changelog_extractor
                     .extract_version_changelog()
                     .unwrap_or_default(),
             );
-            if version_data.is_some() {
+            if let Some(version_data) = version_data {
                 let issues = changelog_extractor
-                    .extract_issues_from_changelog(
-                        version_data.clone().unwrap(),
-                        params.project_key.clone().expect("Project key is required"),
-                    )
+                    .extract_issues_from_changelog(&version_data, p_key)
                     .unwrap_or_default();
                 link_requests = issues
                     .iter()
@@ -156,6 +163,11 @@ impl LinkIssueCmdRunner {
                         }),
                     })
                     .collect();
+            } else {
+                return Err(Box::new(std::io::Error::new(
+                    ErrorKind::Other,
+                    "Error linking issues: No destination issue key found in changelog".to_string(),
+                )));
             }
         };
 

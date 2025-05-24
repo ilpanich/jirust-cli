@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Refactor
+- Removed some unnecessary clone replacing it with references
+
+### Changed
+- Updated dependencies
 
 ## [0.14.5] 2025-04-28
 ### Fixed

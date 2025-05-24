@@ -1,3 +1,5 @@
+use std::io::{Error, ErrorKind};
+
 use crate::args::commands::ProjectArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
 use jira_v3_openapi::apis::configuration::Configuration;
@@ -47,9 +49,9 @@ impl ProjectCmdRunner {
     ///
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     ///
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     /// ```
-    pub fn new(cfg_file: ConfigFile) -> ProjectCmdRunner {
+    pub fn new(cfg_file: &ConfigFile) -> ProjectCmdRunner {
         let mut config = Configuration::new();
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
@@ -75,7 +77,7 @@ impl ProjectCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     ///
     /// let mut params = ProjectCmdParams::new();
     /// params.project_key = Some("TEST".to_string());
@@ -95,10 +97,26 @@ impl ProjectCmdRunner {
         &self,
         params: ProjectCmdParams,
     ) -> Result<ProjectIdentifiers, Box<dyn std::error::Error>> {
-        let mut project_data = CreateProjectDetails::new(
-            params.project_key.expect("Project key is required!"),
-            params.project_name.expect("Project name is required!"),
-        );
+        let p_key = params
+            .project_key
+            .as_deref()
+            .ok_or_else(|| {
+                Box::new(Error::new(
+                    ErrorKind::Other,
+                    "Error creating project: Empty project key",
+                ))
+            })?;
+        let p_name = params
+            .project_name
+            .as_deref()
+            .ok_or_else(|| {
+                Box::new(Error::new(
+                    ErrorKind::Other,
+                    "Error creating project: Empty project name",
+                ))
+            })?;
+
+        let mut project_data = CreateProjectDetails::new(p_key.to_string(), p_name.to_string());
         project_data.description = params.project_description;
         project_data.field_configuration_scheme = params.project_field_configuration_id;
         project_data.issue_security_scheme = params.project_issue_security_scheme_id;
@@ -141,7 +159,7 @@ impl ProjectCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     /// let params = ProjectCmdParams::new();
     ///
     /// let projects = project_cmd_runner.list_jira_projects(params).await?;
@@ -198,7 +216,7 @@ impl ProjectCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     /// let params = ProjectCmdParams::new();
     ///
     /// let issue_types = project_cmd_runner.get_jira_project_issue_types(params).await?;
@@ -210,16 +228,19 @@ impl ProjectCmdRunner {
         &self,
         params: ProjectCmdParams,
     ) -> Result<Vec<IssueTypeIssueCreateMetadata>, Box<dyn std::error::Error>> {
+        let p_key = if let Some(key) = &params.project_key {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Error retrieving project issue types: Empty project key".to_string(),
+            )));
+        };
         let page_size = Some(params.projects_page_size.unwrap_or(10));
         let page_offset = Some(params.projects_page_offset.unwrap_or(0));
-        match get_create_issue_meta_issue_types(
-            &self.cfg,
-            &params.project_key.expect("Project Key is required!"),
-            page_offset,
-            page_size,
-        )
-        .await?
-        .issue_types
+        match get_create_issue_meta_issue_types(&self.cfg, p_key, page_offset, page_size)
+            .await?
+            .issue_types
         {
             Some(issue_types) => Ok(issue_types),
             None => Ok(vec![]),
@@ -246,7 +267,7 @@ impl ProjectCmdRunner {
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
     /// let cfg_file = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
-    /// let project_cmd_runner = ProjectCmdRunner::new(cfg_file);
+    /// let project_cmd_runner = ProjectCmdRunner::new(&cfg_file);
     /// let params = ProjectCmdParams::new();
     ///
     /// let issue_fields = project_cmd_runner.get_jira_project_issue_type_id(params).await?;
@@ -258,12 +279,29 @@ impl ProjectCmdRunner {
         &self,
         params: ProjectCmdParams,
     ) -> Result<Vec<FieldCreateMetadata>, Box<dyn std::error::Error>> {
+        let p_key = if let Some(key) = &params.project_key {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Error retrieving project issue types ids: Empty project key".to_string(),
+            )));
+        };
+        let issue_type = if let Some(key) = &params.project_issue_type {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Error retrieving project issue types ids: Empty project issue type key"
+                    .to_string(),
+            )));
+        };
         let page_size = Some(params.projects_page_size.unwrap_or(10));
         let page_offset = Some(params.projects_page_offset.unwrap_or(0));
         match get_create_issue_meta_issue_type_id(
             &self.cfg,
-            &params.project_key.expect("Project Key is required!"),
-            &params.project_issue_type.expect("Issue Type is required!"),
+            p_key,
+            issue_type,
             page_offset,
             page_size,
         )
