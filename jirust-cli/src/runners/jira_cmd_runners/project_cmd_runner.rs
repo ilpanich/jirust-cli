@@ -1,4 +1,4 @@
-use std::io::{Error, ErrorKind};
+use std::io::Error;
 
 use crate::args::commands::ProjectArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
@@ -100,21 +100,11 @@ impl ProjectCmdRunner {
         let p_key = params
             .project_key
             .as_deref()
-            .ok_or_else(|| {
-                Box::new(Error::new(
-                    ErrorKind::Other,
-                    "Error creating project: Empty project key",
-                ))
-            })?;
+            .ok_or_else(|| Box::new(Error::other("Error creating project: Empty project key")))?;
         let p_name = params
             .project_name
             .as_deref()
-            .ok_or_else(|| {
-                Box::new(Error::new(
-                    ErrorKind::Other,
-                    "Error creating project: Empty project name",
-                ))
-            })?;
+            .ok_or_else(|| Box::new(Error::other("Error creating project: Empty project name")))?;
 
         let mut project_data = CreateProjectDetails::new(p_key.to_string(), p_name.to_string());
         project_data.description = params.project_description;
@@ -231,8 +221,7 @@ impl ProjectCmdRunner {
         let p_key = if let Some(key) = &params.project_key {
             key.as_str()
         } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
+            return Err(Box::new(Error::other(
                 "Error retrieving project issue types: Empty project key".to_string(),
             )));
         };
@@ -282,16 +271,14 @@ impl ProjectCmdRunner {
         let p_key = if let Some(key) = &params.project_key {
             key.as_str()
         } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
+            return Err(Box::new(Error::other(
                 "Error retrieving project issue types ids: Empty project key".to_string(),
             )));
         };
         let issue_type = if let Some(key) = &params.project_issue_type {
             key.as_str()
         } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
+            return Err(Box::new(Error::other(
                 "Error retrieving project issue types ids: Empty project issue type key"
                     .to_string(),
             )));

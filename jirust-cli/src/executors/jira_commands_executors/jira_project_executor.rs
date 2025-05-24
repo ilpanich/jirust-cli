@@ -7,7 +7,7 @@ use crate::{
     utils::PrintableData,
 };
 
-use std::io::{Error, ErrorKind};
+use std::io::Error;
 
 use super::ExecJiraCommand;
 
@@ -158,10 +158,10 @@ impl ExecJiraCommand for ProjectExecutor {
                             projects: vec![project],
                         }])
                     }
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error creating project: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error creating project: {}",
+                        err
+                    )))),
                 }
             }
             ProjectActionValues::List => {
@@ -171,10 +171,10 @@ impl ExecJiraCommand for ProjectExecutor {
                     .await
                 {
                     Ok(projects) => Ok(vec![PrintableData::Project { projects }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error listing projects: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error listing projects: {}",
+                        err
+                    )))),
                 }
             }
             ProjectActionValues::GetIssueTypes => {
@@ -184,10 +184,10 @@ impl ExecJiraCommand for ProjectExecutor {
                     .await
                 {
                     Ok(issue_types) => Ok(vec![PrintableData::IssueType { issue_types }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error listing issue types: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error listing issue types: {}",
+                        err
+                    )))),
                 }
             }
             ProjectActionValues::GetIssueTypeFields => {
@@ -199,10 +199,10 @@ impl ExecJiraCommand for ProjectExecutor {
                     Ok(issue_type_fields) => {
                         Ok(vec![PrintableData::IssueTypeField { issue_type_fields }])
                     }
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error listing issue type fields: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error listing issue type fields: {}",
+                        err
+                    )))),
                 }
             }
         }

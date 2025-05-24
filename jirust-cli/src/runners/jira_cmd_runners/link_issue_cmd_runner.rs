@@ -1,5 +1,3 @@
-use std::io::ErrorKind;
-
 use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::issue_links_api::link_issues;
@@ -123,8 +121,7 @@ impl LinkIssueCmdRunner {
             let p_key = if let Some(key) = &params.project_key {
                 key
             } else {
-                return Err(Box::new(std::io::Error::new(
-                    ErrorKind::Other,
+                return Err(Box::new(std::io::Error::other(
                     "Error linking issues: Empty project key".to_string(),
                 )));
             };
@@ -164,8 +161,7 @@ impl LinkIssueCmdRunner {
                     })
                     .collect();
             } else {
-                return Err(Box::new(std::io::Error::new(
-                    ErrorKind::Other,
+                return Err(Box::new(std::io::Error::other(
                     "Error linking issues: No destination issue key found in changelog".to_string(),
                 )));
             }

@@ -4,7 +4,7 @@ use jira_v3_openapi::models::{CreatedIssue, IssueBean, IssueTransition, Transiti
 use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDetails};
 use serde_json::Value;
 use std::collections::HashMap;
-use std::io::{Error, ErrorKind};
+use std::io::Error;
 
 use crate::args::commands::TransitionArgs;
 use crate::{
@@ -108,8 +108,7 @@ impl IssueCmdRunner {
         let i_key = if let Some(key) = &params.issue_key {
             key.as_str()
         } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
+            return Err(Box::new(Error::other(
                 "Error assinging issue: Empty issue key".to_string(),
             )));
         };
@@ -200,8 +199,7 @@ impl IssueCmdRunner {
         let i_key = if let Some(key) = &params.issue_key {
             key.as_str()
         } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
+            return Err(Box::new(Error::other(
                 "Error deleting issue: Empty issue key".to_string(),
             )));
         };
@@ -245,8 +243,7 @@ impl IssueCmdRunner {
         let i_key = if let Some(key) = &params.issue_key {
             key.as_str()
         } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
+            return Err(Box::new(Error::other(
                 "Error retrieving issue: Empty issue key".to_string(),
             )));
         };
@@ -290,8 +287,7 @@ impl IssueCmdRunner {
         let i_key = if let Some(key) = &params.issue_key {
             key.as_str()
         } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
+            return Err(Box::new(Error::other(
                 "Error with issue transition: Empty issue key".to_string(),
             )));
         };
@@ -299,8 +295,7 @@ impl IssueCmdRunner {
         let trans = if let Some(transition) = &params.transition {
             transition.as_str()
         } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
+            return Err(Box::new(Error::other(
                 "Error with issue transition: Empty transition".to_string(),
             )));
         };
@@ -354,8 +349,7 @@ impl IssueCmdRunner {
         let i_key = if let Some(key) = &params.issue_key {
             key.as_str()
         } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
+            return Err(Box::new(Error::other(
                 "Error updating issue: Empty issue key".to_string(),
             )));
         };
