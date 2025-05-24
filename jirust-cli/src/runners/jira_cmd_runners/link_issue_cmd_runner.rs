@@ -121,7 +121,7 @@ impl LinkIssueCmdRunner {
             link_requests.push(link_request);
         } else {
             let p_key = if let Some(key) = &params.project_key {
-                key.as_str()
+                key
             } else {
                 return Err(Box::new(std::io::Error::new(
                     ErrorKind::Other,
