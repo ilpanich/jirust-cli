@@ -136,7 +136,7 @@ impl LinkIssueCmdRunner {
             );
             if version_data.is_some() {
                 let issues = changelog_extractor
-                    .extract_issues_from_changelog(&version_data.unwrap(), &p_key.to_string())
+                    .extract_issues_from_changelog(&version_data.unwrap(), p_key)
                     .unwrap_or_default();
                 link_requests = issues
                     .iter()
