@@ -97,22 +97,24 @@ impl ProjectCmdRunner {
         &self,
         params: ProjectCmdParams,
     ) -> Result<ProjectIdentifiers, Box<dyn std::error::Error>> {
-        let p_key = if let Some(key) = &params.project_key {
-            key.as_str()
-        } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
-                format!("Error creating project: Empty project key"),
-            )));
-        };
-        let p_name = if let Some(key) = &params.project_name {
-            key.as_str()
-        } else {
-            return Err(Box::new(Error::new(
-                ErrorKind::Other,
-                format!("Error creating project: Empty project name"),
-            )));
-        };
+        let p_key = params
+            .project_key
+            .as_deref()
+            .ok_or_else(|| {
+                Box::new(Error::new(
+                    ErrorKind::Other,
+                    "Error creating project: Empty project key",
+                ))
+            })?;
+        let p_name = params
+            .project_name
+            .as_deref()
+            .ok_or_else(|| {
+                Box::new(Error::new(
+                    ErrorKind::Other,
+                    "Error creating project: Empty project name",
+                ))
+            })?;
 
         let mut project_data = CreateProjectDetails::new(p_key.to_string(), p_name.to_string());
         project_data.description = params.project_description;
