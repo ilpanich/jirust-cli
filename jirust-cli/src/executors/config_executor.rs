@@ -2,7 +2,7 @@ use crate::config::config_file::ConfigFile;
 use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
 use crate::{args::commands::ConfigActionValues, utils::PrintableData};
 
-use std::io::{Error, ErrorKind};
+use std::io::Error;
 
 /// ConfigExecutor struct
 ///
@@ -100,10 +100,10 @@ impl ConfigExecutor {
                         "Authentication configuration stored successfully".to_string(),
                     )],
                 }]),
-                Err(err) => Err(Box::new(Error::new(
-                    ErrorKind::Other,
-                    format!("Error storing authentication configuration: {}", err),
-                ))),
+                Err(err) => Err(Box::new(Error::other(format!(
+                    "Error storing authentication configuration: {}",
+                    err
+                )))),
             },
             ConfigActionValues::Jira => match self.config_cmd_runner.set_cfg_jira(cfg_data) {
                 Ok(_) => Ok(vec![PrintableData::Generic {
@@ -111,10 +111,10 @@ impl ConfigExecutor {
                         "Initialization configuration stored successfully".to_string(),
                     )],
                 }]),
-                Err(err) => Err(Box::new(Error::new(
-                    ErrorKind::Other,
-                    format!("Error storing initialization configuration: {}", err),
-                ))),
+                Err(err) => Err(Box::new(Error::other(format!(
+                    "Error storing initialization configuration: {}",
+                    err
+                )))),
             },
             ConfigActionValues::Setup => match self.config_cmd_runner.setup_cfg(cfg_data) {
                 Ok(_) => Ok(vec![PrintableData::Generic {
@@ -122,10 +122,10 @@ impl ConfigExecutor {
                         "Configuration setup successfully".to_string(),
                     )],
                 }]),
-                Err(err) => Err(Box::new(Error::new(
-                    ErrorKind::Other,
-                    format!("Error setting up configuration: {}", err),
-                ))),
+                Err(err) => Err(Box::new(Error::other(format!(
+                    "Error setting up configuration: {}",
+                    err
+                )))),
             },
             ConfigActionValues::Show => {
                 self.config_cmd_runner.show_cfg(cfg_data);

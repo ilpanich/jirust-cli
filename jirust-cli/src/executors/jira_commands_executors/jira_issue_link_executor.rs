@@ -5,7 +5,7 @@ use crate::runners::jira_cmd_runners::link_issue_cmd_runner::{
 };
 use crate::utils::PrintableData;
 
-use std::io::{Error, ErrorKind};
+use std::io::Error;
 
 use super::ExecJiraCommand;
 
@@ -129,10 +129,10 @@ impl ExecJiraCommand for LinkIssueExecutor {
                     .await
                 {
                     Ok(res) => Ok(vec![PrintableData::Generic { data: vec![res] }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error linking issues: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error linking issues: {}",
+                        err
+                    )))),
                 }
             }
         }

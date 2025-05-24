@@ -5,7 +5,7 @@ use crate::{
     utils::PrintableData,
 };
 
-use std::io::{Error, ErrorKind};
+use std::io::Error;
 
 use super::ExecJiraCommand;
 
@@ -124,10 +124,10 @@ impl ExecJiraCommand for IssueTransitionExecutor {
                     Ok(issue_transitions) => Ok(vec![PrintableData::IssueTransitions {
                         transitions: issue_transitions.transitions.unwrap_or(vec![]),
                     }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error listing issue transitions: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error listing issue transitions: {}",
+                        err
+                    )))),
                 }
             }
         }

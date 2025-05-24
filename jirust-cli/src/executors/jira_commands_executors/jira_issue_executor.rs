@@ -5,7 +5,7 @@ use crate::{
     utils::PrintableData,
 };
 
-use std::io::{Error, ErrorKind};
+use std::io::Error;
 
 use super::ExecJiraCommand;
 
@@ -137,10 +137,10 @@ impl ExecJiraCommand for IssueExecutor {
                             "Issue assigned successfully".to_string(),
                         )],
                     }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error assinging issue: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error assinging issue: {}",
+                        err
+                    )))),
                 }
             }
             IssueActionValues::Create => {
@@ -152,10 +152,10 @@ impl ExecJiraCommand for IssueExecutor {
                     Ok(issue) => Ok(vec![PrintableData::IssueCreated {
                         issues: (vec![issue]),
                     }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error creating issue: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error creating issue: {}",
+                        err
+                    )))),
                 }
             }
             IssueActionValues::Delete => {
@@ -169,10 +169,10 @@ impl ExecJiraCommand for IssueExecutor {
                             "Issue deleted successfully".to_string(),
                         )],
                     }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error deleting issue: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error deleting issue: {}",
+                        err
+                    )))),
                 }
             }
             IssueActionValues::Get => {
@@ -184,10 +184,10 @@ impl ExecJiraCommand for IssueExecutor {
                     Ok(issue) => Ok(vec![PrintableData::IssueData {
                         issues: vec![issue],
                     }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error retrieving issue: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error retrieving issue: {}",
+                        err
+                    )))),
                 }
             }
             IssueActionValues::Transition => {
@@ -201,10 +201,10 @@ impl ExecJiraCommand for IssueExecutor {
                             "Issue transitioned successfully".to_string(),
                         )],
                     }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error transitioning issue: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error transitioning issue: {}",
+                        err
+                    )))),
                 }
             }
             IssueActionValues::Update => {
@@ -218,10 +218,10 @@ impl ExecJiraCommand for IssueExecutor {
                             "Issue updated successfully".to_string(),
                         )],
                     }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error updating issue: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error updating issue: {}",
+                        err
+                    )))),
                 }
             }
         }

@@ -1,4 +1,4 @@
-use std::io::{Error, ErrorKind};
+use std::io::Error;
 
 use crate::args::commands::{VersionActionValues, VersionArgs};
 use crate::config::config_file::ConfigFile;
@@ -157,10 +157,10 @@ impl ExecJiraCommand for VersionExecutor {
                         }
                         Ok(res)
                     }
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error creating version: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error creating version: {}",
+                        err
+                    )))),
                 };
             }
             VersionActionValues::List => {
@@ -170,10 +170,10 @@ impl ExecJiraCommand for VersionExecutor {
                     .await
                 {
                     Ok(version) => Ok(vec![PrintableData::Version { versions: version }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error listing versions: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error listing versions: {}",
+                        err
+                    )))),
                 }
             }
             VersionActionValues::Update => {
@@ -197,18 +197,18 @@ impl ExecJiraCommand for VersionExecutor {
                                 }]);
                             }
                             Err(err) => {
-                                result = Err(Box::new(Error::new(
-                                    ErrorKind::Other,
-                                    format!("Error updating version: {}", err),
-                                )))
+                                result = Err(Box::new(Error::other(format!(
+                                    "Error updating version: {}",
+                                    err
+                                ))))
                             }
                         }
                     }
                     Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error retrieving version: {}", err),
-                        )))
+                        result = Err(Box::new(Error::other(format!(
+                            "Error retrieving version: {}",
+                            err
+                        ))))
                     }
                 }
             }
@@ -223,10 +223,10 @@ impl ExecJiraCommand for VersionExecutor {
                             "Version deleted successfully".to_string(),
                         )],
                     }]),
-                    Err(err) => Err(Box::new(Error::new(
-                        ErrorKind::Other,
-                        format!("Error deleting version: {}", err),
-                    ))),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error deleting version: {}",
+                        err
+                    )))),
                 }
             }
             VersionActionValues::Release => {
@@ -247,18 +247,18 @@ impl ExecJiraCommand for VersionExecutor {
                                 }]);
                             }
                             Err(err) => {
-                                result = Err(Box::new(Error::new(
-                                    ErrorKind::Other,
-                                    format!("Error releasing version: {}", err),
-                                )))
+                                result = Err(Box::new(Error::other(format!(
+                                    "Error releasing version: {}",
+                                    err
+                                ))))
                             }
                         }
                     }
                     Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error retrieving version: {}", err),
-                        )))
+                        result = Err(Box::new(Error::other(format!(
+                            "Error retrieving version: {}",
+                            err
+                        ))))
                     }
                 }
             }
@@ -280,18 +280,18 @@ impl ExecJiraCommand for VersionExecutor {
                                 }]);
                             }
                             Err(err) => {
-                                result = Err(Box::new(Error::new(
-                                    ErrorKind::Other,
-                                    format!("Error archiving version: {}", err),
-                                )))
+                                result = Err(Box::new(Error::other(format!(
+                                    "Error archiving version: {}",
+                                    err
+                                ))))
                             }
                         }
                     }
                     Err(err) => {
-                        result = Err(Box::new(Error::new(
-                            ErrorKind::Other,
-                            format!("Error retrieving version: {}", err),
-                        )))
+                        result = Err(Box::new(Error::other(format!(
+                            "Error retrieving version: {}",
+                            err
+                        ))))
                     }
                 }
             }

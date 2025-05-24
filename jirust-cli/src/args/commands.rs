@@ -688,10 +688,13 @@ where
 fn manage_jira_document_field(value: String) -> String {
     let re = Regex::new(r"^jira_doc_field\[(.+)\]$").unwrap();
     let captures = re.captures(&value);
-    let val = if Option::is_some(&captures) {
-        jira_doc_std_field![captures.unwrap().get(1).unwrap().as_str()].to_string()
+    if let Some(captures) = &captures {
+        if let Some(first_match) = captures.get(1) {
+            jira_doc_std_field![first_match.as_str()].to_string()
+        } else {
+            value.to_string()
+        }
     } else {
         value.to_string()
-    };
-    val
+    }
 }
