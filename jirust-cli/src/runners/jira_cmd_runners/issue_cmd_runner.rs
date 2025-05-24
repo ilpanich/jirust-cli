@@ -110,7 +110,7 @@ impl IssueCmdRunner {
         } else {
             return Err(Box::new(Error::new(
                 ErrorKind::Other,
-                format!("Error assinging issue: Empty issue key"),
+                "Error assinging issue: Empty issue key".to_string(),
             )));
         };
 
@@ -202,7 +202,7 @@ impl IssueCmdRunner {
         } else {
             return Err(Box::new(Error::new(
                 ErrorKind::Other,
-                format!("Error deleting issue: Empty issue key"),
+                "Error deleting issue: Empty issue key".to_string(),
             )));
         };
 
@@ -247,7 +247,7 @@ impl IssueCmdRunner {
         } else {
             return Err(Box::new(Error::new(
                 ErrorKind::Other,
-                format!("Error retrieving issue: Empty issue key"),
+                "Error retrieving issue: Empty issue key".to_string(),
             )));
         };
         Ok(get_issue(&self.cfg, i_key, None, None, None, None, None, None).await?)
@@ -292,7 +292,7 @@ impl IssueCmdRunner {
         } else {
             return Err(Box::new(Error::new(
                 ErrorKind::Other,
-                format!("Error with issue transition: Empty issue key"),
+                "Error with issue transition: Empty issue key".to_string(),
             )));
         };
 
@@ -301,7 +301,7 @@ impl IssueCmdRunner {
         } else {
             return Err(Box::new(Error::new(
                 ErrorKind::Other,
-                format!("Error with issue transition: Empty transition"),
+                "Error with issue transition: Empty transition".to_string(),
             )));
         };
 
@@ -356,7 +356,7 @@ impl IssueCmdRunner {
         } else {
             return Err(Box::new(Error::new(
                 ErrorKind::Other,
-                format!("Error updating issue: Empty issue key"),
+                "Error updating issue: Empty issue key".to_string(),
             )));
         };
 

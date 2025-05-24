@@ -233,7 +233,7 @@ impl ProjectCmdRunner {
         } else {
             return Err(Box::new(Error::new(
                 ErrorKind::Other,
-                format!("Error retrieving project issue types: Empty project key"),
+                "Error retrieving project issue types: Empty project key".to_string(),
             )));
         };
         let page_size = Some(params.projects_page_size.unwrap_or(10));
@@ -284,7 +284,7 @@ impl ProjectCmdRunner {
         } else {
             return Err(Box::new(Error::new(
                 ErrorKind::Other,
-                format!("Error retrieving project issue types ids: Empty project key"),
+                "Error retrieving project issue types ids: Empty project key".to_string(),
             )));
         };
         let issue_type = if let Some(key) = &params.project_issue_type {
@@ -292,7 +292,8 @@ impl ProjectCmdRunner {
         } else {
             return Err(Box::new(Error::new(
                 ErrorKind::Other,
-                format!("Error retrieving project issue types ids: Empty project issue type key"),
+                "Error retrieving project issue types ids: Empty project issue type key"
+                    .to_string(),
             )));
         };
         let page_size = Some(params.projects_page_size.unwrap_or(10));

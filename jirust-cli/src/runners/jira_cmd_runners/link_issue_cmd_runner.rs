@@ -125,7 +125,7 @@ impl LinkIssueCmdRunner {
             } else {
                 return Err(Box::new(std::io::Error::new(
                     ErrorKind::Other,
-                    format!("Error linking issues: Empty project key"),
+                    "Error linking issues: Empty project key".to_string(),
                 )));
             };
             let changelog_extractor = ChangelogExtractor::new(params.changelog_file.unwrap());
@@ -134,9 +134,9 @@ impl LinkIssueCmdRunner {
                     .extract_version_changelog()
                     .unwrap_or_default(),
             );
-            if version_data.is_some() {
+            if let Some(version_data) = version_data {
                 let issues = changelog_extractor
-                    .extract_issues_from_changelog(&version_data.unwrap(), p_key)
+                    .extract_issues_from_changelog(&version_data, p_key)
                     .unwrap_or_default();
                 link_requests = issues
                     .iter()
@@ -163,6 +163,11 @@ impl LinkIssueCmdRunner {
                         }),
                     })
                     .collect();
+            } else {
+                return Err(Box::new(std::io::Error::new(
+                    ErrorKind::Other,
+                    "Error linking issues: No destination issue key found in changelog".to_string(),
+                )));
             }
         };
 
