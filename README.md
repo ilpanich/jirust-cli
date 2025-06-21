@@ -80,6 +80,7 @@ Currently the basic version management is implemented and you can:
 * update a version
 * release a version
 * archive a version
+* list all the version-related workitems
 * create a new project
 * list all the projects
 * list all the issue types available in a given project
@@ -92,6 +93,7 @@ Currently the basic version management is implemented and you can:
 * Assign an issue
 * Link issues
 * List all the transitions available for an issue
+* Search issue using JQL (basic impelementation, as required for my personal use)
 
 Supported output formats are:
 * JSON (default)
