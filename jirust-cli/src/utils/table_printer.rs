@@ -149,7 +149,7 @@ pub fn print_table_full(data: PrintableData) {
             for item in version_related_work_items {
                 table.add_row(row![
                     Fc->item.category,
-                    Fb->item.issue_id.unwrap_or(-1),
+                    Fb->item.issue_id.map(|id| id.to_string()).unwrap_or("N/A".to_string()),
                     Fr->item.related_work_id.unwrap_or("".to_string()),
                     Fm->item.title.unwrap_or("".to_string()),
                     Fy->item.url.unwrap_or("".to_string()),
