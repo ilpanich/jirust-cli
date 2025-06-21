@@ -190,6 +190,19 @@ impl ExecJiraCommand for IssueExecutor {
                     )))),
                 }
             }
+            IssueActionValues::Search => {
+                match self
+                    .issue_cmd_runner
+                    .search_jira_issues(IssueCmdParams::from(&self.issue_args))
+                    .await
+                {
+                    Ok(issues) => Ok(vec![PrintableData::IssueData { issues }]),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error searching issues: {}",
+                        err
+                    )))),
+                }
+            }
             IssueActionValues::Transition => {
                 match self
                     .issue_cmd_runner

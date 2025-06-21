@@ -5,6 +5,16 @@ use super::PrintableData;
 /// # Arguments
 ///
 /// * `data` - The data to be printed
+///     * Project: A vector of Project structs
+///     * Version: A vector of Version structs
+///     * IssueType: A vector of IssueType structs
+///     * IssueTypeFields: A vector of IssueTypeFields structs
+///     * IssueCreated: A vector of CreatedIssue structs
+///     * IssueData: A vector of IssueBean structs
+///     * IssueTransition: A vector of IssueTransition structs
+///     * TransitionedIssue: A vector of TransitionedIssue structs
+///     * VersionRelatedWork: A vector of VersionRelatedWork structs
+///     * Generic: A vector of Generic JSON values
 ///
 /// # Example
 ///
@@ -87,6 +97,15 @@ pub fn print_json(data: PrintableData) {
         }
         PrintableData::Version { versions } => {
             if let Ok(output) = serde_json::to_string_pretty(&versions) {
+                println!("{}", output);
+            } else {
+                println!("Failed to serialize data");
+            }
+        }
+        PrintableData::VersionRelatedWork {
+            version_related_work_items,
+        } => {
+            if let Ok(output) = serde_json::to_string_pretty(&version_related_work_items) {
                 println!("{}", output);
             } else {
                 println!("Failed to serialize data");

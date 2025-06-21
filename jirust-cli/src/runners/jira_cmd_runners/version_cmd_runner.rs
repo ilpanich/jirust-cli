@@ -12,7 +12,7 @@ use jira_v3_openapi::apis::project_versions_api::*;
 use jira_v3_openapi::models::user::AccountType;
 use jira_v3_openapi::models::{
     DeleteAndReplaceVersionBean, FieldUpdateOperation, IssueTransition, IssueUpdateDetails, User,
-    Version,
+    Version, VersionRelatedWork,
 };
 use serde_json::Value;
 
@@ -20,6 +20,7 @@ use serde_json::Value;
 ///
 /// This struct is responsible for holding the version command runner parameters
 /// and it is used to pass the parameters to the version commands runner
+#[derive(Clone)]
 pub struct VersionCmdRunner {
     cfg: Configuration,
     resolution_value: Value,
@@ -541,6 +542,46 @@ impl VersionCmdRunner {
                 _ => Err(e),
             },
         }
+    }
+
+    /// This method retrieves the related work for a given version.
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - The parameters for the command.
+    ///
+    /// # Returns
+    ///
+    /// A `Result` containing a vector of `VersionRelatedWork` or an error.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
+    /// use toml::Table;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
+    /// let params = VersionCmdParams::new();
+    ///
+    /// let items = version_cmd_runner.get_jira_version_related_work(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
+    /// ```
+    pub async fn get_jira_version_related_work(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<Vec<VersionRelatedWork>, Error<GetRelatedWorkError>> {
+        get_related_work(
+            &self.cfg,
+            params.version_id.expect("VersionID is mandatory!").as_str(),
+        )
+        .await
     }
 }
 

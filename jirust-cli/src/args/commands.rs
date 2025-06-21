@@ -282,6 +282,7 @@ pub struct VersionArgs {
 /// * Create: Create a Jira Project version
 /// * Delete: Delete a Jira Project version
 /// * List: List Jira Project versions
+/// * RelatedWorkItems: Get Project version related workitems
 /// * Release: Release a Jira Project version
 /// * Update: Update a Jira Project version
 #[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
@@ -299,6 +300,12 @@ pub enum VersionActionValues {
     /// List Jira Project versions
     #[value(name = "list", help = "List Jira Project versions")]
     List,
+    /// Get Project version related workitems
+    #[value(
+        name = "related-work-items",
+        help = "Get Project version related workitems"
+    )]
+    RelatedWorkItems,
     /// Release a Jira Project version
     #[value(name = "release", help = "Release a Jira Project version")]
     Release,
@@ -484,10 +491,9 @@ pub struct IssueArgs {
         long,
         short = 'p',
         value_name = "project_key",
-        help = "Jira Project key",
-        required = true
+        help = "Jira Project key"
     )]
-    pub project_key: String,
+    pub project_key: Option<String>,
     /// Jira Project issue key
     #[clap(
         long,
@@ -519,6 +525,14 @@ pub struct IssueArgs {
         help = "Jira Project issue assignee"
     )]
     pub assignee: Option<String>,
+    /// Jira Project issue query
+    #[clap(
+        long,
+        short = 'q',
+        value_name = "query",
+        help = "Jira Project issue query"
+    )]
+    pub query: Option<String>,
     /// Jira Project issue pagination
     #[clap(flatten)]
     pub pagination: PaginationArgs,
@@ -550,6 +564,9 @@ pub enum IssueActionValues {
     /// Get a specific Jira Project issue
     #[value(name = "get", help = "Get a specific Jira Project issue")]
     Get,
+    /// Search for Jira Project issues
+    #[value(name = "search", help = "Search for Jira Project issues")]
+    Search,
     /// Transition a Jira Project issue
     #[value(name = "transition", help = "Transition a Jira Project issue")]
     Transition,

@@ -19,6 +19,13 @@ use super::PrintableData;
 ///     * Version: A vector of Version structs
 ///     * IssueType: A vector of IssueType structs
 ///     * IssueTypeFields: A vector of IssueTypeFields structs
+///     * IssueCreated: A vector of CreatedIssue structs
+///     * IssueData: A vector of IssueBean structs
+///     * IssueTransition: A vector of IssueTransition structs
+///     * TransitionedIssue: A vector of TransitionedIssue structs
+///     * VersionRelatedWork: A vector of VersionRelatedWork structs
+///     * Generic: A vector of Generic JSON values
+///
 ///
 /// # Examples
 ///
@@ -126,6 +133,26 @@ pub fn print_table_full(data: PrintableData) {
                     Fr->version.release_date.unwrap_or_default(),
                     Fb->version.archived.unwrap_or_default(),
                     Fg->version.released.unwrap_or_default()
+                ]);
+            }
+        }
+        PrintableData::VersionRelatedWork {
+            version_related_work_items,
+        } => {
+            table.add_row(row![
+                bFC->"Category",
+                bFb->"Issue ID",
+                bFr->"Related Workitem ID",
+                bFm->"Title",
+                bFy->"URL"
+            ]);
+            for item in version_related_work_items {
+                table.add_row(row![
+                    Fc->item.category,
+                    Fb->item.issue_id.unwrap_or(-1),
+                    Fr->item.related_work_id.unwrap_or("".to_string()),
+                    Fm->item.title.unwrap_or("".to_string()),
+                    Fy->item.url.unwrap_or("".to_string()),
                 ]);
             }
         }
@@ -300,6 +327,26 @@ pub fn print_table_basic(data: PrintableData) {
                     Fr->version.release_date.unwrap_or_default(),
                     Fb->version.archived.unwrap_or_default(),
                     Fg->version.released.unwrap_or_default()
+                ]);
+            }
+        }
+        PrintableData::VersionRelatedWork {
+            version_related_work_items,
+        } => {
+            table.add_row(row![
+                bFC->"Category",
+                bFb->"Issue ID",
+                bFr->"Related Workitem ID",
+                bFm->"Title",
+                bFy->"URL"
+            ]);
+            for item in version_related_work_items {
+                table.add_row(row![
+                    Fc->item.category,
+                    Fb->item.issue_id.unwrap_or(-1),
+                    Fr->item.related_work_id.unwrap_or("".to_string()),
+                    Fm->item.title.unwrap_or("".to_string()),
+                    Fy->item.url.unwrap_or("".to_string()),
                 ]);
             }
         }
@@ -492,6 +539,26 @@ pub fn print_table_single(data: PrintableData) {
                 Fy->version.start_date.unwrap_or_default(),
                 Fr->version.release_date.unwrap_or_default(),
             ]);
+        }
+        PrintableData::VersionRelatedWork {
+            version_related_work_items,
+        } => {
+            table.add_row(row![
+                bFC->"Category",
+                bFb->"Issue ID",
+                bFr->"Related Workitem ID",
+                bFm->"Title",
+                bFy->"URL"
+            ]);
+            for item in version_related_work_items {
+                table.add_row(row![
+                    Fc->item.category,
+                    Fb->item.issue_id.unwrap_or(-1),
+                    Fr->item.related_work_id.unwrap_or("".to_string()),
+                    Fm->item.title.unwrap_or("".to_string()),
+                    Fy->item.url.unwrap_or("".to_string()),
+                ]);
+            }
         }
         PrintableData::IssueTransitions { transitions } => {
             let transition = transitions
