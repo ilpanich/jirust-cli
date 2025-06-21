@@ -183,7 +183,7 @@ pub fn print_table_full(data: PrintableData) {
                     Fc->issue_type.id.unwrap_or("".to_string()),
                     Fc->issue_type.name.unwrap_or("".to_string()),
                     Fm->issue_type.description.unwrap_or("".to_string()),
-                    Fw->issue_type.hierarchy_level.unwrap_or(-1),
+                    Fw->issue_type.hierarchy_level.map(|hierarchy_level| hierarchy_level.to_string()).unwrap_or("N/A".to_string()),
                     Fb->issue_type.subtask.unwrap_or(false),
                 ]);
             }
@@ -343,7 +343,7 @@ pub fn print_table_basic(data: PrintableData) {
             for item in version_related_work_items {
                 table.add_row(row![
                     Fc->item.category,
-                    Fb->item.issue_id.unwrap_or(-1),
+                    Fb->item.issue_id.map(|id| id.to_string()).unwrap_or("N/A".to_string()),
                     Fr->item.related_work_id.unwrap_or("".to_string()),
                     Fm->item.title.unwrap_or("".to_string()),
                     Fy->item.url.unwrap_or("".to_string()),
@@ -377,7 +377,7 @@ pub fn print_table_basic(data: PrintableData) {
                     Fc->issue_type.id.unwrap_or("".to_string()),
                     Fc->issue_type.name.unwrap_or("".to_string()),
                     Fm->issue_type.description.unwrap_or("".to_string()),
-                    Fw->issue_type.hierarchy_level.unwrap_or(-1),
+                    Fw->issue_type.hierarchy_level.map(|hierarchy_level| hierarchy_level.to_string()).unwrap_or("N/A".to_string()),
                     Fb->issue_type.subtask.unwrap_or(false),
                 ]);
             }
@@ -553,7 +553,7 @@ pub fn print_table_single(data: PrintableData) {
             for item in version_related_work_items {
                 table.add_row(row![
                     Fc->item.category,
-                    Fb->item.issue_id.unwrap_or(-1),
+                    Fb->item.issue_id.map(|id| id.to_string()).unwrap_or("N/A".to_string()),
                     Fr->item.related_work_id.unwrap_or("".to_string()),
                     Fm->item.title.unwrap_or("".to_string()),
                     Fy->item.url.unwrap_or("".to_string()),
@@ -593,7 +593,7 @@ pub fn print_table_single(data: PrintableData) {
                 Fc->issue_type.id.unwrap_or("".to_string()),
                 Fc->issue_type.name.unwrap_or("".to_string()),
                 Fm->issue_type.description.unwrap_or("".to_string()),
-                Fw->issue_type.hierarchy_level.unwrap_or(-1),
+                Fw->issue_type.hierarchy_level.map(|hierarchy_level| hierarchy_level.to_string()).unwrap_or("N/A".to_string()),
                 Fb->issue_type.subtask.unwrap_or(false),
             ]);
         }
