@@ -370,7 +370,7 @@ Returns a [paginated](#pagination) list of projects visible to the user.  This o
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **start_at** | Option<**i64**> | The index of the first item to return in a page of results (page offset). |  |[default to 0]
-**max_results** | Option<**i32**> | The maximum number of items to return per page. |  |[default to 50]
+**max_results** | Option<**i32**> | The maximum number of items to return per page. Must be less than or equal to 100. If a value greater than 100 is provided, the `maxResults` parameter will default to 100. |  |[default to 50]
 **order_by** | Option<**String**> | [Order](#ordering) the results by a field.   *  `category` Sorts by project category. A complete list of category IDs is found using [Get all project categories](#api-rest-api-3-projectCategory-get).  *  `issueCount` Sorts by the total number of issues in each project.  *  `key` Sorts by project key.  *  `lastIssueUpdatedTime` Sorts by the last issue update time.  *  `name` Sorts by project name.  *  `owner` Sorts by project lead.  *  `archivedDate` EXPERIMENTAL. Sorts by project archived date.  *  `deletedDate` EXPERIMENTAL. Sorts by project deleted date. |  |[default to key]
 **id** | Option<[**Vec<i64>**](i64.md)> | The project IDs to filter the results by. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`. Up to 50 project IDs can be provided. |  |
 **keys** | Option<[**Vec<String>**](String.md)> | The project keys to filter the results by. To include multiple keys, provide an ampersand-separated list. For example, `keys=PA&keys=PB`. Up to 50 project keys can be provided. |  |

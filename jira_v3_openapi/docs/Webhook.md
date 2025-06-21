@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **id** | **i64** | The ID of the webhook. | 
 **issue_property_keys_filter** | Option<**Vec<String>**> | A list of issue property keys. A change of those issue properties triggers the `issue_property_set` or `issue_property_deleted` webhooks. If this parameter is not present, the app is notified about all issue property updates. | [optional]
 **jql_filter** | **String** | The JQL filter that specifies which issues the webhook is sent for. | 
+**url** | **String** | The URL that specifies where the webhooks are sent. | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

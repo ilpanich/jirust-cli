@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **description** | Option<**String**> | The description of the workflow to create. | [optional]
+**looped_transition_container_layout** | Option<[**models::WorkflowLayout**](WorkflowLayout.md)> |  | [optional]
 **name** | **String** | The name of the workflow to create. | 
 **start_point_layout** | Option<[**models::WorkflowLayout**](WorkflowLayout.md)> |  | [optional]
 **statuses** | [**Vec<models::StatusLayoutUpdate>**](StatusLayoutUpdate.md) | The statuses associated with this workflow. | 

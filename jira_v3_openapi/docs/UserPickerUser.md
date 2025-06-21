@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **account_id** | Option<**String**> | The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*. | [optional]
+**account_type** | Option<**String**> | The user account type. Can take the following values:   *  `atlassian` regular Atlassian user account  *  `app` system account used for Connect applications and OAuth to represent external systems  *  `customer` Jira Service Desk account representing an external service desk | [optional]
 **avatar_url** | Option<**String**> | The avatar URL of the user. | [optional]
 **display_name** | Option<**String**> | The display name of the user. Depending on the user’s privacy setting, this may be returned as null. | [optional]
 **html** | Option<**String**> | The display name, email address, and key of the user with the matched query string highlighted with the HTML bold tag. | [optional]
