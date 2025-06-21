@@ -55,11 +55,12 @@ impl IssueExecutor {
     /// let issue_action = IssueActionValues::Get;
     /// let issue_args = IssueArgs {
     ///    issue_act: issue_action.clone(),
-    ///    project_key: "project_key".to_string(),
+    ///    project_key: Some("project_key".to_string()),
     ///    issue_key: Some("issue_key".to_string()),
     ///    issue_fields: None,
     ///    transition_to: None,
     ///    assignee: None,
+    ///    query: None,
     ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
@@ -108,11 +109,12 @@ impl ExecJiraCommand for IssueExecutor {
     /// let issue_action = IssueActionValues::Get;
     /// let issue_args = IssueArgs {
     ///   issue_act: issue_action.clone(),
-    ///   project_key: "project_key".to_string(),
+    ///   project_key: Some("project_key".to_string()),
     ///   issue_key: Some("issue_key".to_string()),
     ///   issue_fields: None,
     ///   transition_to: None,
     ///   assignee: None,
+    ///   query: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///   output: OutputArgs { output_format: None, output_type: None },
     /// };

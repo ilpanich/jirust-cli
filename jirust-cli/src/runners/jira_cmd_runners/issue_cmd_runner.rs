@@ -275,9 +275,9 @@ impl IssueCmdRunner {
     /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
-    /// params.issue_key = Some("issue_key".to_string());
+    /// params.query = Some("field=value".to_string());
     ///
-    /// let result = issue_cmd_runner.get_jira_issue(params).await?;
+    /// let result = issue_cmd_runner.search_jira_issues(params).await?;
     /// # Ok(())
     /// # })
     /// # }
@@ -552,18 +552,19 @@ impl From<&IssueArgs> for IssueCmdParams {
     ///
     /// let issue_args = IssueArgs {
     ///    issue_act: IssueActionValues::Get,
-    ///    project_key: "project_key".to_string(),
+    ///    project_key: Some("project_key".to_string()),
     ///    issue_key: Some("issue_key".to_string()),
     ///    issue_fields: Some(vec![("key".to_string(), r#"{ "key": "value" }"#.to_string())]),
     ///    transition_to: Some("transition_to".to_string()),
     ///    assignee: Some("assignee".to_string()),
+    ///    query: None,
     ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let params = IssueCmdParams::from(&issue_args);
     ///
-    /// assert_eq!(params.project_key, "project_key".to_string());
+    /// assert_eq!(params.project_key, Some("project_key".to_string()));
     /// assert_eq!(params.issue_key.unwrap(), "issue_key".to_string());
     /// assert_eq!(params.transition.unwrap(), "transition_to".to_string());
     /// assert_eq!(params.assignee.unwrap(), "assignee".to_string());
@@ -703,7 +704,7 @@ impl Default for IssueCmdParams {
     ///
     /// let params = IssueCmdParams::default();
     ///
-    /// assert_eq!(params.project_key, "".to_string());
+    /// assert_eq!(params.project_key, Some("".to_string()));
     /// assert_eq!(params.issue_key, None);
     /// assert_eq!(params.issue_fields, None);
     /// assert_eq!(params.transition, None);
