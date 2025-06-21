@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **default_status_mappings** | Option<[**Vec<models::StatusMigration>**](StatusMigration.md)> | The mapping of old to new status ID. | [optional]
 **description** | Option<**String**> | The new description for this workflow. | [optional]
 **id** | **String** | The ID of this workflow. | 
+**looped_transition_container_layout** | Option<[**models::WorkflowLayout**](WorkflowLayout.md)> |  | [optional]
 **start_point_layout** | Option<[**models::WorkflowLayout**](WorkflowLayout.md)> |  | [optional]
 **status_mappings** | Option<[**Vec<models::StatusMappingDto>**](StatusMappingDTO.md)> | The mapping of old to new status ID for a specific project and issue type. | [optional]
 **statuses** | [**Vec<models::StatusLayoutUpdate>**](StatusLayoutUpdate.md) | The statuses associated with this workflow. | 

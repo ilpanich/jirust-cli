@@ -140,7 +140,7 @@ This endpoint does not need any parameter.
 > models::PageBeanField get_fields_paginated(start_at, max_results, r#type, id, query, order_by, expand, project_ids)
 Get fields paginated
 
-Returns a [paginated](#pagination) list of fields for Classic Jira projects. The list can include:   *  all fields  *  specific fields, by defining `id`  *  fields that contain a string in the field name or description, by defining `query`  *  specific fields that contain a string in the field name or description, by defining `id` and `query`  Use `type` must be set to `custom` to show custom fields only.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Returns a [paginated](#pagination) list of fields for Classic Jira projects. The list can include:   *  all fields  *  specific fields, by defining `id`  *  fields that contain a string in the field name or description, by defining `query`  *  specific fields that contain a string in the field name or description, by defining `id` and `query`  Use `type` must be set to `custom` to show custom fields only.  **[Permissions](#permissions) required:** Permission to access Jira.
 
 ### Parameters
 
@@ -154,7 +154,7 @@ Name | Type | Description  | Required | Notes
 **query** | Option<**String**> | String used to perform a case-insensitive partial match with field names or descriptions. |  |
 **order_by** | Option<**String**> | [Order](#ordering) the results by:   *  `contextsCount` sorts by the number of contexts related to a field  *  `lastUsed` sorts by the date when the value of the field last changed  *  `name` sorts by the field name  *  `screensCount` sorts by the number of screens related to a field |  |
 **expand** | Option<**String**> | Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `key` returns the key for each field  *  `stableId` returns the stableId for each field  *  `lastUsed` returns the date when the value of the field last changed  *  `screensCount` returns the number of screens related to a field  *  `contextsCount` returns the number of contexts related to a field  *  `isLocked` returns information about whether the field is locked  *  `searcherKey` returns the searcher key for each custom field |  |
-**project_ids** | Option<[**Vec<i64>**](i64.md)> |  |  |
+**project_ids** | Option<[**Vec<i64>**](i64.md)> | The IDs of the projects to filter the fields by. Fields belonging to project Ids that the user does not have access to will not be returned |  |
 
 ### Return type
 

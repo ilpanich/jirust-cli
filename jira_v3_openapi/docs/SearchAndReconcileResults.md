@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**is_last** | Option<**bool**> | Indicates whether this is the last page of the paginated response. | [optional][readonly]
 **issues** | Option<[**Vec<models::IssueBean>**](IssueBean.md)> | The list of issues found by the search or reconsiliation. | [optional][readonly]
 **names** | Option<**std::collections::HashMap<String, String>**> | The ID and name of each field in the search results. | [optional][readonly]
 **next_page_token** | Option<**String**> | Continuation token to fetch the next page. If this result represents the last or the only page this token will be null. This token will expire in 7 days. | [optional][readonly]

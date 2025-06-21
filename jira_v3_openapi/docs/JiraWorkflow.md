@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **description** | Option<**String**> | The description of the workflow. | [optional]
 **id** | Option<**String**> | The ID of the workflow. | [optional]
 **is_editable** | Option<**bool**> | Indicates if the workflow can be edited. | [optional]
+**looped_transition_container_layout** | Option<[**models::WorkflowLayout**](WorkflowLayout.md)> |  | [optional]
 **name** | Option<**String**> | The name of the workflow. | [optional]
 **scope** | Option<[**models::WorkflowScope**](WorkflowScope.md)> |  | [optional]
 **start_point_layout** | Option<[**models::WorkflowLayout**](WorkflowLayout.md)> |  | [optional]

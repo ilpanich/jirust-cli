@@ -130,7 +130,7 @@ Returns a list of all users, including active users, inactive users and previous
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **start_at** | Option<**i32**> | The index of the first item to return. |  |[default to 0]
-**max_results** | Option<**i32**> | The maximum number of items to return. |  |[default to 50]
+**max_results** | Option<**i32**> | The maximum number of items to return (limited to 1000). |  |[default to 50]
 
 ### Return type
 
@@ -161,7 +161,7 @@ Returns a list of all users, including active users, inactive users and previous
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **start_at** | Option<**i32**> | The index of the first item to return. |  |[default to 0]
-**max_results** | Option<**i32**> | The maximum number of items to return. |  |[default to 50]
+**max_results** | Option<**i32**> | The maximum number of items to return (limited to 1000). |  |[default to 50]
 
 ### Return type
 

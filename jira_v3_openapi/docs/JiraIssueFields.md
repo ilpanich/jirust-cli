@@ -24,6 +24,7 @@ Name | Type | Description | Notes
 **single_select_clearable_user_picker_fields** | Option<[**Vec<models::JiraSingleSelectUserPickerField>**](JiraSingleSelectUserPickerField.md)> | Edit assignment for single select user picker fields like Assignee/Reporter:   *  To assign an issue, specify the user's `accountId`.  *  To unassign an issue, set `user` to `null`.  *  For automatic assignment, set `accountId` to `-1`. | [optional]
 **single_select_fields** | Option<[**Vec<models::JiraSingleSelectField>**](JiraSingleSelectField.md)> | Add or clear a single select field:   *  To add, specify the option with an `optionId`.  *  To clear, pass an option with `optionId` as `-1`. | [optional]
 **single_version_picker_fields** | Option<[**Vec<models::JiraSingleVersionPickerField>**](JiraSingleVersionPickerField.md)> | Add or clear a single version picker field:   *  To add, specify the version with a `versionId`.  *  To clear, set `versionId` to `-1`. | [optional]
+**status** | Option<[**models::JiraStatusInput**](JiraStatusInput.md)> |  | [optional]
 **time_tracking_field** | Option<[**models::JiraTimeTrackingField**](JiraTimeTrackingField.md)> | Edit the time tracking field. | [optional]
 **url_fields** | Option<[**Vec<models::JiraUrlField>**](JiraUrlField.md)> | Add or clear a URL field:   *  To add, provide the `url` with the desired URL value.  *  To clear, set `url` to an empty string. | [optional]
 

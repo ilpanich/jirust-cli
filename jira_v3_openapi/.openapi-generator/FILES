@@ -52,6 +52,10 @@ docs/Avatar.md
 docs/AvatarUrlsBean.md
 docs/Avatars.md
 docs/AvatarsApi.md
+docs/BoardColumnPayload.md
+docs/BoardFeaturePayload.md
+docs/BoardPayload.md
+docs/BoardsPayload.md
 docs/BulkChangeOwnerDetails.md
 docs/BulkChangelogRequestBean.md
 docs/BulkChangelogResponseBean.md
@@ -73,8 +77,12 @@ docs/BulkPermissionGrants.md
 docs/BulkPermissionsRequestBean.md
 docs/BulkProjectPermissionGrants.md
 docs/BulkProjectPermissions.md
+docs/BulkRedactionRequest.md
+docs/BulkRedactionResponse.md
 docs/BulkTransitionGetAvailableTransitions.md
 docs/BulkTransitionSubmitInput.md
+docs/CardLayout.md
+docs/CardLayoutField.md
 docs/ChangeDetails.md
 docs/ChangeFilterOwner.md
 docs/ChangedValueBean.md
@@ -90,6 +98,7 @@ docs/ComponentJsonBean.md
 docs/ComponentWithIssueCount.md
 docs/CompoundClause.md
 docs/ConditionGroupConfiguration.md
+docs/ConditionGroupPayload.md
 docs/ConditionGroupUpdate.md
 docs/Configuration.md
 docs/ConfigurationsListParameters.md
@@ -101,6 +110,7 @@ docs/ContainerForProjectFeatures.md
 docs/ContainerForRegisteredWebhooks.md
 docs/ContainerForWebhookIds.md
 docs/ContainerOfWorkflowSchemeAssociations.md
+docs/ContentItem.md
 docs/Context.md
 docs/ContextForProjectAndIssueType.md
 docs/ContextualConfiguration.md
@@ -173,10 +183,13 @@ docs/CustomFieldDefinitionJsonBean.md
 docs/CustomFieldOption.md
 docs/CustomFieldOptionCreate.md
 docs/CustomFieldOptionUpdate.md
+docs/CustomFieldPayload.md
 docs/CustomFieldReplacement.md
 docs/CustomFieldUpdatedContextOptionsList.md
 docs/CustomFieldValueUpdate.md
 docs/CustomFieldValueUpdateDetails.md
+docs/CustomTemplateRequestDto.md
+docs/CustomTemplatesProjectDetails.md
 docs/Dashboard.md
 docs/DashboardDetails.md
 docs/DashboardGadget.md
@@ -191,6 +204,7 @@ docs/DateRangeFilterRequest.md
 docs/DefaultLevelValue.md
 docs/DefaultShareScope.md
 docs/DefaultWorkflow.md
+docs/DefaultWorkflowEditorResponse.md
 docs/DeleteAndReplaceVersionBean.md
 docs/DeprecatedWorkflow.md
 docs/DetailedErrorCollection.md
@@ -211,6 +225,7 @@ docs/FailedWebhook.md
 docs/FailedWebhooks.md
 docs/Field.md
 docs/FieldAssociationsRequest.md
+docs/FieldCapabilityPayload.md
 docs/FieldChangedClause.md
 docs/FieldConfiguration.md
 docs/FieldConfigurationDetails.md
@@ -226,6 +241,9 @@ docs/FieldDetails.md
 docs/FieldIdIdentifier.md
 docs/FieldIdentifierObject.md
 docs/FieldLastUsed.md
+docs/FieldLayoutConfiguration.md
+docs/FieldLayoutPayload.md
+docs/FieldLayoutSchemePayload.md
 docs/FieldMetadata.md
 docs/FieldReferenceData.md
 docs/FieldUpdateOperation.md
@@ -242,6 +260,7 @@ docs/FoundGroup.md
 docs/FoundGroups.md
 docs/FoundUsers.md
 docs/FoundUsersAndGroups.md
+docs/FromLayoutPayload.md
 docs/FunctionOperand.md
 docs/FunctionReferenceData.md
 docs/GetAtlassianTeamResponse.md
@@ -272,8 +291,6 @@ docs/Icon.md
 docs/IconBean.md
 docs/IdBean.md
 docs/IdOrKeyBean.md
-docs/IdSearchRequestBean.md
-docs/IdSearchResults.md
 docs/IncludedFields.md
 docs/InputStreamSource.md
 docs/IssueArchivalSyncRequest.md
@@ -313,6 +330,8 @@ docs/IssueFieldOptionScopeBean.md
 docs/IssueFieldsApi.md
 docs/IssueFilterForBulkPropertyDelete.md
 docs/IssueFilterForBulkPropertySet.md
+docs/IssueLayouItemtPayload.md
+docs/IssueLayoutPayload.md
 docs/IssueLimitReportResponseBean.md
 docs/IssueLink.md
 docs/IssueLinkType.md
@@ -328,6 +347,7 @@ docs/IssuePickerSuggestions.md
 docs/IssuePickerSuggestionsIssueType.md
 docs/IssuePrioritiesApi.md
 docs/IssuePropertiesApi.md
+docs/IssueRedactionApi.md
 docs/IssueRemoteLinksApi.md
 docs/IssueResolutionsApi.md
 docs/IssueSearchApi.md
@@ -339,15 +359,19 @@ docs/IssueTransition.md
 docs/IssueTransitionStatus.md
 docs/IssueTypeCreateBean.md
 docs/IssueTypeDetails.md
+docs/IssueTypeHierarchyPayload.md
 docs/IssueTypeIds.md
 docs/IssueTypeIdsToRemove.md
 docs/IssueTypeInfo.md
 docs/IssueTypeIssueCreateMetadata.md
+docs/IssueTypePayload.md
+docs/IssueTypeProjectCreatePayload.md
 docs/IssueTypePropertiesApi.md
 docs/IssueTypeScheme.md
 docs/IssueTypeSchemeDetails.md
 docs/IssueTypeSchemeId.md
 docs/IssueTypeSchemeMapping.md
+docs/IssueTypeSchemePayload.md
 docs/IssueTypeSchemeProjectAssociation.md
 docs/IssueTypeSchemeProjects.md
 docs/IssueTypeSchemeUpdateDetails.md
@@ -358,6 +382,7 @@ docs/IssueTypeScreenSchemeId.md
 docs/IssueTypeScreenSchemeItem.md
 docs/IssueTypeScreenSchemeMapping.md
 docs/IssueTypeScreenSchemeMappingDetails.md
+docs/IssueTypeScreenSchemePayload.md
 docs/IssueTypeScreenSchemeProjectAssociation.md
 docs/IssueTypeScreenSchemeUpdateDetails.md
 docs/IssueTypeScreenSchemesApi.md
@@ -413,6 +438,7 @@ docs/JiraExpressionsComplexityValueBean.md
 docs/JiraGroupInput.md
 docs/JiraIssueFields.md
 docs/JiraIssueTypeField.md
+docs/JiraLabelPropertiesInputJackson1.md
 docs/JiraLabelsField.md
 docs/JiraLabelsInput.md
 docs/JiraMultiSelectComponentField.md
@@ -432,6 +458,7 @@ docs/JiraSingleSelectField.md
 docs/JiraSingleSelectUserPickerField.md
 docs/JiraSingleVersionPickerField.md
 docs/JiraStatus.md
+docs/JiraStatusInput.md
 docs/JiraTimeTrackingField.md
 docs/JiraUrlField.md
 docs/JiraUserField.md
@@ -489,6 +516,7 @@ docs/MultipleCustomFieldValuesUpdateDetails.md
 docs/MyselfApi.md
 docs/NestedResponse.md
 docs/NewUserDetails.md
+docs/NonWorkingDay.md
 docs/Notification.md
 docs/NotificationEvent.md
 docs/NotificationRecipients.md
@@ -497,9 +525,13 @@ docs/NotificationScheme.md
 docs/NotificationSchemeAndProjectMappingJsonBean.md
 docs/NotificationSchemeEvent.md
 docs/NotificationSchemeEventDetails.md
+docs/NotificationSchemeEventIdPayload.md
+docs/NotificationSchemeEventPayload.md
 docs/NotificationSchemeEventTypeId.md
 docs/NotificationSchemeId.md
 docs/NotificationSchemeNotificationDetails.md
+docs/NotificationSchemeNotificationDetailsPayload.md
+docs/NotificationSchemePayload.md
 docs/OldToNewSecurityLevelMappingsBean.md
 docs/OperationMessage.md
 docs/Operations.md
@@ -578,8 +610,10 @@ docs/ParsedJqlQueries.md
 docs/ParsedJqlQuery.md
 docs/PermissionDetails.md
 docs/PermissionGrant.md
+docs/PermissionGrantDto.md
 docs/PermissionGrants.md
 docs/PermissionHolder.md
+docs/PermissionPayloadDto.md
 docs/PermissionScheme.md
 docs/PermissionSchemes.md
 docs/PermissionSchemesApi.md
@@ -605,6 +639,8 @@ docs/ProjectCategory.md
 docs/ProjectClassificationLevelsApi.md
 docs/ProjectComponent.md
 docs/ProjectComponentsApi.md
+docs/ProjectCreateResourceIdentifier.md
+docs/ProjectCustomTemplateCreateRequestDto.md
 docs/ProjectDataPolicies.md
 docs/ProjectDataPolicy.md
 docs/ProjectDetails.md
@@ -628,6 +664,7 @@ docs/ProjectIssueTypes.md
 docs/ProjectIssueTypesHierarchyLevel.md
 docs/ProjectKeyAndNameValidationApi.md
 docs/ProjectLandingPageInfo.md
+docs/ProjectPayload.md
 docs/ProjectPermissionSchemesApi.md
 docs/ProjectPermissions.md
 docs/ProjectPropertiesApi.md
@@ -639,6 +676,7 @@ docs/ProjectRoleGroup.md
 docs/ProjectRoleUser.md
 docs/ProjectRolesApi.md
 docs/ProjectScopeBean.md
+docs/ProjectTemplatesApi.md
 docs/ProjectType.md
 docs/ProjectTypesApi.md
 docs/ProjectUsage.md
@@ -650,6 +688,9 @@ docs/PropertyKey.md
 docs/PropertyKeys.md
 docs/PublishDraftWorkflowScheme.md
 docs/PublishedWorkflowId.md
+docs/QuickFilterPayload.md
+docs/RedactionJobStatusResponse.md
+docs/RedactionPosition.md
 docs/RegisteredWebhook.md
 docs/RemoteIssueLink.md
 docs/RemoteIssueLinkIdentifies.md
@@ -667,15 +708,21 @@ docs/Resource.md
 docs/RestrictedPermission.md
 docs/RichText.md
 docs/RoleActor.md
+docs/RolePayload.md
+docs/RolesCapabilityPayload.md
 docs/RuleConfiguration.md
+docs/RulePayload.md
 docs/SanitizedJqlQueries.md
 docs/SanitizedJqlQuery.md
 docs/Scope.md
+docs/ScopePayload.md
 docs/Screen.md
 docs/ScreenDetails.md
+docs/ScreenPayload.md
 docs/ScreenScheme.md
 docs/ScreenSchemeDetails.md
 docs/ScreenSchemeId.md
+docs/ScreenSchemePayload.md
 docs/ScreenSchemesApi.md
 docs/ScreenTabFieldsApi.md
 docs/ScreenTabsApi.md
@@ -691,11 +738,14 @@ docs/SearchRequestBean.md
 docs/SearchResults.md
 docs/SecurityLevel.md
 docs/SecurityLevelMember.md
+docs/SecurityLevelMemberPayload.md
+docs/SecurityLevelPayload.md
 docs/SecurityScheme.md
 docs/SecuritySchemeId.md
 docs/SecuritySchemeLevelBean.md
 docs/SecuritySchemeLevelMemberBean.md
 docs/SecuritySchemeMembersRequest.md
+docs/SecuritySchemePayload.md
 docs/SecuritySchemeWithProjects.md
 docs/SecuritySchemes.md
 docs/ServerInfoApi.md
@@ -717,6 +767,8 @@ docs/SimpleListWrapperGroupName.md
 docs/SimpleUsage.md
 docs/SimplifiedHierarchyLevel.md
 docs/SimplifiedIssueTransition.md
+docs/SingleRedactionRequest.md
+docs/SingleRedactionResponse.md
 docs/SoftwareNavigationInfo.md
 docs/Status.md
 docs/StatusApi.md
@@ -729,6 +781,7 @@ docs/StatusMapping.md
 docs/StatusMappingDto.md
 docs/StatusMetadata.md
 docs/StatusMigration.md
+docs/StatusPayload.md
 docs/StatusProjectIssueTypeUsage.md
 docs/StatusProjectIssueTypeUsageDto.md
 docs/StatusProjectIssueTypeUsagePage.md
@@ -747,7 +800,10 @@ docs/SuggestedIssue.md
 docs/SuggestedMappingsForPrioritiesRequestBean.md
 docs/SuggestedMappingsForProjectsRequestBean.md
 docs/SuggestedMappingsRequestBean.md
+docs/SwimlanePayload.md
+docs/SwimlanesPayload.md
 docs/SystemAvatars.md
+docs/TabPayload.md
 docs/TargetClassification.md
 docs/TargetMandatoryFields.md
 docs/TargetStatus.md
@@ -761,7 +817,9 @@ docs/TimeTrackingApi.md
 docs/TimeTrackingConfiguration.md
 docs/TimeTrackingDetails.md
 docs/TimeTrackingProvider.md
+docs/ToLayoutPayload.md
 docs/Transition.md
+docs/TransitionPayload.md
 docs/TransitionScreenDetails.md
 docs/TransitionUpdateDto.md
 docs/Transitions.md
@@ -831,6 +889,7 @@ docs/WorkManagementNavigationInfo.md
 docs/Workflow.md
 docs/WorkflowAssociationStatusMapping.md
 docs/WorkflowCapabilities.md
+docs/WorkflowCapabilityPayload.md
 docs/WorkflowCompoundCondition.md
 docs/WorkflowCondition.md
 docs/WorkflowCreate.md
@@ -844,6 +903,7 @@ docs/WorkflowLayout.md
 docs/WorkflowMetadataAndIssueTypeRestModel.md
 docs/WorkflowMetadataRestModel.md
 docs/WorkflowOperations.md
+docs/WorkflowPayload.md
 docs/WorkflowProjectIssueTypeUsage.md
 docs/WorkflowProjectIssueTypeUsageDto.md
 docs/WorkflowProjectIssueTypeUsagePage.md
@@ -860,6 +920,7 @@ docs/WorkflowSchemeAssociation.md
 docs/WorkflowSchemeAssociations.md
 docs/WorkflowSchemeDraftsApi.md
 docs/WorkflowSchemeIdName.md
+docs/WorkflowSchemePayload.md
 docs/WorkflowSchemeProjectAssociation.md
 docs/WorkflowSchemeProjectAssociationsApi.md
 docs/WorkflowSchemeProjectUsageDto.md
@@ -878,6 +939,8 @@ docs/WorkflowSimpleCondition.md
 docs/WorkflowStatus.md
 docs/WorkflowStatusCategoriesApi.md
 docs/WorkflowStatusLayout.md
+docs/WorkflowStatusLayoutPayload.md
+docs/WorkflowStatusPayload.md
 docs/WorkflowStatusUpdate.md
 docs/WorkflowStatusesApi.md
 docs/WorkflowTransition.md
@@ -902,6 +965,7 @@ docs/WorkflowValidationError.md
 docs/WorkflowValidationErrorList.md
 docs/WorkflowsApi.md
 docs/WorkflowsWithTransitionRulesDetails.md
+docs/WorkingDaysConfig.md
 docs/Worklog.md
 docs/WorklogIdsRequestBean.md
 docs/WorklogsMoveRequestBean.md
@@ -940,6 +1004,7 @@ src/apis/issue_navigator_settings_api.rs
 src/apis/issue_notification_schemes_api.rs
 src/apis/issue_priorities_api.rs
 src/apis/issue_properties_api.rs
+src/apis/issue_redaction_api.rs
 src/apis/issue_remote_links_api.rs
 src/apis/issue_resolutions_api.rs
 src/apis/issue_search_api.rs
@@ -977,6 +1042,7 @@ src/apis/project_permission_schemes_api.rs
 src/apis/project_properties_api.rs
 src/apis/project_role_actors_api.rs
 src/apis/project_roles_api.rs
+src/apis/project_templates_api.rs
 src/apis/project_types_api.rs
 src/apis/project_versions_api.rs
 src/apis/projects_api.rs
@@ -1047,6 +1113,10 @@ src/models/available_workflow_triggers.rs
 src/models/avatar.rs
 src/models/avatar_urls_bean.rs
 src/models/avatars.rs
+src/models/board_column_payload.rs
+src/models/board_feature_payload.rs
+src/models/board_payload.rs
+src/models/boards_payload.rs
 src/models/bulk_change_owner_details.rs
 src/models/bulk_changelog_request_bean.rs
 src/models/bulk_changelog_response_bean.rs
@@ -1068,8 +1138,12 @@ src/models/bulk_permission_grants.rs
 src/models/bulk_permissions_request_bean.rs
 src/models/bulk_project_permission_grants.rs
 src/models/bulk_project_permissions.rs
+src/models/bulk_redaction_request.rs
+src/models/bulk_redaction_response.rs
 src/models/bulk_transition_get_available_transitions.rs
 src/models/bulk_transition_submit_input.rs
+src/models/card_layout.rs
+src/models/card_layout_field.rs
 src/models/change_details.rs
 src/models/change_filter_owner.rs
 src/models/changed_value_bean.rs
@@ -1084,6 +1158,7 @@ src/models/component_json_bean.rs
 src/models/component_with_issue_count.rs
 src/models/compound_clause.rs
 src/models/condition_group_configuration.rs
+src/models/condition_group_payload.rs
 src/models/condition_group_update.rs
 src/models/configuration.rs
 src/models/configurations_list_parameters.rs
@@ -1095,6 +1170,7 @@ src/models/container_for_project_features.rs
 src/models/container_for_registered_webhooks.rs
 src/models/container_for_webhook_ids.rs
 src/models/container_of_workflow_scheme_associations.rs
+src/models/content_item.rs
 src/models/context.rs
 src/models/context_for_project_and_issue_type.rs
 src/models/contextual_configuration.rs
@@ -1167,10 +1243,13 @@ src/models/custom_field_definition_json_bean.rs
 src/models/custom_field_option.rs
 src/models/custom_field_option_create.rs
 src/models/custom_field_option_update.rs
+src/models/custom_field_payload.rs
 src/models/custom_field_replacement.rs
 src/models/custom_field_updated_context_options_list.rs
 src/models/custom_field_value_update.rs
 src/models/custom_field_value_update_details.rs
+src/models/custom_template_request_dto.rs
+src/models/custom_templates_project_details.rs
 src/models/dashboard.rs
 src/models/dashboard_details.rs
 src/models/dashboard_gadget.rs
@@ -1184,6 +1263,7 @@ src/models/date_range_filter_request.rs
 src/models/default_level_value.rs
 src/models/default_share_scope.rs
 src/models/default_workflow.rs
+src/models/default_workflow_editor_response.rs
 src/models/delete_and_replace_version_bean.rs
 src/models/deprecated_workflow.rs
 src/models/detailed_error_collection.rs
@@ -1203,6 +1283,7 @@ src/models/failed_webhook.rs
 src/models/failed_webhooks.rs
 src/models/field.rs
 src/models/field_associations_request.rs
+src/models/field_capability_payload.rs
 src/models/field_changed_clause.rs
 src/models/field_configuration.rs
 src/models/field_configuration_details.rs
@@ -1218,6 +1299,9 @@ src/models/field_details.rs
 src/models/field_id_identifier.rs
 src/models/field_identifier_object.rs
 src/models/field_last_used.rs
+src/models/field_layout_configuration.rs
+src/models/field_layout_payload.rs
+src/models/field_layout_scheme_payload.rs
 src/models/field_metadata.rs
 src/models/field_reference_data.rs
 src/models/field_update_operation.rs
@@ -1232,6 +1316,7 @@ src/models/found_group.rs
 src/models/found_groups.rs
 src/models/found_users.rs
 src/models/found_users_and_groups.rs
+src/models/from_layout_payload.rs
 src/models/function_operand.rs
 src/models/function_reference_data.rs
 src/models/get_atlassian_team_response.rs
@@ -1260,8 +1345,6 @@ src/models/icon.rs
 src/models/icon_bean.rs
 src/models/id_bean.rs
 src/models/id_or_key_bean.rs
-src/models/id_search_request_bean.rs
-src/models/id_search_results.rs
 src/models/included_fields.rs
 src/models/input_stream_source.rs
 src/models/issue_archival_sync_request.rs
@@ -1289,6 +1372,8 @@ src/models/issue_field_option_create_bean.rs
 src/models/issue_field_option_scope_bean.rs
 src/models/issue_filter_for_bulk_property_delete.rs
 src/models/issue_filter_for_bulk_property_set.rs
+src/models/issue_layou_itemt_payload.rs
+src/models/issue_layout_payload.rs
 src/models/issue_limit_report_response_bean.rs
 src/models/issue_link.rs
 src/models/issue_link_type.rs
@@ -1304,14 +1389,18 @@ src/models/issue_transition.rs
 src/models/issue_transition_status.rs
 src/models/issue_type_create_bean.rs
 src/models/issue_type_details.rs
+src/models/issue_type_hierarchy_payload.rs
 src/models/issue_type_ids.rs
 src/models/issue_type_ids_to_remove.rs
 src/models/issue_type_info.rs
 src/models/issue_type_issue_create_metadata.rs
+src/models/issue_type_payload.rs
+src/models/issue_type_project_create_payload.rs
 src/models/issue_type_scheme.rs
 src/models/issue_type_scheme_details.rs
 src/models/issue_type_scheme_id.rs
 src/models/issue_type_scheme_mapping.rs
+src/models/issue_type_scheme_payload.rs
 src/models/issue_type_scheme_project_association.rs
 src/models/issue_type_scheme_projects.rs
 src/models/issue_type_scheme_update_details.rs
@@ -1321,6 +1410,7 @@ src/models/issue_type_screen_scheme_id.rs
 src/models/issue_type_screen_scheme_item.rs
 src/models/issue_type_screen_scheme_mapping.rs
 src/models/issue_type_screen_scheme_mapping_details.rs
+src/models/issue_type_screen_scheme_payload.rs
 src/models/issue_type_screen_scheme_project_association.rs
 src/models/issue_type_screen_scheme_update_details.rs
 src/models/issue_type_screen_schemes_projects.rs
@@ -1368,6 +1458,7 @@ src/models/jira_expressions_complexity_value_bean.rs
 src/models/jira_group_input.rs
 src/models/jira_issue_fields.rs
 src/models/jira_issue_type_field.rs
+src/models/jira_label_properties_input_jackson1.rs
 src/models/jira_labels_field.rs
 src/models/jira_labels_input.rs
 src/models/jira_multi_select_component_field.rs
@@ -1386,6 +1477,7 @@ src/models/jira_single_select_field.rs
 src/models/jira_single_select_user_picker_field.rs
 src/models/jira_single_version_picker_field.rs
 src/models/jira_status.rs
+src/models/jira_status_input.rs
 src/models/jira_time_tracking_field.rs
 src/models/jira_url_field.rs
 src/models/jira_user_field.rs
@@ -1439,6 +1531,7 @@ src/models/multiple_custom_field_values_update.rs
 src/models/multiple_custom_field_values_update_details.rs
 src/models/nested_response.rs
 src/models/new_user_details.rs
+src/models/non_working_day.rs
 src/models/notification.rs
 src/models/notification_event.rs
 src/models/notification_recipients.rs
@@ -1447,9 +1540,13 @@ src/models/notification_scheme.rs
 src/models/notification_scheme_and_project_mapping_json_bean.rs
 src/models/notification_scheme_event.rs
 src/models/notification_scheme_event_details.rs
+src/models/notification_scheme_event_id_payload.rs
+src/models/notification_scheme_event_payload.rs
 src/models/notification_scheme_event_type_id.rs
 src/models/notification_scheme_id.rs
 src/models/notification_scheme_notification_details.rs
+src/models/notification_scheme_notification_details_payload.rs
+src/models/notification_scheme_payload.rs
 src/models/old_to_new_security_level_mappings_bean.rs
 src/models/operation_message.rs
 src/models/operations.rs
@@ -1528,8 +1625,10 @@ src/models/parsed_jql_queries.rs
 src/models/parsed_jql_query.rs
 src/models/permission_details.rs
 src/models/permission_grant.rs
+src/models/permission_grant_dto.rs
 src/models/permission_grants.rs
 src/models/permission_holder.rs
+src/models/permission_payload_dto.rs
 src/models/permission_scheme.rs
 src/models/permission_schemes.rs
 src/models/permissions.rs
@@ -1547,6 +1646,8 @@ src/models/project_and_issue_type_pair.rs
 src/models/project_avatars.rs
 src/models/project_category.rs
 src/models/project_component.rs
+src/models/project_create_resource_identifier.rs
+src/models/project_custom_template_create_request_dto.rs
 src/models/project_data_policies.rs
 src/models/project_data_policy.rs
 src/models/project_details.rs
@@ -1567,6 +1668,7 @@ src/models/project_issue_type_mappings.rs
 src/models/project_issue_types.rs
 src/models/project_issue_types_hierarchy_level.rs
 src/models/project_landing_page_info.rs
+src/models/project_payload.rs
 src/models/project_permissions.rs
 src/models/project_role.rs
 src/models/project_role_actors_update_bean.rs
@@ -1582,6 +1684,9 @@ src/models/property_key.rs
 src/models/property_keys.rs
 src/models/publish_draft_workflow_scheme.rs
 src/models/published_workflow_id.rs
+src/models/quick_filter_payload.rs
+src/models/redaction_job_status_response.rs
+src/models/redaction_position.rs
 src/models/registered_webhook.rs
 src/models/remote_issue_link.rs
 src/models/remote_issue_link_identifies.rs
@@ -1599,15 +1704,21 @@ src/models/resource.rs
 src/models/restricted_permission.rs
 src/models/rich_text.rs
 src/models/role_actor.rs
+src/models/role_payload.rs
+src/models/roles_capability_payload.rs
 src/models/rule_configuration.rs
+src/models/rule_payload.rs
 src/models/sanitized_jql_queries.rs
 src/models/sanitized_jql_query.rs
 src/models/scope.rs
+src/models/scope_payload.rs
 src/models/screen.rs
 src/models/screen_details.rs
+src/models/screen_payload.rs
 src/models/screen_scheme.rs
 src/models/screen_scheme_details.rs
 src/models/screen_scheme_id.rs
+src/models/screen_scheme_payload.rs
 src/models/screen_types.rs
 src/models/screen_with_tab.rs
 src/models/screenable_field.rs
@@ -1619,11 +1730,14 @@ src/models/search_request_bean.rs
 src/models/search_results.rs
 src/models/security_level.rs
 src/models/security_level_member.rs
+src/models/security_level_member_payload.rs
+src/models/security_level_payload.rs
 src/models/security_scheme.rs
 src/models/security_scheme_id.rs
 src/models/security_scheme_level_bean.rs
 src/models/security_scheme_level_member_bean.rs
 src/models/security_scheme_members_request.rs
+src/models/security_scheme_payload.rs
 src/models/security_scheme_with_projects.rs
 src/models/security_schemes.rs
 src/models/server_information.rs
@@ -1643,6 +1757,8 @@ src/models/simple_list_wrapper_group_name.rs
 src/models/simple_usage.rs
 src/models/simplified_hierarchy_level.rs
 src/models/simplified_issue_transition.rs
+src/models/single_redaction_request.rs
+src/models/single_redaction_response.rs
 src/models/software_navigation_info.rs
 src/models/status.rs
 src/models/status_category.rs
@@ -1654,6 +1770,7 @@ src/models/status_mapping.rs
 src/models/status_mapping_dto.rs
 src/models/status_metadata.rs
 src/models/status_migration.rs
+src/models/status_payload.rs
 src/models/status_project_issue_type_usage.rs
 src/models/status_project_issue_type_usage_dto.rs
 src/models/status_project_issue_type_usage_page.rs
@@ -1672,7 +1789,10 @@ src/models/suggested_issue.rs
 src/models/suggested_mappings_for_priorities_request_bean.rs
 src/models/suggested_mappings_for_projects_request_bean.rs
 src/models/suggested_mappings_request_bean.rs
+src/models/swimlane_payload.rs
+src/models/swimlanes_payload.rs
 src/models/system_avatars.rs
+src/models/tab_payload.rs
 src/models/target_classification.rs
 src/models/target_mandatory_fields.rs
 src/models/target_status.rs
@@ -1683,7 +1803,9 @@ src/models/task_progress_bean_remove_option_from_issues_result.rs
 src/models/time_tracking_configuration.rs
 src/models/time_tracking_details.rs
 src/models/time_tracking_provider.rs
+src/models/to_layout_payload.rs
 src/models/transition.rs
+src/models/transition_payload.rs
 src/models/transition_screen_details.rs
 src/models/transition_update_dto.rs
 src/models/transitions.rs
@@ -1747,6 +1869,7 @@ src/models/work_management_navigation_info.rs
 src/models/workflow.rs
 src/models/workflow_association_status_mapping.rs
 src/models/workflow_capabilities.rs
+src/models/workflow_capability_payload.rs
 src/models/workflow_compound_condition.rs
 src/models/workflow_condition.rs
 src/models/workflow_create.rs
@@ -1760,6 +1883,7 @@ src/models/workflow_layout.rs
 src/models/workflow_metadata_and_issue_type_rest_model.rs
 src/models/workflow_metadata_rest_model.rs
 src/models/workflow_operations.rs
+src/models/workflow_payload.rs
 src/models/workflow_project_issue_type_usage.rs
 src/models/workflow_project_issue_type_usage_dto.rs
 src/models/workflow_project_issue_type_usage_page.rs
@@ -1775,6 +1899,7 @@ src/models/workflow_scheme.rs
 src/models/workflow_scheme_association.rs
 src/models/workflow_scheme_associations.rs
 src/models/workflow_scheme_id_name.rs
+src/models/workflow_scheme_payload.rs
 src/models/workflow_scheme_project_association.rs
 src/models/workflow_scheme_project_usage_dto.rs
 src/models/workflow_scheme_read_request.rs
@@ -1790,6 +1915,8 @@ src/models/workflow_search_response.rs
 src/models/workflow_simple_condition.rs
 src/models/workflow_status.rs
 src/models/workflow_status_layout.rs
+src/models/workflow_status_layout_payload.rs
+src/models/workflow_status_payload.rs
 src/models/workflow_status_update.rs
 src/models/workflow_transition.rs
 src/models/workflow_transition_links.rs
@@ -1810,6 +1937,7 @@ src/models/workflow_usages.rs
 src/models/workflow_validation_error.rs
 src/models/workflow_validation_error_list.rs
 src/models/workflows_with_transition_rules_details.rs
+src/models/working_days_config.rs
 src/models/worklog.rs
 src/models/worklog_ids_request_bean.rs
 src/models/worklogs_move_request_bean.rs
