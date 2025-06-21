@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+
+## [0.15.0] 2025-06-21
+### Added
+- Retrieve version-related workitems
+- Search for issues using JQL
+- General code, documentation and tests improvements
+
 ### Changed
 - Updated dependencies
 
