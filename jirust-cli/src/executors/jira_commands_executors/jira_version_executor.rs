@@ -229,6 +229,21 @@ impl ExecJiraCommand for VersionExecutor {
                     )))),
                 }
             }
+            VersionActionValues::RelatedWorkItems => {
+                result = match self
+                    .version_cmd_runner
+                    .get_jira_version_related_work(VersionCmdParams::from(&self.version_args))
+                    .await
+                {
+                    Ok(items) => Ok(vec![PrintableData::VersionRelatedWork {
+                        version_related_work_items: items,
+                    }]),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error listing version Related Workitems: {}",
+                        err
+                    )))),
+                }
+            }
             VersionActionValues::Release => {
                 match self
                     .version_cmd_runner

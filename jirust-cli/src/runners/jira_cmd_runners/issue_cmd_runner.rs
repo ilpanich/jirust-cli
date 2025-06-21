@@ -1,6 +1,9 @@
+use jira_v3_openapi::apis::issue_search_api::search_for_issues_using_jql_post;
 use jira_v3_openapi::apis::issues_api::*;
 use jira_v3_openapi::models::user::AccountType;
-use jira_v3_openapi::models::{CreatedIssue, IssueBean, IssueTransition, Transitions, User};
+use jira_v3_openapi::models::{
+    CreatedIssue, IssueBean, IssueTransition, SearchRequestBean, Transitions, User,
+};
 use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDetails};
 use serde_json::Value;
 use std::collections::HashMap;
@@ -151,7 +154,7 @@ impl IssueCmdRunner {
         let mut issue_fields = params.issue_fields.unwrap_or_default();
         issue_fields.insert(
             "project".to_string(),
-            serde_json::json!({"key": params.project_key}),
+            serde_json::json!({"key": params.project_key.expect("Project Key is required to create an issue!")}),
         );
         let issue_data = IssueUpdateDetails {
             fields: Some(issue_fields),
@@ -248,6 +251,55 @@ impl IssueCmdRunner {
             )));
         };
         Ok(get_issue(&self.cfg, i_key, None, None, None, None, None, None).await?)
+    }
+
+    /// This method searches for Jira issues using the provided JQL query parameters.
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - Issue command parameters
+    ///
+    /// # Returns
+    ///
+    /// * `Vec<IssueBean>` - A vector of Jira issue beans
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
+    /// let mut params = IssueCmdParams::new();
+    /// params.query = Some("field=value".to_string());
+    ///
+    /// let result = issue_cmd_runner.search_jira_issues(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
+    /// ```
+    pub async fn search_jira_issues(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Vec<IssueBean>, Box<dyn std::error::Error>> {
+        let search_params: SearchRequestBean = SearchRequestBean {
+            jql: params.query,
+            ..Default::default()
+        };
+        match search_for_issues_using_jql_post(&self.cfg, search_params).await {
+            Ok(result) => {
+                if let Some(issues) = result.issues {
+                    Ok(issues)
+                } else {
+                    Ok(vec![])
+                }
+            }
+            Err(e) => Err(Box::new(e)),
+        }
     }
 
     /// Transitions a Jira issue
@@ -429,9 +481,10 @@ impl IssueCmdRunner {
 /// * `issue_fields` - Jira issue fields
 /// * `transition` - Jira issue transition
 /// * `assignee` - Jira issue assignee
+/// * `query` - Jira issue query
 pub struct IssueCmdParams {
     /// Jira project key
-    pub project_key: String,
+    pub project_key: Option<String>,
     /// Jira issue key
     pub issue_key: Option<String>,
     /// Jira issue fields
@@ -440,6 +493,8 @@ pub struct IssueCmdParams {
     pub transition: Option<String>,
     /// Jira issue assignee
     pub assignee: Option<String>,
+    /// Jira issue query
+    pub query: Option<String>,
 }
 
 /// Implementation of IssueCmdParams struct
@@ -463,11 +518,12 @@ impl IssueCmdParams {
     /// ```
     pub fn new() -> IssueCmdParams {
         IssueCmdParams {
-            project_key: "".to_string(),
+            project_key: Some("".to_string()),
             issue_key: None,
             issue_fields: None,
             transition: None,
             assignee: None,
+            query: None,
         }
     }
 }
@@ -496,18 +552,19 @@ impl From<&IssueArgs> for IssueCmdParams {
     ///
     /// let issue_args = IssueArgs {
     ///    issue_act: IssueActionValues::Get,
-    ///    project_key: "project_key".to_string(),
+    ///    project_key: Some("project_key".to_string()),
     ///    issue_key: Some("issue_key".to_string()),
     ///    issue_fields: Some(vec![("key".to_string(), r#"{ "key": "value" }"#.to_string())]),
     ///    transition_to: Some("transition_to".to_string()),
     ///    assignee: Some("assignee".to_string()),
+    ///    query: None,
     ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
     ///
     /// let params = IssueCmdParams::from(&issue_args);
     ///
-    /// assert_eq!(params.project_key, "project_key".to_string());
+    /// assert_eq!(params.project_key, Some("project_key".to_string()));
     /// assert_eq!(params.issue_key.unwrap(), "issue_key".to_string());
     /// assert_eq!(params.transition.unwrap(), "transition_to".to_string());
     /// assert_eq!(params.assignee.unwrap(), "assignee".to_string());
@@ -532,6 +589,7 @@ impl From<&IssueArgs> for IssueCmdParams {
             ),
             transition: value.transition_to.clone(),
             assignee: value.assignee.clone(),
+            query: value.query.clone(),
         }
     }
 }
@@ -646,7 +704,7 @@ impl Default for IssueCmdParams {
     ///
     /// let params = IssueCmdParams::default();
     ///
-    /// assert_eq!(params.project_key, "".to_string());
+    /// assert_eq!(params.project_key, Some("".to_string()));
     /// assert_eq!(params.issue_key, None);
     /// assert_eq!(params.issue_fields, None);
     /// assert_eq!(params.transition, None);

@@ -19,6 +19,13 @@ use super::PrintableData;
 ///     * Version: A vector of Version structs
 ///     * IssueType: A vector of IssueType structs
 ///     * IssueTypeFields: A vector of IssueTypeFields structs
+///     * IssueCreated: A vector of CreatedIssue structs
+///     * IssueData: A vector of IssueBean structs
+///     * IssueTransition: A vector of IssueTransition structs
+///     * TransitionedIssue: A vector of TransitionedIssue structs
+///     * VersionRelatedWork: A vector of VersionRelatedWork structs
+///     * Generic: A vector of Generic JSON values
+///
 ///
 /// # Examples
 ///
@@ -129,6 +136,26 @@ pub fn print_table_full(data: PrintableData) {
                 ]);
             }
         }
+        PrintableData::VersionRelatedWork {
+            version_related_work_items,
+        } => {
+            table.add_row(row![
+                bFC->"Category",
+                bFb->"Issue ID",
+                bFr->"Related Workitem ID",
+                bFm->"Title",
+                bFy->"URL"
+            ]);
+            for item in version_related_work_items {
+                table.add_row(row![
+                    Fc->item.category,
+                    Fb->item.issue_id.map(|id| id.to_string()).unwrap_or("N/A".to_string()),
+                    Fr->item.related_work_id.unwrap_or("".to_string()),
+                    Fm->item.title.unwrap_or("".to_string()),
+                    Fy->item.url.unwrap_or("".to_string()),
+                ]);
+            }
+        }
         PrintableData::IssueTransitions { transitions } => {
             table.add_row(row![
                 bFC->"Transition ID",
@@ -156,7 +183,7 @@ pub fn print_table_full(data: PrintableData) {
                     Fc->issue_type.id.unwrap_or("".to_string()),
                     Fc->issue_type.name.unwrap_or("".to_string()),
                     Fm->issue_type.description.unwrap_or("".to_string()),
-                    Fw->issue_type.hierarchy_level.unwrap_or(-1),
+                    Fw->issue_type.hierarchy_level.map(|hierarchy_level| hierarchy_level.to_string()).unwrap_or("N/A".to_string()),
                     Fb->issue_type.subtask.unwrap_or(false),
                 ]);
             }
@@ -303,6 +330,26 @@ pub fn print_table_basic(data: PrintableData) {
                 ]);
             }
         }
+        PrintableData::VersionRelatedWork {
+            version_related_work_items,
+        } => {
+            table.add_row(row![
+                bFC->"Category",
+                bFb->"Issue ID",
+                bFr->"Related Workitem ID",
+                bFm->"Title",
+                bFy->"URL"
+            ]);
+            for item in version_related_work_items {
+                table.add_row(row![
+                    Fc->item.category,
+                    Fb->item.issue_id.map(|id| id.to_string()).unwrap_or("N/A".to_string()),
+                    Fr->item.related_work_id.unwrap_or("".to_string()),
+                    Fm->item.title.unwrap_or("".to_string()),
+                    Fy->item.url.unwrap_or("".to_string()),
+                ]);
+            }
+        }
         PrintableData::IssueTransitions { transitions } => {
             table.add_row(row![
                 bFC->"Transition ID",
@@ -330,7 +377,7 @@ pub fn print_table_basic(data: PrintableData) {
                     Fc->issue_type.id.unwrap_or("".to_string()),
                     Fc->issue_type.name.unwrap_or("".to_string()),
                     Fm->issue_type.description.unwrap_or("".to_string()),
-                    Fw->issue_type.hierarchy_level.unwrap_or(-1),
+                    Fw->issue_type.hierarchy_level.map(|hierarchy_level| hierarchy_level.to_string()).unwrap_or("N/A".to_string()),
                     Fb->issue_type.subtask.unwrap_or(false),
                 ]);
             }
@@ -493,6 +540,26 @@ pub fn print_table_single(data: PrintableData) {
                 Fr->version.release_date.unwrap_or_default(),
             ]);
         }
+        PrintableData::VersionRelatedWork {
+            version_related_work_items,
+        } => {
+            table.add_row(row![
+                bFC->"Category",
+                bFb->"Issue ID",
+                bFr->"Related Workitem ID",
+                bFm->"Title",
+                bFy->"URL"
+            ]);
+            for item in version_related_work_items {
+                table.add_row(row![
+                    Fc->item.category,
+                    Fb->item.issue_id.map(|id| id.to_string()).unwrap_or("N/A".to_string()),
+                    Fr->item.related_work_id.unwrap_or("".to_string()),
+                    Fm->item.title.unwrap_or("".to_string()),
+                    Fy->item.url.unwrap_or("".to_string()),
+                ]);
+            }
+        }
         PrintableData::IssueTransitions { transitions } => {
             let transition = transitions
                 .first()
@@ -526,7 +593,7 @@ pub fn print_table_single(data: PrintableData) {
                 Fc->issue_type.id.unwrap_or("".to_string()),
                 Fc->issue_type.name.unwrap_or("".to_string()),
                 Fm->issue_type.description.unwrap_or("".to_string()),
-                Fw->issue_type.hierarchy_level.unwrap_or(-1),
+                Fw->issue_type.hierarchy_level.map(|hierarchy_level| hierarchy_level.to_string()).unwrap_or("N/A".to_string()),
                 Fb->issue_type.subtask.unwrap_or(false),
             ]);
         }
