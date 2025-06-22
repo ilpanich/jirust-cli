@@ -6,6 +6,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.15.1] 2025-06-22
+### Changed
+- Improved code documentation
+- Fixed typo in README.md
+
 ## [0.15.0] 2025-06-21
 ### Added
 - Retrieve version-related workitems
