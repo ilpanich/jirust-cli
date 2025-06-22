@@ -93,7 +93,7 @@ Currently the basic version management is implemented and you can:
 * Assign an issue
 * Link issues
 * List all the transitions available for an issue
-* Search issue using JQL (basic impelementation, as required for my personal use)
+* Search issue using JQL query (basic implementation, as required for my personal use)
 
 Supported output formats are:
 * JSON (default)
