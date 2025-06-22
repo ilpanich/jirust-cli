@@ -475,13 +475,14 @@ pub enum ProjectActionValues {
 /// * issue_fields: Option<Vec<(String, String)>> - Jira Project issue fields
 /// * transition_to: Option<String> - Jira Project issue transition to
 /// * assignee: Option<String> - Jira Project issue assignee
+/// * query: Option<String> - Jira Project issue JQL query to search for issues
 /// * pagination: PaginationArgs - Jira Project issue pagination
 /// * output: OutputArgs - Jira Project issue actions result output format
 #[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct IssueArgs {
     /// Issue action
     #[arg(
-        value_name = "assign|create|delete|get|transition|update",
+        value_name = "assign|create|delete|get|search|transition|update",
         help_heading = "Jira Project issue management",
         required = true
     )]
@@ -547,6 +548,7 @@ pub struct IssueArgs {
 /// * Create: Create a Jira Project issue
 /// * Delete: Delete a Jira Project issue
 /// * Get: Get a specific Jira Project issue
+/// * Search: Search for Jira Project issues using JQL
 /// * Transition: Transition a Jira Project issue
 /// * Update: Update a Jira Project issue
 #[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
@@ -564,7 +566,7 @@ pub enum IssueActionValues {
     /// Get a specific Jira Project issue
     #[value(name = "get", help = "Get a specific Jira Project issue")]
     Get,
-    /// Search for Jira Project issues
+    /// Search for Jira Project issues using JQL query
     #[value(name = "search", help = "Search for Jira Project issues")]
     Search,
     /// Transition a Jira Project issue
