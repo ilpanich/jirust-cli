@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.15.2] 2025-06-27
+### Refactored
+- Applied the suggested cargo clippy fixes
+
 ## [0.15.1] 2025-06-22
 ### Changed
 - Improved code documentation
