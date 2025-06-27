@@ -10,6 +10,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Refactored
 - Applied the suggested cargo clippy fixes
 
+### Changed
+- Updated dependencies
+
 ## [0.15.1] 2025-06-22
 ### Changed
 - Improved code documentation
