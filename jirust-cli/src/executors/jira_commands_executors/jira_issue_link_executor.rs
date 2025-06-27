@@ -130,8 +130,7 @@ impl ExecJiraCommand for LinkIssueExecutor {
                 {
                     Ok(res) => Ok(vec![PrintableData::Generic { data: vec![res] }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error linking issues: {}",
-                        err
+                        "Error linking issues: {err}"
                     )))),
                 }
             }

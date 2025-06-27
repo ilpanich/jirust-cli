@@ -159,8 +159,7 @@ impl ExecJiraCommand for ProjectExecutor {
                         }])
                     }
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error creating project: {}",
-                        err
+                        "Error creating project: {err}"
                     )))),
                 }
             }
@@ -172,8 +171,7 @@ impl ExecJiraCommand for ProjectExecutor {
                 {
                     Ok(projects) => Ok(vec![PrintableData::Project { projects }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error listing projects: {}",
-                        err
+                        "Error listing projects: {err}"
                     )))),
                 }
             }
@@ -185,8 +183,7 @@ impl ExecJiraCommand for ProjectExecutor {
                 {
                     Ok(issue_types) => Ok(vec![PrintableData::IssueType { issue_types }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error listing issue types: {}",
-                        err
+                        "Error listing issue types: {err}"
                     )))),
                 }
             }
@@ -200,8 +197,7 @@ impl ExecJiraCommand for ProjectExecutor {
                         Ok(vec![PrintableData::IssueTypeField { issue_type_fields }])
                     }
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error listing issue type fields: {}",
-                        err
+                        "Error listing issue type fields: {err}"
                     )))),
                 }
             }

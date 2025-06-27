@@ -172,7 +172,7 @@ pub async fn run(js_args: js_sys::Array, js_cfg: JsValue) -> JsValue {
     let opts = match JirustCliArgs::try_parse_from(args) {
         Ok(opts) => opts,
         Err(err) => {
-            let err_s = format!("Error: {}", err);
+            let err_s = format!("Error: {err}");
             return serde_wasm_bindgen::to_value(&err_s).unwrap_or(JsValue::NULL);
         }
     };
@@ -184,7 +184,7 @@ pub async fn run(js_args: js_sys::Array, js_cfg: JsValue) -> JsValue {
     match result {
         Ok(data) => serde_wasm_bindgen::to_value(&data).unwrap_or(JsValue::NULL),
         Err(err) => {
-            let err_s = format!("Error: {}", err);
+            let err_s = format!("Error: {err}");
             serde_wasm_bindgen::to_value(&err_s).unwrap_or(JsValue::NULL)
         }
     }

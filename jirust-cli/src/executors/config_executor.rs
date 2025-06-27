@@ -101,8 +101,7 @@ impl ConfigExecutor {
                     )],
                 }]),
                 Err(err) => Err(Box::new(Error::other(format!(
-                    "Error storing authentication configuration: {}",
-                    err
+                    "Error storing authentication configuration: {err}"
                 )))),
             },
             ConfigActionValues::Jira => match self.config_cmd_runner.set_cfg_jira(cfg_data) {
@@ -112,8 +111,7 @@ impl ConfigExecutor {
                     )],
                 }]),
                 Err(err) => Err(Box::new(Error::other(format!(
-                    "Error storing initialization configuration: {}",
-                    err
+                    "Error storing initialization configuration: {err}"
                 )))),
             },
             ConfigActionValues::Setup => match self.config_cmd_runner.setup_cfg(cfg_data) {
@@ -123,8 +121,7 @@ impl ConfigExecutor {
                     )],
                 }]),
                 Err(err) => Err(Box::new(Error::other(format!(
-                    "Error setting up configuration: {}",
-                    err
+                    "Error setting up configuration: {err}"
                 )))),
             },
             ConfigActionValues::Show => {

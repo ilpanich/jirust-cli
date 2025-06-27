@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
     let mut opts = match JirustCliArgs::try_parse_from(std::env::args()) {
         Ok(opts) => opts,
         Err(err) => {
-            eprintln!("Error: {}", err);
+            eprintln!("Error: {err}");
             err.exit();
         }
     };

@@ -125,8 +125,7 @@ impl ExecJiraCommand for IssueTransitionExecutor {
                         transitions: issue_transitions.transitions.unwrap_or(vec![]),
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error listing issue transitions: {}",
-                        err
+                        "Error listing issue transitions: {err}"
                     )))),
                 }
             }

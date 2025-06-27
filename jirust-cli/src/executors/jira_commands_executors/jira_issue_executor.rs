@@ -140,8 +140,7 @@ impl ExecJiraCommand for IssueExecutor {
                         )],
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error assigning issue: {}",
-                        err
+                        "Error assigning issue: {err}"
                     )))),
                 }
             }
@@ -155,8 +154,7 @@ impl ExecJiraCommand for IssueExecutor {
                         issues: (vec![issue]),
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error creating issue: {}",
-                        err
+                        "Error creating issue: {err}"
                     )))),
                 }
             }
@@ -172,8 +170,7 @@ impl ExecJiraCommand for IssueExecutor {
                         )],
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error deleting issue: {}",
-                        err
+                        "Error deleting issue: {err}"
                     )))),
                 }
             }
@@ -187,8 +184,7 @@ impl ExecJiraCommand for IssueExecutor {
                         issues: vec![issue],
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error retrieving issue: {}",
-                        err
+                        "Error retrieving issue: {err}"
                     )))),
                 }
             }
@@ -200,8 +196,7 @@ impl ExecJiraCommand for IssueExecutor {
                 {
                     Ok(issues) => Ok(vec![PrintableData::IssueData { issues }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error searching issues: {}",
-                        err
+                        "Error searching issues: {err}"
                     )))),
                 }
             }
@@ -217,8 +212,7 @@ impl ExecJiraCommand for IssueExecutor {
                         )],
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error transitioning issue: {}",
-                        err
+                        "Error transitioning issue: {err}"
                     )))),
                 }
             }
@@ -234,8 +228,7 @@ impl ExecJiraCommand for IssueExecutor {
                         )],
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error updating issue: {}",
-                        err
+                        "Error updating issue: {err}"
                     )))),
                 }
             }

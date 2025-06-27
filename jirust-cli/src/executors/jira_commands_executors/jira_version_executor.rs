@@ -158,8 +158,7 @@ impl ExecJiraCommand for VersionExecutor {
                         Ok(res)
                     }
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error creating version: {}",
-                        err
+                        "Error creating version: {err}"
                     )))),
                 };
             }
@@ -171,8 +170,7 @@ impl ExecJiraCommand for VersionExecutor {
                 {
                     Ok(version) => Ok(vec![PrintableData::Version { versions: version }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error listing versions: {}",
-                        err
+                        "Error listing versions: {err}"
                     )))),
                 }
             }
@@ -198,16 +196,14 @@ impl ExecJiraCommand for VersionExecutor {
                             }
                             Err(err) => {
                                 result = Err(Box::new(Error::other(format!(
-                                    "Error updating version: {}",
-                                    err
+                                    "Error updating version: {err}"
                                 ))))
                             }
                         }
                     }
                     Err(err) => {
                         result = Err(Box::new(Error::other(format!(
-                            "Error retrieving version: {}",
-                            err
+                            "Error retrieving version: {err}"
                         ))))
                     }
                 }
@@ -224,8 +220,7 @@ impl ExecJiraCommand for VersionExecutor {
                         )],
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error deleting version: {}",
-                        err
+                        "Error deleting version: {err}"
                     )))),
                 }
             }
@@ -239,8 +234,7 @@ impl ExecJiraCommand for VersionExecutor {
                         version_related_work_items: items,
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
-                        "Error listing version Related Workitems: {}",
-                        err
+                        "Error listing version Related Workitems: {err}"
                     )))),
                 }
             }
@@ -263,16 +257,14 @@ impl ExecJiraCommand for VersionExecutor {
                             }
                             Err(err) => {
                                 result = Err(Box::new(Error::other(format!(
-                                    "Error releasing version: {}",
-                                    err
+                                    "Error releasing version: {err}"
                                 ))))
                             }
                         }
                     }
                     Err(err) => {
                         result = Err(Box::new(Error::other(format!(
-                            "Error retrieving version: {}",
-                            err
+                            "Error retrieving version: {err}"
                         ))))
                     }
                 }
@@ -296,16 +288,14 @@ impl ExecJiraCommand for VersionExecutor {
                             }
                             Err(err) => {
                                 result = Err(Box::new(Error::other(format!(
-                                    "Error archiving version: {}",
-                                    err
+                                    "Error archiving version: {err}"
                                 ))))
                             }
                         }
                     }
                     Err(err) => {
                         result = Err(Box::new(Error::other(format!(
-                            "Error retrieving version: {}",
-                            err
+                            "Error retrieving version: {err}"
                         ))))
                     }
                 }
