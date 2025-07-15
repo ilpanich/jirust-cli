@@ -5,8 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
-### Improved
-- Use tokio multi-threaded runtime for better performance (manage version-related tickets operations concurrently on version creation)
+
+## [0.16.0] 2025-07-15
+### Added
+- Use tokio multi-threaded runtime for better performance (manage version-related tickets operations concurrently on version creation) [Only Linux & Windows, nto WASM]
 
 ### Changed
 - Updated dependencies
