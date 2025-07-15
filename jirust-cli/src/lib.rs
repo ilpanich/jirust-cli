@@ -2,10 +2,8 @@
 extern crate prettytable;
 
 use crate::args::commands::Commands;
-
 use crate::executors::jira_commands_executors::jira_version_executor::VersionExecutor;
-use args::commands::JirustCliArgs;
-use clap::Parser;
+
 use config::config_file::ConfigFile;
 use executors::config_executor::ConfigExecutor;
 use executors::jira_commands_executors::ExecJiraCommand;
@@ -15,7 +13,14 @@ use executors::jira_commands_executors::jira_issue_transition_executor::IssueTra
 use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
 use std::io::{Error, ErrorKind};
 use utils::PrintableData;
+
+#[cfg(target_family = "wasm")]
+use args::commands::JirustCliArgs;
+#[cfg(target_family = "wasm")]
+use clap::Parser;
+#[cfg(target_family = "wasm")]
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
+#[cfg(target_family = "wasm")]
 use wasm_bindgen_futures::js_sys;
 
 pub mod args;
@@ -153,11 +158,13 @@ pub async fn process_command(
     }
 }
 
+#[cfg(target_family = "wasm")]
 pub fn set_panic_hook() {
     #[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
 }
 
+#[cfg(target_family = "wasm")]
 #[wasm_bindgen]
 pub async fn run(js_args: js_sys::Array, js_cfg: JsValue) -> JsValue {
     set_panic_hook();

@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Improved
+- Use tokio multi-threaded runtime for better performance (manage version-related tickets operations concurrently on version creation)
+
+### Changed
+- Updated dependencies
 
 ## [0.15.2] 2025-06-27
 ### Refactored
