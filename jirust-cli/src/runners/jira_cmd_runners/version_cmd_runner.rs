@@ -166,7 +166,7 @@ impl VersionCmdRunner {
             name: Some(
                 params
                     .version_name
-                    .expect("VersionName is mandatory on cretion!"),
+                    .expect("VersionName is mandatory on creation!"),
             ),
             description: version_description,
             start_date: params.version_start_date,
