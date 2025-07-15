@@ -201,7 +201,7 @@ impl VersionCmdRunner {
                         ));
                     }
                     Err(err) => {
-                        eprintln!("Error managing version related issues: {:?}", err);
+                        eprintln!("Error managing version related issues: {err:?}");
                     }
                 }
             }
