@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.16.1] 2025-07-16
+### Fixed
+- Uniform project_key short param name management (`-k`) across different commands
+
+### Changed
+- Updated dependencies
+
 ## [0.16.0] 2025-07-15
 ### Added
 - Use tokio multi-threaded runtime for better performance (manage version-related tickets operations concurrently on version creation) [Only Linux & Windows, nto WASM]
