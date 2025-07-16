@@ -151,6 +151,7 @@ pub enum ConfigActionValues {
 }
 
 /// Available version command line arguments
+///
 /// * version_act: VersionActionValues - Version action
 /// * project_key: String - Jira Project key
 /// * project_id: Option<i64> - Jira Project ID
@@ -490,7 +491,7 @@ pub struct IssueArgs {
     /// Jira Project key
     #[clap(
         long,
-        short = 'p',
+        short = 'k',
         value_name = "project_key",
         help = "Jira Project key"
     )]
@@ -597,7 +598,7 @@ pub struct LinkIssueArgs {
     /// Jira Project key
     #[clap(
         long,
-        short = 'k',
+        short = 'p',
         value_name = "project_key",
         help = "Jira Project key"
     )]
