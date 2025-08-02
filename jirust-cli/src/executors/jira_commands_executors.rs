@@ -5,6 +5,8 @@ pub mod jira_issue_link_executor;
 pub mod jira_issue_transition_executor;
 pub mod jira_project_executor;
 pub mod jira_version_executor;
+pub mod jira_issue_attach_executor;
+
 
 /// Trait to be impelemented to execute Jira commands in Jira commands executors
 pub trait ExecJiraCommand {

@@ -30,6 +30,8 @@ pub enum Commands {
     Transition(TransitionArgs),
     /// Version management
     Version(VersionArgs),
+    /// Attachment management
+    Attachment(AttachmentArgs),
 }
 
 /// Available pagination command line arguments
@@ -96,6 +98,7 @@ pub enum OutputTypes {
 ///
 /// * output: Option<OutputValues> - Output format
 #[derive(Args, Clone, Debug, Serialize, Deserialize)]
+#[derive(Default)]
 pub struct OutputArgs {
     /// Output format
     #[clap(long, short = 'o', value_name = "table|json", help = "Output format")]
@@ -109,6 +112,8 @@ pub struct OutputArgs {
     )]
     pub output_type: Option<OutputTypes>,
 }
+
+
 
 /// Available configuration command line arguments
 /// cfg_act: ConfigActionValues
@@ -576,6 +581,55 @@ pub enum IssueActionValues {
     /// Update a Jira Project issue
     #[value(name = "update", help = "Update a Jira Project issue")]
     Update,
+}
+
+/// Available attachment command line arguments
+///
+/// * attachment_act: AttachmentActionValues - Attachment action
+/// * issue_key: String - Jira Project issue key
+/// * attachment_file: String - The path to the file to attach
+/// * output: OutputArgs - Jira Project issue actions result output format
+#[derive(Args, Clone, Debug, Serialize, Deserialize)]
+pub struct AttachmentArgs {
+    /// Attachment action
+    #[arg(
+        value_name = "add",
+        help_heading = "Jira issue attachment management",
+        required = true
+    )]
+    pub attachment_act: AttachmentActionValues,
+    /// Jira Project issue key
+    #[clap(
+        long,
+        short = 'i',
+        value_name = "issue_key",
+        help = "Jira Project issue key",
+        required = true
+    )]
+    pub issue_key: String,
+    /// The path to the file to attach
+    #[clap(
+        long,
+        short = 'f',
+        value_name = "file",
+        help = "The path to the file to attach",
+        required = true
+    )]
+    pub attachment_file: String,
+    /// Jira Project issue actions result output format
+    #[clap(flatten)]
+    pub output: OutputArgs,
+}
+
+/// Available attachment action values
+///
+/// * Add: Add a new attachment to a Jira issue
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
+#[value(rename_all = "kebab-case")]
+pub enum AttachmentActionValues {
+    /// Add a new attachment to a Jira issue
+    #[value(name = "add", help = "Add a new attachment to a Jira issue")]
+    Add,
 }
 
 /// Available issues' links command line arguments
