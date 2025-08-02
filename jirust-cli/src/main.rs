@@ -66,6 +66,10 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
                     args.output.output_format.unwrap_or(OutputValues::Json),
                     OutputType::from(args.output.output_type.unwrap_or(OutputTypes::Full)),
                 ),
+                Commands::Attachment(args) => (
+                    args.output.output_format.unwrap_or(OutputValues::Json),
+                    OutputType::from(args.output.output_type.unwrap_or(OutputTypes::Full)),
+                ),
             };
             for elem in result {
                 print_data(elem, output_format, output_type.clone());
@@ -129,6 +133,10 @@ async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
                     OutputType::from(args.output.output_type.unwrap_or(OutputTypes::Full)),
                 ),
                 Commands::Version(args) => (
+                    args.output.output_format.unwrap_or(OutputValues::Json),
+                    OutputType::from(args.output.output_type.unwrap_or(OutputTypes::Full)),
+                ),
+                Commands::Attachment(args) => (
                     args.output.output_format.unwrap_or(OutputValues::Json),
                     OutputType::from(args.output.output_type.unwrap_or(OutputTypes::Full)),
                 ),

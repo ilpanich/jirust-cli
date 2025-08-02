@@ -11,6 +11,7 @@ use executors::jira_commands_executors::jira_issue_executor::IssueExecutor;
 use executors::jira_commands_executors::jira_issue_link_executor::LinkIssueExecutor;
 use executors::jira_commands_executors::jira_issue_transition_executor::IssueTransitionExecutor;
 use executors::jira_commands_executors::jira_project_executor::ProjectExecutor;
+use executors::jira_commands_executors::jira_issue_attach_executor::AttachmentExecutor;
 use std::io::{Error, ErrorKind};
 use utils::PrintableData;
 
@@ -154,6 +155,10 @@ pub async fn process_command(
         Commands::Link(args) => {
             let link_issue_executor = LinkIssueExecutor::new(cfg_data, args.link_act, args);
             link_issue_executor.exec_jira_command().await
+        }
+        Commands::Attachment(args) => {
+            let attachment_executor = AttachmentExecutor::new(cfg_data, args.attachment_act, args);
+            attachment_executor.exec_jira_command().await
         }
     }
 }
