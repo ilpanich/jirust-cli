@@ -9,3 +9,6 @@ extern crate reqwest;
 
 pub mod apis;
 pub mod models;
+
+#[cfg(test)]
+pub mod tests;
