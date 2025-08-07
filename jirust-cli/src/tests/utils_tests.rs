@@ -183,7 +183,7 @@ mod tests {
                 assert_eq!(issue_type_fields.len(), 1);
                 assert_eq!(issue_type_fields[0].key, "summary".to_string());
                 assert_eq!(issue_type_fields[0].name, "Summary".to_string());
-                assert_eq!(issue_type_fields[0].required, true);
+                assert!(issue_type_fields[0].required);
             }
             _ => panic!("Expected IssueTypeField variant"),
         }
