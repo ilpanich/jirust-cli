@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.16.2] 2025-08-07
+### Added
+- Added test (with the help of Claude Code)
+
+### Changed
+- Updated dependencies
+
 ## [0.16.1] 2025-07-16
 ### Fixed
 - Uniform project_key short param name management (`-k`) across different commands
