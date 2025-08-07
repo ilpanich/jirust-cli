@@ -29,6 +29,9 @@ pub mod executors;
 pub mod runners;
 pub mod utils;
 
+#[cfg(test)]
+pub mod tests;
+
 /// Manages the loading of the CLI configuration
 ///
 /// # Arguments
