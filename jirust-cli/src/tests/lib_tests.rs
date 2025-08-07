@@ -110,12 +110,12 @@ mod tests {
         }
     }
 
+    /// This test documents that the Setup action requires interactive input
+    /// and cannot be easily tested in automated environments.
+    /// The Setup action calls functions that read from stdin, which would hang
+    /// in test environments without manual input.
     #[tokio::test]
     async fn test_process_command_config_setup_action_note() {
-        // NOTE: This test documents that Setup action requires interactive input
-        // and cannot be easily tested in automated environments.
-        // The Setup action calls functions that read from stdin, which would hang
-        // in test environments without manual input.
         
         let config_args = ConfigArgs {
             cfg_act: ConfigActionValues::Setup,
