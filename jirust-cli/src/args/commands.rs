@@ -130,7 +130,7 @@ pub struct ConfigArgs {
 /// * Jira: Set Jira API base URL
 /// * Setup: Setup Jira API configuration (authentication data, jira base URL, etc.)
 /// * Show: Show current configuration
-#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[value(rename_all = "kebab-case")]
 pub enum ConfigActionValues {
     /// Set Jira API authentication (username, apikey)
