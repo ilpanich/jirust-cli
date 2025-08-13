@@ -1,0 +1,174 @@
+name: Detailed Coverage Report
+
+on:
+  push:
+    tags:
+      - "jirust-cli_*.*.*"
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-coverage-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-coverage-
+
+      - name: Install cargo-tarpaulin
+        run: |
+          cargo install cargo-tarpaulin
+
+      - name: Run comprehensive coverage analysis
+        run: |
+          mkdir -p coverage-reports
+
+          # Generate XML report for Coveralls
+          cargo tarpaulin \
+            --engine llvm \
+            --all-features \
+            --timeout 120 \
+            --out xml \
+            --output-dir coverage-reports \
+            --packages jirust-cli \
+            --exclude-files "target/*" \
+            --exclude-files "*/tests/*" \
+            --exclude-files "jira_v3_openapi/*" \
+            --verbose
+
+          # Generate HTML report for GitHub Pages
+          cargo tarpaulin \
+            --engine llvm \
+            --all-features \
+            --timeout 120 \
+            --out html \
+            --output-dir coverage-reports \
+            --packages jirust-cli \
+            --exclude-files "target/*" \
+            --exclude-files "*/tests/*" \
+            --exclude-files "jira_v3_openapi/*" \
+            --verbose
+
+          # Generate JSON report for badge creation
+          cargo tarpaulin \
+            --engine llvm \
+            --all-features \
+            --timeout 120 \
+            --out json \
+            --output-dir coverage-reports \
+            --packages jirust-cli \
+            --exclude-files "target/*" \
+            --exclude-files "*/tests/*" \
+            --exclude-files "jira_v3_openapi/*" \
+            --print-summary
+        env:
+          RUST_BACKTRACE: 1
+
+      - name: Extract coverage percentage
+        id: coverage
+        run: |
+          if [ -f coverage-reports/tarpaulin-report.json ]; then
+            COVERAGE=$(python3 -c "
+            import json
+            with open('coverage-reports/tarpaulin-report.json') as f:
+                data = json.load(f)
+                print(f\"{data['coverage']:.2f}\")
+            ")
+            echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
+            echo "Coverage: $COVERAGE%"
+          else
+            echo "percentage=0.00" >> $GITHUB_OUTPUT
+            echo "Coverage report not found"
+          fi
+
+      - name: Create coverage badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GITHUB_TOKEN }}
+          gistID: ${{ secrets.COVERAGE_GIST_ID }}
+          filename: jirust-cli-coverage.json
+          label: Coverage
+          message: ${{ steps.coverage.outputs.percentage }}%
+          color: ${{ steps.coverage.outputs.percentage > 80 && 'brightgreen' || steps.coverage.outputs.percentage > 60 && 'yellow' || 'red' }}
+
+      - name: Upload to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: coverage-reports/cobertura.xml
+          format: cobertura
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+      - name: Setup Pages
+        if: github.ref == 'refs/heads/main'
+        uses: actions/configure-pages@v4
+
+      - name: Upload coverage HTML to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: coverage-reports/
+
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Archive all coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-reports-all
+          path: coverage-reports/
+          retention-days: 30
+
+      - name: Post coverage summary
+        run: |
+          echo "## Coverage Report Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f coverage-reports/tarpaulin-report.json ]; then
+            COVERAGE="${{ steps.coverage.outputs.percentage }}"
+            echo "**Coverage: ${COVERAGE}%**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- 📊 [Detailed HTML Report](https://$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]' | sed 's/\//.github.io\//').github.io/)" >> $GITHUB_STEP_SUMMARY
+            echo "- 📈 [Coveralls Report](https://coveralls.io/github/$GITHUB_REPOSITORY)" >> $GITHUB_STEP_SUMMARY
+            echo "- 📋 Coverage reports are also available as workflow artifacts" >> $GITHUB_STEP_SUMMARY
+
+            if (( $(echo "$COVERAGE >= 80" | bc -l) )); then
+              echo "- ✅ **Excellent coverage!** Target of 80%+ achieved." >> $GITHUB_STEP_SUMMARY
+            elif (( $(echo "$COVERAGE >= 60" | bc -l) )); then
+              echo "- ⚠️ **Good coverage.** Consider adding more tests to reach 80%." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- ❌ **Coverage needs improvement.** Target is 80%." >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ Coverage report generation failed" >> $GITHUB_STEP_SUMMARY
+          fi
