@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.16.3] 2025-08-13
+### Added
+- Added coverage report related stuff
+
+### Changed
+- improved Jirus-CLI crate tests coverage
+- Updated dependencies
+
 ## [0.16.2] 2025-08-07
 ### Added
 - Added test (with the help of Claude Code)
