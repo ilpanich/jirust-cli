@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.16.4] 2025-08-13
+### Changed
+- Fixed coverage report generation
+
 ## [0.16.3] 2025-08-13
 ### Added
 - Added coverage report related stuff
