@@ -55,7 +55,7 @@ impl AttachmentExecutor {
     /// let attachment_args = AttachmentArgs {
     ///   attachment_act: AttachmentActionValues::Add,
     ///   issue_key: "ISSUE-123".to_string(),
-    ///   attachment_file: "/tmp/test.txt".to_string(),
+    ///   attachment_file: Some("/tmp/test.txt".to_string()),
     ///   output: jirust_cli::args::commands::OutputArgs::default(),
     /// };
     ///
@@ -118,7 +118,7 @@ impl ExecJiraCommand for AttachmentExecutor {
     /// let attachment_args = AttachmentArgs {
     ///   attachment_act: attachment_action.clone(),
     ///   issue_key: "ISSUE-123".to_string(),
-    ///   attachment_file: "/tmp/test.txt".to_string(),
+    ///   attachment_file: Some("/tmp/test.txt".to_string()),
     ///   output: jirust_cli::args::commands::OutputArgs::default(),
     /// };
     ///
@@ -130,10 +130,12 @@ impl ExecJiraCommand for AttachmentExecutor {
     /// # })
     /// # }
     /// ```
-    async fn exec_jira_command(&self) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
-        match self.attachment_action {
-            AttachmentActionValues::Add => self.add_attachment().await,
-            AttachmentActionValues::List => self.list_attachments().await,
+    fn exec_jira_command(&self) -> impl std::future::Future<Output = Result<Vec<PrintableData>, Box<dyn std::error::Error>>> {
+        async move {
+            match self.attachment_action {
+                AttachmentActionValues::Add => self.add_attachment().await,
+                AttachmentActionValues::List => self.list_attachments().await,
+            }
         }
     }
 }
