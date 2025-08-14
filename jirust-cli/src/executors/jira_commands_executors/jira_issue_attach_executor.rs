@@ -133,6 +133,23 @@ impl ExecJiraCommand for AttachmentExecutor {
     async fn exec_jira_command(&self) -> Result<Vec<PrintableData>, Box<dyn std::error::Error>> {
         match self.attachment_action {
             AttachmentActionValues::Add => self.add_attachment().await,
+            AttachmentActionValues::List => self.list_attachments().await,
+        }
+    }
+}
+
+impl AttachmentExecutor {
+    async fn list_attachments(&self) -> Result<Vec<PrintableData>, Box<dyn Error>> {
+        let params = AttachmentCmdParams::from(&self.attachment_args);
+        match self
+            .attachment_cmd_runner
+            .list_attachments(params)
+            .await
+        {
+            Ok(res) => Ok(vec![PrintableData::Generic { data: vec![res] }]),
+            Err(err) => Err(Box::new(std::io::Error::other(format!(
+                "Error listing attachments: {err}"
+            )))),
         }
     }
 }

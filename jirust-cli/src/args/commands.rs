@@ -587,13 +587,13 @@ pub enum IssueActionValues {
 ///
 /// * attachment_act: AttachmentActionValues - Attachment action
 /// * issue_key: String - Jira Project issue key
-/// * attachment_file: String - The path to the file to attach
+/// * attachment_file: Option<String> - The path to the file to attach
 /// * output: OutputArgs - Jira Project issue actions result output format
 #[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct AttachmentArgs {
     /// Attachment action
     #[arg(
-        value_name = "add",
+        value_name = "add|list",
         help_heading = "Jira issue attachment management",
         required = true
     )]
@@ -612,10 +612,9 @@ pub struct AttachmentArgs {
         long,
         short = 'f',
         value_name = "file",
-        help = "The path to the file to attach",
-        required = true
+        help = "The path to the file to attach"
     )]
-    pub attachment_file: String,
+    pub attachment_file: Option<String>,
     /// Jira Project issue actions result output format
     #[clap(flatten)]
     pub output: OutputArgs,
@@ -624,12 +623,16 @@ pub struct AttachmentArgs {
 /// Available attachment action values
 ///
 /// * Add: Add a new attachment to a Jira issue
+/// * List: List attachments for a Jira issue
 #[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
 #[value(rename_all = "kebab-case")]
 pub enum AttachmentActionValues {
     /// Add a new attachment to a Jira issue
     #[value(name = "add", help = "Add a new attachment to a Jira issue")]
     Add,
+    /// List attachments for a Jira issue
+    #[value(name = "list", help = "List attachments for a Jira issue")]
+    List,
 }
 
 /// Available issues' links command line arguments
