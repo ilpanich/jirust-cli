@@ -31,7 +31,7 @@ jobs:
           mkdir builds
 
       - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.8
+        uses: mozilla-actions/sccache-action@v0.0.9
 
       - name: Run tests
         env:
@@ -69,13 +69,14 @@ jobs:
 
       - name: Build Linux msul
         env:
-          SCCACHE_GHA_ENABLED: "true"
-          RUSTC_WRAPPER: "sccache"
+          SCCACHE_GHA_ENABLED: "false"
+        #   RUSTC_WRAPPER: "sccache"
         run: |
-          cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-unknown-linux-msul
-          mkdir builds/jirust-cli-linux
-          cp target/x86_64-unknown-linux-msul/release/jirust-cli builds/jirust-cli-linux
-          tar -C builds -czvf dist/jirust-cli-linux-msul.tar.gz jirust-cli-linux
+          #cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-unknown-linux-msul
+          cargo build -p jirust-cli --bin jirust-cli --release --target=x86_64-unknown-linux-msul
+          mkdir builds/jirust-cli-linux-msul
+          cp target/x86_64-unknown-linux-msul/release/jirust-cli builds/jirust-cli-linux-msul
+          tar -C builds -czvf dist/jirust-cli-linux-msul.tar.gz jirust-cli-linux-msul
 
 
       - name: WASM Pack
