@@ -2,8 +2,7 @@ name: Detailed Coverage Report
 
 on:
   push:
-    tags:
-      - "jirust-cli_*.*.*"
+    branches: ["main"]
   workflow_dispatch:
 
 env:
@@ -53,6 +52,7 @@ jobs:
           # Generate XML report for Coveralls
           cargo tarpaulin \
             --engine llvm \
+            --follow-exec \
             --all-features \
             --timeout 120 \
             --out xml \

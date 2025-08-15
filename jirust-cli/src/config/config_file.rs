@@ -489,8 +489,16 @@ impl ConfigFile {
     ///
     /// ```
     /// use jirust_cli::config::config_file::ConfigFile;
-    ///
-    /// let config = ConfigFile::read_from_file("config_example.toml");
+    /// use std::path::Path;
+    /// 
+    /// // Try both possible paths to handle different working directories
+    /// let config_path = if Path::new("config_example.toml").exists() {
+    ///     "config_example.toml"
+    /// } else {
+    ///     "jirust-cli/config_example.toml"
+    /// };
+    /// 
+    /// let config = ConfigFile::read_from_file(config_path);
     ///
     /// assert!(config.clone().is_ok());
     /// assert_eq!(config.clone().unwrap().get_auth_key(), "auth_key");
