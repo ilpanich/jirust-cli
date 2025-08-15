@@ -58,6 +58,11 @@ jobs:
             --out xml \
             --output-dir coverage-reports \
             --packages jirust-cli \
+            --tests \
+            --doc \
+            --examples \
+            --bin \
+            --lib \
             --exclude-files "target/*" \
             --exclude-files "*/tests/*" \
             --exclude-files "jira_v3_openapi/*" \
