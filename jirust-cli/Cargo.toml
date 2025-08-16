@@ -54,6 +54,7 @@ console_error_panic_hook = { version = "0.1.7", optional = true }
 tokio-test = "0.4.4"
 wasm-bindgen-test = "0.3.50"
 tempfile = "3.8"
+mockall = "0.13.0"
 
 [profile.release]
 opt-level = "s"

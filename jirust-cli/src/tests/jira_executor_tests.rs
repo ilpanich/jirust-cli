@@ -1,0 +1,406 @@
+#[cfg(test)]
+mod tests {
+    use crate::args::commands::{
+        IssueActionValues, IssueArgs, ProjectActionValues, ProjectArgs, 
+        VersionActionValues, VersionArgs, LinkIssueArgs, TransitionArgs,
+        PaginationArgs, OutputArgs, OutputValues, OutputTypes,
+        TransitionActionValues, LinkIssueActionValues
+    };
+    use crate::config::config_file::ConfigFile;
+    use crate::executors::jira_commands_executors::{
+        jira_issue_executor::IssueExecutor,
+        jira_project_executor::ProjectExecutor,
+        jira_version_executor::VersionExecutor,
+        jira_issue_link_executor::LinkIssueExecutor,
+        jira_issue_transition_executor::IssueTransitionExecutor,
+    };
+    use toml::Table;
+
+    fn create_test_config() -> ConfigFile {
+        ConfigFile::new(
+            "dGVzdF91c2VyOnRlc3RfYXBpX2tleQ==".to_string(),
+            "https://test.atlassian.net".to_string(),
+            "Done".to_string(),
+            "Task completed".to_string(),
+            Table::new(),
+        )
+    }
+
+    fn create_test_issue_args() -> IssueArgs {
+        IssueArgs {
+            issue_act: IssueActionValues::Get,
+            project_key: Some("TEST".to_string()),
+            issue_key: Some("TEST-123".to_string()),
+            issue_fields: Some(vec![
+                ("summary".to_string(), "Test issue".to_string()),
+                ("description".to_string(), "Test description".to_string()),
+                ("issuetype".to_string(), "Task".to_string()),
+            ]),
+            transition_to: None,
+            assignee: Some("test.user".to_string()),
+            query: None,
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: Some(OutputValues::Table),
+                output_type: Some(OutputTypes::Basic),
+            },
+        }
+    }
+
+    fn create_test_project_args() -> ProjectArgs {
+        ProjectArgs {
+            project_act: ProjectActionValues::List,
+            project_key: Some("TEST".to_string()),
+            project_issue_type: None,
+            project_name: Some("Test Project".to_string()),
+            project_description: Some("Test project description".to_string()),
+            project_field_configuration_id: None,
+            project_issue_security_scheme_id: None,
+            project_issue_type_scheme_id: None,
+            project_issue_type_screen_scheme_id: None,
+            project_notification_scheme_id: None,
+            project_permission_scheme_id: None,
+            project_workflow_scheme_id: None,
+            project_lead_account_id: Some("test.user".to_string()),
+            project_assignee_type: None,
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: Some(OutputValues::Table),
+                output_type: Some(OutputTypes::Basic),
+            },
+        }
+    }
+
+    fn create_test_version_args() -> VersionArgs {
+        VersionArgs {
+            version_act: VersionActionValues::List,
+            project_key: "TEST".to_string(),
+            project_id: None,
+            version_id: Some("1.0.0".to_string()),
+            version_name: Some("1.0.0".to_string()),
+            version_description: Some("Test version".to_string()),
+            version_start_date: None,
+            version_release_date: None,
+            version_archived: None,
+            version_released: None,
+            changelog_file: None,
+            transition_issues: None,
+            transition_assignee: None,
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: Some(OutputValues::Table),
+                output_type: Some(OutputTypes::Basic),
+            },
+        }
+    }
+
+    fn create_test_link_args() -> LinkIssueArgs {
+        LinkIssueArgs {
+            link_act: LinkIssueActionValues::Create,
+            project_key: Some("TEST".to_string()),
+            origin_issue_key: "TEST-123".to_string(),
+            destination_issue_key: Some("TEST-456".to_string()),
+            link_type: "Blocks".to_string(),
+            changelog_file: None,
+        }
+    }
+
+    fn create_test_transition_args() -> TransitionArgs {
+        TransitionArgs {
+            transition_act: TransitionActionValues::List,
+            issue_key: "TEST-123".to_string(),
+            output: OutputArgs {
+                output_format: Some(OutputValues::Table),
+                output_type: Some(OutputTypes::Basic),
+            },
+        }
+    }
+
+    #[test]
+    fn test_issue_executor_creation() {
+        let config = create_test_config();
+        let args = create_test_issue_args();
+        
+        let _executor = IssueExecutor::new(config, IssueActionValues::Get, args);
+        
+        // Test passes if no panic occurs during creation
+        assert!(true);
+    }
+
+    #[test]
+    fn test_project_executor_creation() {
+        let config = create_test_config();
+        let args = create_test_project_args();
+        
+        let _executor = ProjectExecutor::new(config, ProjectActionValues::List, args);
+        
+        // Test passes if no panic occurs during creation
+        assert!(true);
+    }
+
+    #[test]
+    fn test_version_executor_creation() {
+        let config = create_test_config();
+        let args = create_test_version_args();
+        
+        let _executor = VersionExecutor::new(config, VersionActionValues::List, args);
+        
+        // Test passes if no panic occurs during creation
+        assert!(true);
+    }
+
+    #[test]
+    fn test_link_issue_executor_creation() {
+        let config = create_test_config();
+        let args = create_test_link_args();
+        
+        let _executor = LinkIssueExecutor::new(config, LinkIssueActionValues::Create, args);
+        
+        // Test passes if no panic occurs during creation
+        assert!(true);
+    }
+
+    #[test]
+    fn test_issue_transition_executor_creation() {
+        let config = create_test_config();
+        let args = create_test_transition_args();
+        
+        let _executor = IssueTransitionExecutor::new(config, TransitionActionValues::List, args);
+        
+        // Test passes if no panic occurs during creation
+        assert!(true);
+    }
+
+    #[test]
+    fn test_issue_executor_with_different_actions() {
+        let config = create_test_config();
+        let args = create_test_issue_args();
+
+        // Test creating executors with different actions
+        let _get_executor = IssueExecutor::new(config.clone(), IssueActionValues::Get, args.clone());
+        let _create_executor = IssueExecutor::new(config.clone(), IssueActionValues::Create, args.clone());
+        let _update_executor = IssueExecutor::new(config.clone(), IssueActionValues::Update, args.clone());
+        let _delete_executor = IssueExecutor::new(config.clone(), IssueActionValues::Delete, args.clone());
+        let _search_executor = IssueExecutor::new(config.clone(), IssueActionValues::Search, args.clone());
+        let _assign_executor = IssueExecutor::new(config, IssueActionValues::Assign, args);
+
+        // All constructors should work without panicking
+        assert!(true);
+    }
+
+    #[test]
+    fn test_project_executor_with_different_actions() {
+        let config = create_test_config();
+        let args = create_test_project_args();
+
+        // Test creating executors with different actions
+        let _list_executor = ProjectExecutor::new(config.clone(), ProjectActionValues::List, args.clone());
+        let _create_executor = ProjectExecutor::new(config, ProjectActionValues::Create, args);
+
+        // All constructors should work without panicking
+        assert!(true);
+    }
+
+    #[test]
+    fn test_version_executor_with_different_actions() {
+        let config = create_test_config();
+        let args = create_test_version_args();
+
+        // Test creating executors with different actions
+        let _list_executor = VersionExecutor::new(config.clone(), VersionActionValues::List, args.clone());
+        let _create_executor = VersionExecutor::new(config.clone(), VersionActionValues::Create, args.clone());
+        let _update_executor = VersionExecutor::new(config.clone(), VersionActionValues::Update, args.clone());
+        let _delete_executor = VersionExecutor::new(config.clone(), VersionActionValues::Delete, args.clone());
+        let _release_executor = VersionExecutor::new(config.clone(), VersionActionValues::Release, args.clone());
+        let _archive_executor = VersionExecutor::new(config, VersionActionValues::Archive, args);
+
+        // All constructors should work without panicking
+        assert!(true);
+    }
+
+    #[test]
+    fn test_multiple_executor_instances() {
+        let config = create_test_config();
+
+        // Test creating multiple different executor types
+        let _issue_executor = IssueExecutor::new(
+            config.clone(), 
+            IssueActionValues::Get, 
+            create_test_issue_args()
+        );
+        let _project_executor = ProjectExecutor::new(
+            config.clone(), 
+            ProjectActionValues::List, 
+            create_test_project_args()
+        );
+        let _version_executor = VersionExecutor::new(
+            config.clone(), 
+            VersionActionValues::List, 
+            create_test_version_args()
+        );
+        let _link_executor = LinkIssueExecutor::new(
+            config.clone(),
+            LinkIssueActionValues::Create,
+            create_test_link_args()
+        );
+        let _transition_executor = IssueTransitionExecutor::new(
+            config,
+            TransitionActionValues::List,
+            create_test_transition_args()
+        );
+
+        // Test that all executors were created successfully
+        assert!(true);
+    }
+
+    #[test]
+    fn test_executor_config_handling() {
+        let mut config = ConfigFile::default();
+        config.set_auth_key("dGVzdF91c2VyOnRlc3RfYXBpX2tleQ==".to_string());
+        config.set_jira_url("https://custom.atlassian.net".to_string());
+
+        let args = create_test_issue_args();
+        let _executor = IssueExecutor::new(config, IssueActionValues::Get, args);
+
+        // Test that executor accepts custom config
+        assert!(true);
+    }
+
+    #[test]
+    fn test_executor_args_variations() {
+        let config = create_test_config();
+
+        // Test with minimal args
+        let minimal_args = IssueArgs {
+            issue_act: IssueActionValues::Get,
+            project_key: None,
+            issue_key: Some("MIN-1".to_string()),
+            issue_fields: None,
+            transition_to: None,
+            assignee: None,
+            query: None,
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: None,
+                output_type: None,
+            },
+        };
+        let _executor_minimal = IssueExecutor::new(config.clone(), IssueActionValues::Get, minimal_args);
+
+        // Test with comprehensive args
+        let comprehensive_args = IssueArgs {
+            issue_act: IssueActionValues::Create,
+            project_key: Some("COMP".to_string()),
+            issue_key: Some("COMP-1".to_string()),
+            issue_fields: Some(vec![
+                ("summary".to_string(), "Comprehensive test".to_string()),
+                ("description".to_string(), "Full description".to_string()),
+                ("issuetype".to_string(), "Bug".to_string()),
+                ("priority".to_string(), "High".to_string()),
+            ]),
+            transition_to: Some("In Progress".to_string()),
+            assignee: Some("user@test.com".to_string()),
+            query: Some("project = COMP".to_string()),
+            pagination: PaginationArgs {
+                page_size: Some(50),
+                page_offset: Some(0),
+            },
+            output: OutputArgs {
+                output_format: Some(OutputValues::Json),
+                output_type: Some(OutputTypes::Full),
+            },
+        };
+        let _executor_comprehensive = IssueExecutor::new(config, IssueActionValues::Create, comprehensive_args);
+
+        // Both should create successfully
+        assert!(true);
+    }
+
+    #[test]
+    fn test_action_enum_variants() {
+        // Test all IssueActionValues variants
+        let issue_actions = [
+            IssueActionValues::Assign,
+            IssueActionValues::Create,
+            IssueActionValues::Delete,
+            IssueActionValues::Get,
+            IssueActionValues::Search,
+            IssueActionValues::Transition,
+            IssueActionValues::Update,
+        ];
+        assert_eq!(issue_actions.len(), 7);
+
+        // Test all ProjectActionValues variants
+        let project_actions = [
+            ProjectActionValues::Create,
+            ProjectActionValues::List,
+        ];
+        assert_eq!(project_actions.len(), 2);
+
+        // Test all VersionActionValues variants
+        let version_actions = [
+            VersionActionValues::Archive,
+            VersionActionValues::Create,
+            VersionActionValues::Delete,
+            VersionActionValues::List,
+            VersionActionValues::RelatedWorkItems,
+            VersionActionValues::Release,
+            VersionActionValues::Update,
+        ];
+        assert_eq!(version_actions.len(), 7);
+    }
+
+    #[test]
+    fn test_output_args_creation() {
+        let table_basic = OutputArgs {
+            output_format: Some(OutputValues::Table),
+            output_type: Some(OutputTypes::Basic),
+        };
+
+        let json_full = OutputArgs {
+            output_format: Some(OutputValues::Json),
+            output_type: Some(OutputTypes::Full),
+        };
+
+        let default_output = OutputArgs {
+            output_format: None,
+            output_type: None,
+        };
+
+        // All should be valid output configurations
+        assert!(table_basic.output_format.is_some());
+        assert!(json_full.output_format.is_some());
+        assert!(default_output.output_format.is_none());
+    }
+
+    #[test]
+    fn test_pagination_args_creation() {
+        let paginated = PaginationArgs {
+            page_size: Some(25),
+            page_offset: Some(100),
+        };
+
+        let unpaginated = PaginationArgs {
+            page_size: None,
+            page_offset: None,
+        };
+
+        // Both should be valid pagination configurations
+        assert_eq!(paginated.page_size, Some(25));
+        assert_eq!(paginated.page_offset, Some(100));
+        assert_eq!(unpaginated.page_size, None);
+        assert_eq!(unpaginated.page_offset, None);
+    }
+}

@@ -61,7 +61,7 @@ pub struct PaginationArgs {
 ///
 /// * Table: Print output in table format
 /// * Json: Print output in json format
-#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[value(rename_all = "kebab-case")]
 pub enum OutputValues {
     /// Print output in table format
@@ -78,7 +78,7 @@ pub enum OutputValues {
 /// * Basic: Print basic output
 /// * Single: Print single row output
 /// * Full: Print full output
-#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[value(rename_all = "kebab-case")]
 pub enum OutputTypes {
     /// Print basic output
@@ -286,7 +286,7 @@ pub struct VersionArgs {
 /// * RelatedWorkItems: Get Project version related workitems
 /// * Release: Release a Jira Project version
 /// * Update: Update a Jira Project version
-#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[value(rename_all = "kebab-case")]
 pub enum VersionActionValues {
     /// Archive a Jira Project version
@@ -445,7 +445,7 @@ pub struct ProjectArgs {
 /// * GetIssueTypes: Get Jira Project issue types by Jira project key
 /// * GetIssueTypeFields: Get Jira Project issue type fields by Jira project key and issue type ID
 /// * List: List Jira Projects
-#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[value(rename_all = "kebab-case")]
 pub enum ProjectActionValues {
     /// Create new Jira Project
@@ -552,7 +552,7 @@ pub struct IssueArgs {
 /// * Search: Search for Jira Project issues using JQL
 /// * Transition: Transition a Jira Project issue
 /// * Update: Update a Jira Project issue
-#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[value(rename_all = "kebab-case")]
 pub enum IssueActionValues {
     /// Assign a Jira Project issue
@@ -642,7 +642,7 @@ pub struct LinkIssueArgs {
 /// Available link issue action values
 ///
 /// * Create: Create a Jira link between issues
-#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[value(rename_all = "kebab-case")]
 pub enum LinkIssueActionValues {
     /// Create a Jira link between issues
@@ -677,7 +677,7 @@ pub struct TransitionArgs {
 /// Available transition action values
 ///
 /// * List: List Jira issue available transitions
-#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(ValueEnum, Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 #[value(rename_all = "kebab-case")]
 pub enum TransitionActionValues {
     /// List Jira issue available transitions
