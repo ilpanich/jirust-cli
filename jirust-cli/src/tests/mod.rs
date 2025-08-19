@@ -12,3 +12,5 @@ pub mod command_parsing_tests;
 pub mod config_runner_tests;
 pub mod error_handling_tests;
 pub mod serialization_tests;
+pub mod comprehensive_executor_tests;
+pub mod comprehensive_runner_tests;
