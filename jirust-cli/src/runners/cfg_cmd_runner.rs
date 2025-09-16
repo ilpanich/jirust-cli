@@ -87,7 +87,7 @@ impl ConfigCmdRunner {
         println!("Your username: ");
         let stdin = std::io::stdin();
         let mut reader = stdin.lock();
-        self.read_auth_from_sources(cfg, &mut reader, || read_password())
+        self.read_auth_from_sources(cfg, &mut reader, read_password)
     }
 
     fn read_auth_from_sources<R, P>(
