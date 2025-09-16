@@ -1,7 +1,7 @@
 use crate::config::config_file::{AuthData, ConfigFile};
 
 use rpassword::read_password;
-use std::{fs, path::Path};
+use std::{fs, io::BufRead, path::Path};
 
 /// ConfigCmdRunner is a struct that holds the configuration file path
 /// and provides methods to initialize, set, and show the configuration file.
@@ -83,13 +83,27 @@ impl ConfigCmdRunner {
     ///
     /// cfg_runner.set_cfg_auth(cfg);
     /// ```
-    pub fn set_cfg_auth(&self, mut cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
-        let input = std::io::stdin();
-        let mut user = String::new();
+    pub fn set_cfg_auth(&self, cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
         println!("Your username: ");
-        input.read_line(&mut user)?;
+        let stdin = std::io::stdin();
+        let mut reader = stdin.lock();
+        self.read_auth_from_sources(cfg, &mut reader, || read_password())
+    }
+
+    fn read_auth_from_sources<R, P>(
+        &self,
+        mut cfg: ConfigFile,
+        reader: &mut R,
+        mut password_reader: P,
+    ) -> Result<ConfigFile, std::io::Error>
+    where
+        R: BufRead,
+        P: FnMut() -> Result<String, std::io::Error>,
+    {
+        let mut user = String::new();
+        reader.read_line(&mut user)?;
         println!("Your apikey: ");
-        let apikey = read_password()?;
+        let apikey = password_reader()?;
         let config_data = AuthData::new(user, apikey);
         cfg.set_auth_key(config_data.to_base64());
         cfg.write_to_file(self.cfg_file.as_str())?;
@@ -116,19 +130,31 @@ impl ConfigCmdRunner {
     /// let cfg = ConfigFile::default();
     /// cfg_runner.set_cfg_jira(cfg);
     /// ```
-    pub fn set_cfg_jira(&self, mut cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
-        let input = std::io::stdin();
-        let mut read_data = String::new();
+    pub fn set_cfg_jira(&self, cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
         println!("Your Jira instance URL: ");
-        input.read_line(&mut read_data)?;
+        let stdin = std::io::stdin();
+        let mut reader = stdin.lock();
+        self.read_jira_from_reader(cfg, &mut reader)
+    }
+
+    fn read_jira_from_reader<R>(
+        &self,
+        mut cfg: ConfigFile,
+        reader: &mut R,
+    ) -> Result<ConfigFile, std::io::Error>
+    where
+        R: BufRead,
+    {
+        let mut read_data = String::new();
+        reader.read_line(&mut read_data)?;
         cfg.set_jira_url(read_data.clone());
         read_data.clear();
         println!("Default Jira issue resolution JSON Value: ");
-        input.read_line(&mut read_data)?;
+        reader.read_line(&mut read_data)?;
         cfg.set_standard_resolution(read_data.clone());
         read_data.clear();
         println!("Default Jira issue resolution comment JSON: ");
-        input.read_line(&mut read_data)?;
+        reader.read_line(&mut read_data)?;
         cfg.set_standard_resolution_comment(read_data);
         cfg.write_to_file(self.cfg_file.as_str())?;
         Ok(cfg)
@@ -189,5 +215,31 @@ impl ConfigCmdRunner {
             "Jira default resolution comment: {:?}",
             cfg.get_standard_resolution_comment()
         );
+    }
+
+    #[cfg(test)]
+    pub(crate) fn set_cfg_auth_with_reader<R, P>(
+        &self,
+        cfg: ConfigFile,
+        reader: &mut R,
+        password_reader: P,
+    ) -> Result<ConfigFile, std::io::Error>
+    where
+        R: BufRead,
+        P: FnMut() -> Result<String, std::io::Error>,
+    {
+        self.read_auth_from_sources(cfg, reader, password_reader)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn set_cfg_jira_with_reader<R>(
+        &self,
+        cfg: ConfigFile,
+        reader: &mut R,
+    ) -> Result<ConfigFile, std::io::Error>
+    where
+        R: BufRead,
+    {
+        self.read_jira_from_reader(cfg, reader)
     }
 }

@@ -3,7 +3,9 @@ use jira_v3_openapi::models::Project;
 use crate::{
     args::commands::{ProjectActionValues, ProjectArgs},
     config::config_file::ConfigFile,
-    runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdParams, ProjectCmdRunner},
+    runners::jira_cmd_runners::project_cmd_runner::{
+        ProjectCmdParams, ProjectCmdRunner, ProjectCmdRunnerApi,
+    },
     utils::PrintableData,
 };
 
@@ -18,9 +20,9 @@ use super::ExecJiraCommand;
 /// * `project_cmd_runner` - the runner responsible for running the Jira project-related commands
 /// * `project_action` - the action to be performed on the Jira project
 /// * `project_args` - the arguments passed to the Jira project command
-pub struct ProjectExecutor {
+pub struct ProjectExecutor<R: ProjectCmdRunnerApi = ProjectCmdRunner> {
     /// project_cmd_runner is the runner responsible for running the Jira project-related commands
-    project_cmd_runner: ProjectCmdRunner,
+    project_cmd_runner: R,
     /// project_action is the action to be performed on the Jira project
     project_action: ProjectActionValues,
     /// project_args are the arguments passed to the Jira project command
@@ -82,6 +84,16 @@ impl ProjectExecutor {
         project_args: ProjectArgs,
     ) -> Self {
         let project_cmd_runner = ProjectCmdRunner::new(&cfg_data);
+        Self::with_runner(project_cmd_runner, project_action, project_args)
+    }
+}
+
+impl<R: ProjectCmdRunnerApi> ProjectExecutor<R> {
+    pub fn with_runner(
+        project_cmd_runner: R,
+        project_action: ProjectActionValues,
+        project_args: ProjectArgs,
+    ) -> Self {
         Self {
             project_cmd_runner,
             project_action,
@@ -96,7 +108,7 @@ impl ProjectExecutor {
 /// # Methods
 ///
 /// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
-impl ExecJiraCommand for ProjectExecutor {
+impl<R: ProjectCmdRunnerApi> ExecJiraCommand for ProjectExecutor<R> {
     /// Executes the Jira command
     ///
     /// # Returns

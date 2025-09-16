@@ -1,7 +1,9 @@
 use crate::{
     args::commands::{IssueActionValues, IssueArgs},
     config::config_file::ConfigFile,
-    runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdParams, IssueCmdRunner},
+    runners::jira_cmd_runners::issue_cmd_runner::{
+        IssueCmdParams, IssueCmdRunner, IssueCmdRunnerApi,
+    },
     utils::PrintableData,
 };
 
@@ -16,9 +18,9 @@ use super::ExecJiraCommand;
 /// * `issue_cmd_runner` - the runner responsible for running the Jira issue-related commands
 /// * `issue_action` - the action to be performed on the Jira issue
 /// * `issue_args` - the arguments passed to the Jira issue command
-pub struct IssueExecutor {
+pub struct IssueExecutor<R: IssueCmdRunnerApi = IssueCmdRunner> {
     /// issue_cmd_runner is the runner responsible for running the Jira issue-related commands
-    issue_cmd_runner: IssueCmdRunner,
+    issue_cmd_runner: R,
     /// issue_action is the action to be performed on the Jira issue
     issue_action: IssueActionValues,
     /// issue_args are the arguments passed to the Jira issue command
@@ -73,6 +75,16 @@ impl IssueExecutor {
         issue_args: IssueArgs,
     ) -> Self {
         let issue_cmd_runner = IssueCmdRunner::new(&cfg_data);
+        Self::with_runner(issue_cmd_runner, issue_action, issue_args)
+    }
+}
+
+impl<R: IssueCmdRunnerApi> IssueExecutor<R> {
+    pub fn with_runner(
+        issue_cmd_runner: R,
+        issue_action: IssueActionValues,
+        issue_args: IssueArgs,
+    ) -> Self {
         Self {
             issue_cmd_runner,
             issue_action,
@@ -87,7 +99,7 @@ impl IssueExecutor {
 /// # Methods
 ///
 /// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>` - executes the Jira command
-impl ExecJiraCommand for IssueExecutor {
+impl<R: IssueCmdRunnerApi> ExecJiraCommand for IssueExecutor<R> {
     /// Executes the Jira command
     ///
     /// # Returns
