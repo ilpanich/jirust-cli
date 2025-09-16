@@ -31,3 +31,6 @@ coverage-reports/*
 # Claude stuff
 .claude/*
 CLAUDE.md
+
+# Codex stuff
+AGENTS.md
