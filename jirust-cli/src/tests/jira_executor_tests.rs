@@ -7,10 +7,10 @@ mod tests {
     };
     use crate::config::config_file::ConfigFile;
     use crate::executors::jira_commands_executors::{
-        jira_issue_executor::IssueExecutor, jira_issue_link_executor::LinkIssueExecutor,
+        ExecJiraCommand, jira_issue_executor::IssueExecutor,
+        jira_issue_link_executor::LinkIssueExecutor,
         jira_issue_transition_executor::IssueTransitionExecutor,
         jira_project_executor::ProjectExecutor, jira_version_executor::VersionExecutor,
-        ExecJiraCommand,
     };
     use crate::runners::jira_cmd_runners::issue_cmd_runner::MockIssueCmdRunnerApi;
     use crate::runners::jira_cmd_runners::link_issue_cmd_runner::MockLinkIssueCmdRunnerApi;

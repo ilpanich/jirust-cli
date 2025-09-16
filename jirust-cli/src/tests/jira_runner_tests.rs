@@ -2,14 +2,14 @@
 mod tests {
     use crate::config::config_file::ConfigFile;
     use crate::runners::jira_cmd_runners::{
-        issue_cmd_runner::{IssueCmdRunner, IssueCmdParams, IssueTransitionCmdParams},
-        project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams},
-        version_cmd_runner::{VersionCmdRunner, VersionCmdParams},
-        link_issue_cmd_runner::{LinkIssueCmdRunner, LinkIssueCmdParams},
+        issue_cmd_runner::{IssueCmdParams, IssueCmdRunner, IssueTransitionCmdParams},
+        link_issue_cmd_runner::{LinkIssueCmdParams, LinkIssueCmdRunner},
+        project_cmd_runner::{ProjectCmdParams, ProjectCmdRunner},
+        version_cmd_runner::{VersionCmdParams, VersionCmdRunner},
     };
-    use toml::Table;
-    use std::collections::HashMap;
     use serde_json::Value;
+    use std::collections::HashMap;
+    use toml::Table;
 
     fn create_test_config() -> ConfigFile {
         ConfigFile::new(
@@ -25,7 +25,7 @@ mod tests {
     fn test_issue_cmd_runner_creation() {
         let config = create_test_config();
         let _runner = IssueCmdRunner::new(&config);
-        
+
         // Test passes if no panic occurs during creation
         assert!(true);
     }
@@ -34,7 +34,7 @@ mod tests {
     fn test_project_cmd_runner_creation() {
         let config = create_test_config();
         let _runner = ProjectCmdRunner::new(&config);
-        
+
         // Test passes if no panic occurs during creation
         assert!(true);
     }
@@ -43,7 +43,7 @@ mod tests {
     fn test_version_cmd_runner_creation() {
         let config = create_test_config();
         let _runner = VersionCmdRunner::new(&config);
-        
+
         // Test passes if no panic occurs during creation
         assert!(true);
     }
@@ -52,7 +52,7 @@ mod tests {
     fn test_link_issue_cmd_runner_creation() {
         let config = create_test_config();
         let _runner = LinkIssueCmdRunner::new(&config);
-        
+
         // Test passes if no panic occurs during creation
         assert!(true);
     }
@@ -76,7 +76,7 @@ mod tests {
     #[test]
     fn test_issue_cmd_params_default() {
         let params = IssueCmdParams::default();
-        
+
         assert_eq!(params.issue_key, None);
         assert_eq!(params.project_key, Some("".to_string()));
         assert_eq!(params.assignee, None);
@@ -89,10 +89,16 @@ mod tests {
     fn test_issue_cmd_params_with_fields() {
         let mut params = IssueCmdParams::new();
         let mut fields = HashMap::new();
-        fields.insert("summary".to_string(), Value::String("Test issue".to_string()));
-        fields.insert("description".to_string(), Value::String("Test description".to_string()));
+        fields.insert(
+            "summary".to_string(),
+            Value::String("Test issue".to_string()),
+        );
+        fields.insert(
+            "description".to_string(),
+            Value::String("Test description".to_string()),
+        );
         fields.insert("issuetype".to_string(), Value::String("Task".to_string()));
-        
+
         params.issue_fields = Some(fields.clone());
 
         assert_eq!(params.issue_fields, Some(fields));
@@ -108,7 +114,7 @@ mod tests {
     #[test]
     fn test_issue_transition_cmd_params_default() {
         let params = IssueTransitionCmdParams::default();
-        
+
         assert_eq!(params.issue_key, "");
     }
 
@@ -122,14 +128,20 @@ mod tests {
 
         assert_eq!(params.project_key, Some("TEST".to_string()));
         assert_eq!(params.project_name, Some("Test Project".to_string()));
-        assert_eq!(params.project_description, Some("Test project description".to_string()));
-        assert_eq!(params.project_lead_account_id, Some("test.user".to_string()));
+        assert_eq!(
+            params.project_description,
+            Some("Test project description".to_string())
+        );
+        assert_eq!(
+            params.project_lead_account_id,
+            Some("test.user".to_string())
+        );
     }
 
     #[test]
     fn test_project_cmd_params_default() {
         let params = ProjectCmdParams::default();
-        
+
         assert_eq!(params.project_key, None);
         assert_eq!(params.project_name, None);
         assert_eq!(params.project_description, None);
@@ -159,7 +171,7 @@ mod tests {
     #[test]
     fn test_version_cmd_params_default() {
         let params = VersionCmdParams::default();
-        
+
         assert_eq!(params.project, "".to_string());
         assert_eq!(params.project_id, None);
         assert_eq!(params.version_name, None);
@@ -192,7 +204,7 @@ mod tests {
     #[test]
     fn test_link_issue_cmd_params_default() {
         let params = LinkIssueCmdParams::default();
-        
+
         assert_eq!(params.origin_issue_key, "");
         assert_eq!(params.destination_issue_key, None);
         assert_eq!(params.link_type, "");
@@ -225,10 +237,16 @@ mod tests {
         issue_params.assignee = Some("user@example.com".to_string());
         issue_params.transition = Some("In Progress".to_string());
         issue_params.query = Some("project = COMP AND status = 'To Do'".to_string());
-        
+
         let mut fields = HashMap::new();
-        fields.insert("summary".to_string(), Value::String("Comprehensive test issue".to_string()));
-        fields.insert("description".to_string(), Value::String("This is a detailed description".to_string()));
+        fields.insert(
+            "summary".to_string(),
+            Value::String("Comprehensive test issue".to_string()),
+        );
+        fields.insert(
+            "description".to_string(),
+            Value::String("This is a detailed description".to_string()),
+        );
         fields.insert("issuetype".to_string(), Value::String("Bug".to_string()));
         fields.insert("priority".to_string(), Value::String("High".to_string()));
         issue_params.issue_fields = Some(fields);
@@ -248,7 +266,10 @@ mod tests {
         project_params.project_issue_security_scheme_id = Some(10000);
 
         assert_eq!(project_params.project_key, Some("PROJ".to_string()));
-        assert_eq!(project_params.project_name, Some("Comprehensive Project".to_string()));
+        assert_eq!(
+            project_params.project_name,
+            Some("Comprehensive Project".to_string())
+        );
         assert_eq!(project_params.project_field_configuration_id, Some(10200));
 
         // Test comprehensive VersionCmdParams
@@ -275,13 +296,13 @@ mod tests {
         let mut params = IssueCmdParams::new();
         params.issue_key = Some("".to_string());
         params.query = Some("".to_string());
-        
+
         assert_eq!(params.issue_key, Some("".to_string()));
         assert_eq!(params.query, Some("".to_string()));
 
         // Test empty fields
         params.issue_fields = Some(HashMap::new());
-        
+
         assert_eq!(params.issue_fields, Some(HashMap::new()));
     }
 
@@ -358,7 +379,7 @@ mod tests {
     #[test]
     fn test_version_params_field_management() {
         let mut params = VersionCmdParams::new();
-        
+
         // Initially everything is set to default values
         assert_eq!(params.project, "");
         assert_eq!(params.version_released, None);
@@ -385,7 +406,7 @@ mod tests {
     fn test_runner_instances_with_different_configs() {
         // Test runners with different configurations
         let config1 = create_test_config();
-        
+
         let mut config2 = ConfigFile::default();
         config2.set_auth_key("YWx0ZXJuYXRpdmVfdXNlcjphbHRlcm5hdGl2ZV9hcGlfa2V5".to_string());
         config2.set_jira_url("https://alternative.atlassian.net".to_string());
@@ -408,20 +429,41 @@ mod tests {
     fn test_issue_fields_handling() {
         let mut params = IssueCmdParams::new();
         let mut fields = HashMap::new();
-        
+
         // Test with different value types
-        fields.insert("summary".to_string(), Value::String("Test Summary".to_string()));
-        fields.insert("priority".to_string(), Value::Number(serde_json::Number::from(1)));
-        fields.insert("labels".to_string(), Value::Array(vec![
-            Value::String("bug".to_string()),
-            Value::String("urgent".to_string())
-        ]));
-        
+        fields.insert(
+            "summary".to_string(),
+            Value::String("Test Summary".to_string()),
+        );
+        fields.insert(
+            "priority".to_string(),
+            Value::Number(serde_json::Number::from(1)),
+        );
+        fields.insert(
+            "labels".to_string(),
+            Value::Array(vec![
+                Value::String("bug".to_string()),
+                Value::String("urgent".to_string()),
+            ]),
+        );
+
         params.issue_fields = Some(fields.clone());
-        
+
         assert_eq!(params.issue_fields, Some(fields));
-        assert!(params.issue_fields.as_ref().unwrap().contains_key("summary"));
-        assert!(params.issue_fields.as_ref().unwrap().contains_key("priority"));
+        assert!(
+            params
+                .issue_fields
+                .as_ref()
+                .unwrap()
+                .contains_key("summary")
+        );
+        assert!(
+            params
+                .issue_fields
+                .as_ref()
+                .unwrap()
+                .contains_key("priority")
+        );
         assert!(params.issue_fields.as_ref().unwrap().contains_key("labels"));
     }
 }
