@@ -84,7 +84,7 @@ mod tests {
         // This should succeed with Show action as it doesn't require user input
         let result = process_command(command, config_file_path, cfg_data).await;
         assert!(result.is_ok());
-        
+
         if let Ok(data) = result {
             assert!(!data.is_empty());
         }
@@ -116,7 +116,6 @@ mod tests {
     /// in test environments without manual input.
     #[tokio::test]
     async fn test_process_command_config_setup_action_note() {
-        
         let config_args = ConfigArgs {
             cfg_act: ConfigActionValues::Setup,
         };

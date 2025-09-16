@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use jira_v3_openapi::apis::issue_search_api::search_for_issues_using_jql_post;
 use jira_v3_openapi::apis::issues_api::*;
 use jira_v3_openapi::models::user::AccountType;
@@ -8,6 +9,9 @@ use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDet
 use serde_json::Value;
 use std::collections::HashMap;
 use std::io::Error;
+
+#[cfg(test)]
+use mockall::automock;
 
 use crate::args::commands::TransitionArgs;
 use crate::{
@@ -712,5 +716,108 @@ impl Default for IssueCmdParams {
     /// ```
     fn default() -> Self {
         IssueCmdParams::new()
+    }
+}
+
+#[cfg_attr(test, automock)]
+#[async_trait(?Send)]
+pub trait IssueCmdRunnerApi: Send + Sync {
+    async fn assign_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Value, Box<dyn std::error::Error>>;
+
+    async fn create_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<CreatedIssue, Box<dyn std::error::Error>>;
+
+    async fn delete_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<(), Box<dyn std::error::Error>>;
+
+    async fn get_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<IssueBean, Box<dyn std::error::Error>>;
+
+    async fn search_jira_issues(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Vec<IssueBean>, Box<dyn std::error::Error>>;
+
+    async fn transition_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Value, Box<dyn std::error::Error>>;
+
+    async fn update_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Value, Box<dyn std::error::Error>>;
+
+    async fn get_issue_available_transitions(
+        &self,
+        params: IssueTransitionCmdParams,
+    ) -> Result<Transitions, Box<dyn std::error::Error>>;
+}
+
+#[async_trait(?Send)]
+impl IssueCmdRunnerApi for IssueCmdRunner {
+    async fn assign_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Value, Box<dyn std::error::Error>> {
+        IssueCmdRunner::assign_jira_issue(self, params).await
+    }
+
+    async fn create_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<CreatedIssue, Box<dyn std::error::Error>> {
+        IssueCmdRunner::create_jira_issue(self, params).await
+    }
+
+    async fn delete_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        IssueCmdRunner::delete_jira_issue(self, params).await
+    }
+
+    async fn get_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<IssueBean, Box<dyn std::error::Error>> {
+        IssueCmdRunner::get_jira_issue(self, params).await
+    }
+
+    async fn search_jira_issues(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Vec<IssueBean>, Box<dyn std::error::Error>> {
+        IssueCmdRunner::search_jira_issues(self, params).await
+    }
+
+    async fn transition_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Value, Box<dyn std::error::Error>> {
+        IssueCmdRunner::transition_jira_issue(self, params).await
+    }
+
+    async fn update_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Value, Box<dyn std::error::Error>> {
+        IssueCmdRunner::update_jira_issue(self, params).await
+    }
+
+    async fn get_issue_available_transitions(
+        &self,
+        params: IssueTransitionCmdParams,
+    ) -> Result<Transitions, Box<dyn std::error::Error>> {
+        IssueCmdRunner::get_issue_available_transitions(self, params).await
     }
 }

@@ -2,7 +2,9 @@ use std::io::Error;
 
 use crate::args::commands::{VersionActionValues, VersionArgs};
 use crate::config::config_file::ConfigFile;
-use crate::runners::jira_cmd_runners::version_cmd_runner::{VersionCmdParams, VersionCmdRunner};
+use crate::runners::jira_cmd_runners::version_cmd_runner::{
+    VersionCmdParams, VersionCmdRunner, VersionCmdRunnerApi,
+};
 use crate::utils::PrintableData;
 
 use super::ExecJiraCommand;
@@ -14,9 +16,9 @@ use super::ExecJiraCommand;
 /// * `version_cmd_runner` - the runner responsible for running the Jira version-related commands
 /// * `version_action` - the action to be performed on the Jira version
 /// * `version_args` - the arguments passed to the Jira version command
-pub struct VersionExecutor {
+pub struct VersionExecutor<R: VersionCmdRunnerApi = VersionCmdRunner> {
     /// version_cmd_runner is the runner responsible for running the Jira version-related commands
-    version_cmd_runner: VersionCmdRunner,
+    version_cmd_runner: R,
     /// version_action is the action to be performed on the Jira version
     version_action: VersionActionValues,
     /// version_args are the arguments passed to the Jira version command
@@ -77,6 +79,16 @@ impl VersionExecutor {
         version_args: VersionArgs,
     ) -> Self {
         let version_cmd_runner = VersionCmdRunner::new(&cfg_data);
+        Self::with_runner(version_cmd_runner, version_action, version_args)
+    }
+}
+
+impl<R: VersionCmdRunnerApi> VersionExecutor<R> {
+    pub fn with_runner(
+        version_cmd_runner: R,
+        version_action: VersionActionValues,
+        version_args: VersionArgs,
+    ) -> Self {
         Self {
             version_cmd_runner,
             version_action,
@@ -91,7 +103,7 @@ impl VersionExecutor {
 /// # Methods
 ///
 /// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
-impl ExecJiraCommand for VersionExecutor {
+impl<R: VersionCmdRunnerApi> ExecJiraCommand for VersionExecutor<R> {
     /// Executes the Jira command
     ///
     /// # Returns

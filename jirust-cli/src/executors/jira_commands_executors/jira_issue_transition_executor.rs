@@ -1,7 +1,9 @@
 use crate::{
     args::commands::{TransitionActionValues, TransitionArgs},
     config::config_file::ConfigFile,
-    runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueTransitionCmdParams},
+    runners::jira_cmd_runners::issue_cmd_runner::{
+        IssueCmdRunner, IssueCmdRunnerApi, IssueTransitionCmdParams,
+    },
     utils::PrintableData,
 };
 
@@ -16,9 +18,9 @@ use super::ExecJiraCommand;
 /// * `issue_transition_cmd_runner` - the runner responsible for running the Jira issue transition-related commands
 /// * `issue_transition_action` - the action to be performed on the Jira issue transition
 /// * `issue_transition_args` - the arguments passed to the Jira issue transition command
-pub struct IssueTransitionExecutor {
+pub struct IssueTransitionExecutor<R: IssueCmdRunnerApi = IssueCmdRunner> {
     /// issue_transition_cmd_runner is the runner responsible for running the Jira issue transition-related commands
-    issue_transition_cmd_runner: IssueCmdRunner,
+    issue_transition_cmd_runner: R,
     /// issue_transition_action is the action to be performed on the Jira issue transition
     issue_transition_action: TransitionActionValues,
     /// issue_transition_args are the arguments passed to the Jira issue transition command
@@ -66,6 +68,20 @@ impl IssueTransitionExecutor {
         issue_transition_args: TransitionArgs,
     ) -> Self {
         let issue_transition_cmd_runner = IssueCmdRunner::new(&cfg_data);
+        Self::with_runner(
+            issue_transition_cmd_runner,
+            issue_transition_action,
+            issue_transition_args,
+        )
+    }
+}
+
+impl<R: IssueCmdRunnerApi> IssueTransitionExecutor<R> {
+    pub fn with_runner(
+        issue_transition_cmd_runner: R,
+        issue_transition_action: TransitionActionValues,
+        issue_transition_args: TransitionArgs,
+    ) -> Self {
         Self {
             issue_transition_cmd_runner,
             issue_transition_action,
@@ -80,7 +96,7 @@ impl IssueTransitionExecutor {
 /// # Methods
 ///
 /// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
-impl ExecJiraCommand for IssueTransitionExecutor {
+impl<R: IssueCmdRunnerApi> ExecJiraCommand for IssueTransitionExecutor<R> {
     /// Executes the Jira command
     ///
     /// # Returns

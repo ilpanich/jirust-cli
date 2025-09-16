@@ -5,6 +5,7 @@ use crate::args::commands::VersionArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
 use crate::jira_doc_std_field;
 use crate::utils::changelog_extractor::ChangelogExtractor;
+use async_trait::async_trait;
 use chrono::Utc;
 use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::apis::configuration::Configuration;
@@ -16,6 +17,9 @@ use jira_v3_openapi::models::{
     Version, VersionRelatedWork,
 };
 use serde_json::Value;
+
+#[cfg(test)]
+use mockall::automock;
 
 #[cfg(any(windows, unix))]
 use futures::StreamExt;
@@ -1255,5 +1259,92 @@ impl Default for VersionCmdParams {
     /// ```
     fn default() -> Self {
         VersionCmdParams::new()
+    }
+}
+
+#[cfg_attr(test, automock)]
+#[async_trait(?Send)]
+pub trait VersionCmdRunnerApi: Send + Sync {
+    async fn create_jira_version(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<(Version, Option<Vec<(String, String, String, String)>>), Box<dyn std::error::Error>>;
+
+    async fn list_jira_versions(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<Vec<Version>, Box<dyn std::error::Error>>;
+
+    async fn get_jira_version(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<Version, Box<dyn std::error::Error>>;
+
+    async fn update_jira_version(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<Version, Box<dyn std::error::Error>>;
+
+    async fn delete_jira_version(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<(), Box<dyn std::error::Error>>;
+
+    async fn get_jira_version_related_work(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<Vec<VersionRelatedWork>, Error<GetRelatedWorkError>>;
+}
+
+#[async_trait(?Send)]
+impl VersionCmdRunnerApi for VersionCmdRunner {
+    async fn create_jira_version(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<(Version, Option<Vec<(String, String, String, String)>>), Box<dyn std::error::Error>>
+    {
+        VersionCmdRunner::create_jira_version(self, params).await
+    }
+
+    async fn list_jira_versions(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<Vec<Version>, Box<dyn std::error::Error>> {
+        VersionCmdRunner::list_jira_versions(self, params).await
+    }
+
+    async fn get_jira_version(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<Version, Box<dyn std::error::Error>> {
+        VersionCmdRunner::get_jira_version(self, params)
+            .await
+            .map_err(|err| Box::new(err) as Box<dyn std::error::Error>)
+    }
+
+    async fn update_jira_version(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<Version, Box<dyn std::error::Error>> {
+        VersionCmdRunner::update_jira_version(self, params)
+            .await
+            .map_err(|err| Box::new(err) as Box<dyn std::error::Error>)
+    }
+
+    async fn delete_jira_version(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        VersionCmdRunner::delete_jira_version(self, params)
+            .await
+            .map(|_| ())
+            .map_err(|err| Box::new(err) as Box<dyn std::error::Error>)
+    }
+
+    async fn get_jira_version_related_work(
+        &self,
+        params: VersionCmdParams,
+    ) -> Result<Vec<VersionRelatedWork>, Error<GetRelatedWorkError>> {
+        VersionCmdRunner::get_jira_version_related_work(self, params).await
     }
 }

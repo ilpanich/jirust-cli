@@ -2,6 +2,7 @@ use std::io::Error;
 
 use crate::args::commands::ProjectArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
+use async_trait::async_trait;
 use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::issues_api::{
     get_create_issue_meta_issue_type_id, get_create_issue_meta_issue_types,
@@ -12,6 +13,9 @@ use jira_v3_openapi::models::{CreateProjectDetails, ProjectIdentifiers};
 use jira_v3_openapi::models::{
     FieldCreateMetadata, IssueTypeIssueCreateMetadata, project::Project,
 };
+
+#[cfg(test)]
+use mockall::automock;
 
 /// Project command runner struct.
 ///
@@ -459,5 +463,60 @@ impl Default for ProjectCmdParams {
     /// ```
     fn default() -> Self {
         ProjectCmdParams::new()
+    }
+}
+
+#[cfg_attr(test, automock)]
+#[async_trait(?Send)]
+pub trait ProjectCmdRunnerApi: Send + Sync {
+    async fn create_jira_project(
+        &self,
+        params: ProjectCmdParams,
+    ) -> Result<ProjectIdentifiers, Box<dyn std::error::Error>>;
+
+    async fn list_jira_projects(
+        &self,
+        params: ProjectCmdParams,
+    ) -> Result<Vec<Project>, Box<dyn std::error::Error>>;
+
+    async fn get_jira_project_issue_types(
+        &self,
+        params: ProjectCmdParams,
+    ) -> Result<Vec<IssueTypeIssueCreateMetadata>, Box<dyn std::error::Error>>;
+
+    async fn get_jira_project_issue_type_id(
+        &self,
+        params: ProjectCmdParams,
+    ) -> Result<Vec<FieldCreateMetadata>, Box<dyn std::error::Error>>;
+}
+
+#[async_trait(?Send)]
+impl ProjectCmdRunnerApi for ProjectCmdRunner {
+    async fn create_jira_project(
+        &self,
+        params: ProjectCmdParams,
+    ) -> Result<ProjectIdentifiers, Box<dyn std::error::Error>> {
+        ProjectCmdRunner::create_jira_project(self, params).await
+    }
+
+    async fn list_jira_projects(
+        &self,
+        params: ProjectCmdParams,
+    ) -> Result<Vec<Project>, Box<dyn std::error::Error>> {
+        ProjectCmdRunner::list_jira_projects(self, params).await
+    }
+
+    async fn get_jira_project_issue_types(
+        &self,
+        params: ProjectCmdParams,
+    ) -> Result<Vec<IssueTypeIssueCreateMetadata>, Box<dyn std::error::Error>> {
+        ProjectCmdRunner::get_jira_project_issue_types(self, params).await
+    }
+
+    async fn get_jira_project_issue_type_id(
+        &self,
+        params: ProjectCmdParams,
+    ) -> Result<Vec<FieldCreateMetadata>, Box<dyn std::error::Error>> {
+        ProjectCmdRunner::get_jira_project_issue_type_id(self, params).await
     }
 }

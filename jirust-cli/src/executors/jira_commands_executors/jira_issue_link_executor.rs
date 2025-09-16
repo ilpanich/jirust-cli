@@ -1,7 +1,7 @@
 use crate::args::commands::{LinkIssueActionValues, LinkIssueArgs};
 use crate::config::config_file::ConfigFile;
 use crate::runners::jira_cmd_runners::link_issue_cmd_runner::{
-    LinkIssueCmdParams, LinkIssueCmdRunner,
+    LinkIssueCmdParams, LinkIssueCmdRunner, LinkIssueCmdRunnerApi,
 };
 use crate::utils::PrintableData;
 
@@ -16,9 +16,9 @@ use super::ExecJiraCommand;
 /// * `link_issue_cmd_runner` - the runner responsible for running the Jira link-issue-related commands
 /// * `link_issue_action` - the action to be performed on the Jira link issue
 /// * `link_issue_args` - the arguments passed to the Jira link issue command
-pub struct LinkIssueExecutor {
+pub struct LinkIssueExecutor<R: LinkIssueCmdRunnerApi = LinkIssueCmdRunner> {
     /// link_issue_cmd_runner is the runner responsible for running the Jira version-related commands
-    link_issue_cmd_runner: LinkIssueCmdRunner,
+    link_issue_cmd_runner: R,
     /// link_issue_action is the action to be performed on the Jira version
     link_issue_action: LinkIssueActionValues,
     /// link_issue_args are the arguments passed to the Jira version command
@@ -70,6 +70,16 @@ impl LinkIssueExecutor {
         link_issue_args: LinkIssueArgs,
     ) -> Self {
         let link_issue_cmd_runner = LinkIssueCmdRunner::new(&cfg_data);
+        Self::with_runner(link_issue_cmd_runner, link_issue_action, link_issue_args)
+    }
+}
+
+impl<R: LinkIssueCmdRunnerApi> LinkIssueExecutor<R> {
+    pub fn with_runner(
+        link_issue_cmd_runner: R,
+        link_issue_action: LinkIssueActionValues,
+        link_issue_args: LinkIssueArgs,
+    ) -> Self {
         Self {
             link_issue_cmd_runner,
             link_issue_action,
@@ -84,7 +94,7 @@ impl LinkIssueExecutor {
 /// # Methods
 ///
 /// * `exec_jira_command(&self) -> Result<(), Box<dyn std::error::Error>>` - executes the Jira command
-impl ExecJiraCommand for LinkIssueExecutor {
+impl<R: LinkIssueCmdRunnerApi> ExecJiraCommand for LinkIssueExecutor<R> {
     /// Executes the Jira command
     ///
     /// # Returns

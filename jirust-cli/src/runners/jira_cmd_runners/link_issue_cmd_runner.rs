@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use jira_v3_openapi::apis::Error;
 use jira_v3_openapi::apis::configuration::Configuration;
 use jira_v3_openapi::apis::issue_links_api::link_issues;
@@ -7,6 +8,9 @@ use serde_json::Value;
 use crate::args::commands::LinkIssueArgs;
 use crate::config::config_file::{AuthData, ConfigFile};
 use crate::utils::changelog_extractor::ChangelogExtractor;
+
+#[cfg(test)]
+use mockall::automock;
 
 /// Link issue command runner
 /// This struct is responsible for running the link issue command
@@ -316,5 +320,24 @@ impl Default for LinkIssueCmdParams {
     /// ```
     fn default() -> Self {
         LinkIssueCmdParams::new()
+    }
+}
+
+#[cfg_attr(test, automock)]
+#[async_trait(?Send)]
+pub trait LinkIssueCmdRunnerApi: Send + Sync {
+    async fn link_jira_issues(
+        &self,
+        params: LinkIssueCmdParams,
+    ) -> Result<Value, Box<dyn std::error::Error>>;
+}
+
+#[async_trait(?Send)]
+impl LinkIssueCmdRunnerApi for LinkIssueCmdRunner {
+    async fn link_jira_issues(
+        &self,
+        params: LinkIssueCmdParams,
+    ) -> Result<Value, Box<dyn std::error::Error>> {
+        LinkIssueCmdRunner::link_jira_issues(self, params).await
     }
 }

@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use crate::utils::changelog_extractor::ChangelogExtractor;
     use crate::jira_doc_std_field;
+    use crate::utils::changelog_extractor::ChangelogExtractor;
     use std::io::Write;
     use tempfile::NamedTempFile;
 
@@ -82,7 +82,12 @@ mod tests {
         let result = extractor.extract_version_changelog();
 
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("No version changelog available"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("No version changelog available")
+        );
     }
 
     #[test]
@@ -104,7 +109,8 @@ mod tests {
 ### Fixed
 - Resolved JIR-101 issue with data
 - Fixed JIR-102 and JIR-103 together
-"#.to_string();
+"#
+        .to_string();
 
         let extractor = ChangelogExtractor::new("test.md".to_string());
         let project_key = "JIR".to_string();
@@ -128,7 +134,8 @@ mod tests {
 - Fixed bug with login
 - Improved performance
 - Added feature for reporting
-"#.to_string();
+"#
+        .to_string();
 
         let extractor = ChangelogExtractor::new("test.md".to_string());
         let project_key = "JIR".to_string();
@@ -146,7 +153,8 @@ mod tests {
 - Fixed bug PROJ-100 with login
 - Improved performance PROJ-200
 - Added feature JIR-789 for reporting
-"#.to_string();
+"#
+        .to_string();
 
         let extractor = ChangelogExtractor::new("test.md".to_string());
         let project_key = "PROJ".to_string();
@@ -167,7 +175,8 @@ mod tests {
 - Fixed bug JIR-123 with login
 - Improved performance for JIR-123
 - Referenced JIR-123 again
-"#.to_string();
+"#
+        .to_string();
 
         let extractor = ChangelogExtractor::new("test.md".to_string());
         let project_key = "JIR".to_string();
@@ -214,8 +223,10 @@ mod tests {
         writeln!(temp_file, "").expect("Failed to write to temp file");
         writeln!(temp_file, "## [1.0.1] 2023-12-01").expect("Failed to write to temp file");
         writeln!(temp_file, "### Added").expect("Failed to write to temp file");
-        writeln!(temp_file, "- Feature with special chars: @#$%^&*()").expect("Failed to write to temp file");
-        writeln!(temp_file, "- Unicode support: 测试文本 🚀").expect("Failed to write to temp file");
+        writeln!(temp_file, "- Feature with special chars: @#$%^&*()")
+            .expect("Failed to write to temp file");
+        writeln!(temp_file, "- Unicode support: 测试文本 🚀")
+            .expect("Failed to write to temp file");
         writeln!(temp_file, "").expect("Failed to write to temp file");
         writeln!(temp_file, "## [1.0.0] 2023-11-01").expect("Failed to write to temp file");
         writeln!(temp_file, "### Added").expect("Failed to write to temp file");
@@ -255,7 +266,8 @@ mod tests {
 - Edge case (JIR-999) in parentheses
 - Reference to JIR-888.
 - Multiple JIR-777, JIR-666, and JIR-555 in same line
-"#.to_string();
+"#
+        .to_string();
 
         let extractor = ChangelogExtractor::new("test.md".to_string());
         let project_key = "JIR".to_string();
@@ -263,7 +275,7 @@ mod tests {
 
         assert!(result.is_ok());
         let issues = result.unwrap();
-        
+
         // Should find all issue references
         assert!(issues.contains(&"JIR-1".to_string()));
         assert!(issues.contains(&"JIR-12".to_string()));

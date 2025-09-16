@@ -1,11 +1,12 @@
 #[cfg(test)]
 mod tests {
     use crate::args::commands::{
-        Commands, ConfigArgs, ConfigActionValues, IssueArgs, IssueActionValues,
-        LinkIssueArgs, LinkIssueActionValues, ProjectActionValues, ProjectArgs,
-        TransitionActionValues, TransitionArgs, VersionArgs, VersionActionValues,
-        OutputArgs, OutputValues, OutputTypes, PaginationArgs
+        Commands, ConfigActionValues, ConfigArgs, IssueActionValues, IssueArgs, JirustCliArgs,
+        LinkIssueActionValues, LinkIssueArgs, OutputArgs, OutputTypes, OutputValues,
+        PaginationArgs, ProjectActionValues, ProjectArgs, TransitionActionValues, TransitionArgs,
+        VersionActionValues, VersionArgs,
     };
+    use clap::Parser;
 
     #[test]
     fn test_config_action_values_enum() {
@@ -45,7 +46,16 @@ mod tests {
 
             // Test Clone trait
             let cloned = action.clone();
-            assert!(matches!(cloned, IssueActionValues::Assign | IssueActionValues::Create | IssueActionValues::Delete | IssueActionValues::Get | IssueActionValues::Search | IssueActionValues::Transition | IssueActionValues::Update));
+            assert!(matches!(
+                cloned,
+                IssueActionValues::Assign
+                    | IssueActionValues::Create
+                    | IssueActionValues::Delete
+                    | IssueActionValues::Get
+                    | IssueActionValues::Search
+                    | IssueActionValues::Transition
+                    | IssueActionValues::Update
+            ));
         }
     }
 
@@ -83,7 +93,16 @@ mod tests {
             assert!(!debug_str.is_empty());
 
             let cloned = action.clone();
-            assert!(matches!(cloned, VersionActionValues::Archive | VersionActionValues::Create | VersionActionValues::Delete | VersionActionValues::List | VersionActionValues::RelatedWorkItems | VersionActionValues::Release | VersionActionValues::Update));
+            assert!(matches!(
+                cloned,
+                VersionActionValues::Archive
+                    | VersionActionValues::Create
+                    | VersionActionValues::Delete
+                    | VersionActionValues::List
+                    | VersionActionValues::RelatedWorkItems
+                    | VersionActionValues::Release
+                    | VersionActionValues::Update
+            ));
         }
     }
 
@@ -200,12 +219,24 @@ mod tests {
             project_key: Some("COMP".to_string()),
             issue_key: Some("COMP-123".to_string()),
             issue_fields: Some(vec![
-                ("summary".to_string(), "Comprehensive test issue".to_string()),
-                ("description".to_string(), "Detailed description for testing".to_string()),
+                (
+                    "summary".to_string(),
+                    "Comprehensive test issue".to_string(),
+                ),
+                (
+                    "description".to_string(),
+                    "Detailed description for testing".to_string(),
+                ),
                 ("issuetype".to_string(), "Bug".to_string()),
                 ("priority".to_string(), "High".to_string()),
-                ("components".to_string(), "[\"Frontend\", \"Backend\"]".to_string()),
-                ("labels".to_string(), "[\"urgent\", \"customer\"]".to_string()),
+                (
+                    "components".to_string(),
+                    "[\"Frontend\", \"Backend\"]".to_string(),
+                ),
+                (
+                    "labels".to_string(),
+                    "[\"urgent\", \"customer\"]".to_string(),
+                ),
             ]),
             transition_to: Some("In Progress".to_string()),
             assignee: Some("developer@example.com".to_string()),
@@ -220,16 +251,41 @@ mod tests {
             },
         };
 
-        assert!(matches!(comprehensive_issue_args.issue_act, IssueActionValues::Create));
-        assert_eq!(comprehensive_issue_args.project_key, Some("COMP".to_string()));
-        assert_eq!(comprehensive_issue_args.issue_key, Some("COMP-123".to_string()));
+        assert!(matches!(
+            comprehensive_issue_args.issue_act,
+            IssueActionValues::Create
+        ));
+        assert_eq!(
+            comprehensive_issue_args.project_key,
+            Some("COMP".to_string())
+        );
+        assert_eq!(
+            comprehensive_issue_args.issue_key,
+            Some("COMP-123".to_string())
+        );
         assert!(comprehensive_issue_args.issue_fields.is_some());
-        assert_eq!(comprehensive_issue_args.issue_fields.as_ref().unwrap().len(), 6);
-        assert_eq!(comprehensive_issue_args.transition_to, Some("In Progress".to_string()));
-        assert_eq!(comprehensive_issue_args.assignee, Some("developer@example.com".to_string()));
+        assert_eq!(
+            comprehensive_issue_args
+                .issue_fields
+                .as_ref()
+                .unwrap()
+                .len(),
+            6
+        );
+        assert_eq!(
+            comprehensive_issue_args.transition_to,
+            Some("In Progress".to_string())
+        );
+        assert_eq!(
+            comprehensive_issue_args.assignee,
+            Some("developer@example.com".to_string())
+        );
         assert!(comprehensive_issue_args.query.is_some());
         assert_eq!(comprehensive_issue_args.pagination.page_size, Some(50));
-        assert_eq!(comprehensive_issue_args.output.output_format, Some(OutputValues::Json));
+        assert_eq!(
+            comprehensive_issue_args.output.output_format,
+            Some(OutputValues::Json)
+        );
     }
 
     #[test]
@@ -252,7 +308,10 @@ mod tests {
             },
         };
 
-        assert!(matches!(minimal_issue_args.issue_act, IssueActionValues::Get));
+        assert!(matches!(
+            minimal_issue_args.issue_act,
+            IssueActionValues::Get
+        ));
         assert_eq!(minimal_issue_args.project_key, None);
         assert_eq!(minimal_issue_args.issue_key, Some("MIN-1".to_string()));
         assert_eq!(minimal_issue_args.issue_fields, None);
@@ -288,11 +347,26 @@ mod tests {
             },
         };
 
-        assert!(matches!(comprehensive_project_args.project_act, ProjectActionValues::Create));
-        assert_eq!(comprehensive_project_args.project_key, Some("NEWPROJ".to_string()));
-        assert_eq!(comprehensive_project_args.project_name, Some("New Project".to_string()));
-        assert_eq!(comprehensive_project_args.project_field_configuration_id, Some(10200));
-        assert_eq!(comprehensive_project_args.project_lead_account_id, Some("lead@example.com".to_string()));
+        assert!(matches!(
+            comprehensive_project_args.project_act,
+            ProjectActionValues::Create
+        ));
+        assert_eq!(
+            comprehensive_project_args.project_key,
+            Some("NEWPROJ".to_string())
+        );
+        assert_eq!(
+            comprehensive_project_args.project_name,
+            Some("New Project".to_string())
+        );
+        assert_eq!(
+            comprehensive_project_args.project_field_configuration_id,
+            Some(10200)
+        );
+        assert_eq!(
+            comprehensive_project_args.project_lead_account_id,
+            Some("lead@example.com".to_string())
+        );
     }
 
     #[test]
@@ -321,10 +395,16 @@ mod tests {
             },
         };
 
-        assert!(matches!(comprehensive_version_args.version_act, VersionActionValues::Create));
+        assert!(matches!(
+            comprehensive_version_args.version_act,
+            VersionActionValues::Create
+        ));
         assert_eq!(comprehensive_version_args.project_key, "PROJ");
         assert_eq!(comprehensive_version_args.project_id, Some(12345));
-        assert_eq!(comprehensive_version_args.version_name, Some("2.0.0".to_string()));
+        assert_eq!(
+            comprehensive_version_args.version_name,
+            Some("2.0.0".to_string())
+        );
         assert_eq!(comprehensive_version_args.version_archived, Some(false));
         assert_eq!(comprehensive_version_args.transition_issues, Some(true));
     }
@@ -340,12 +420,24 @@ mod tests {
             changelog_file: Some("LINKING_CHANGELOG.md".to_string()),
         };
 
-        assert!(matches!(comprehensive_link_args.link_act, LinkIssueActionValues::Create));
-        assert_eq!(comprehensive_link_args.project_key, Some("LINK".to_string()));
+        assert!(matches!(
+            comprehensive_link_args.link_act,
+            LinkIssueActionValues::Create
+        ));
+        assert_eq!(
+            comprehensive_link_args.project_key,
+            Some("LINK".to_string())
+        );
         assert_eq!(comprehensive_link_args.origin_issue_key, "LINK-123");
-        assert_eq!(comprehensive_link_args.destination_issue_key, Some("LINK-456".to_string()));
+        assert_eq!(
+            comprehensive_link_args.destination_issue_key,
+            Some("LINK-456".to_string())
+        );
         assert_eq!(comprehensive_link_args.link_type, "Blocks");
-        assert_eq!(comprehensive_link_args.changelog_file, Some("LINKING_CHANGELOG.md".to_string()));
+        assert_eq!(
+            comprehensive_link_args.changelog_file,
+            Some("LINKING_CHANGELOG.md".to_string())
+        );
     }
 
     #[test]
@@ -359,10 +451,19 @@ mod tests {
             },
         };
 
-        assert!(matches!(comprehensive_transition_args.transition_act, TransitionActionValues::List));
+        assert!(matches!(
+            comprehensive_transition_args.transition_act,
+            TransitionActionValues::List
+        ));
         assert_eq!(comprehensive_transition_args.issue_key, "TRANS-789");
-        assert_eq!(comprehensive_transition_args.output.output_format, Some(OutputValues::Table));
-        assert_eq!(comprehensive_transition_args.output.output_type, Some(OutputTypes::Single));
+        assert_eq!(
+            comprehensive_transition_args.output.output_format,
+            Some(OutputValues::Table)
+        );
+        assert_eq!(
+            comprehensive_transition_args.output.output_type,
+            Some(OutputTypes::Single)
+        );
     }
 
     #[test]
@@ -411,8 +512,14 @@ mod tests {
         ];
 
         let json_fields = vec![
-            ("components".to_string(), "[{\"name\": \"Frontend\"}]".to_string()),
-            ("customfield_10001".to_string(), "{\"value\": \"Custom Value\"}".to_string()),
+            (
+                "components".to_string(),
+                "[{\"name\": \"Frontend\"}]".to_string(),
+            ),
+            (
+                "customfield_10001".to_string(),
+                "{\"value\": \"Custom Value\"}".to_string(),
+            ),
         ];
 
         let mixed_fields = vec![
@@ -492,9 +599,7 @@ mod tests {
             issue_act: IssueActionValues::Get,
             project_key: Some("".to_string()),
             issue_key: Some("".to_string()),
-            issue_fields: Some(vec![
-                ("".to_string(), "".to_string()),
-            ]),
+            issue_fields: Some(vec![("".to_string(), "".to_string())]),
             transition_to: Some("".to_string()),
             assignee: Some("".to_string()),
             query: Some("".to_string()),
@@ -570,5 +675,51 @@ mod tests {
 
         assert_eq!(special_char_args.project_key, special_chars);
         assert_eq!(special_char_args.version_name, Some(special_chars.clone()));
+    }
+
+    #[test]
+    fn test_cli_parses_issue_fields_with_jira_doc_wrapper() {
+        let args = JirustCliArgs::try_parse_from([
+            "jirust-cli",
+            "issue",
+            "create",
+            "-k",
+            "TEST",
+            "-f",
+            "summary=New issue",
+            "-f",
+            "description=jira_doc_field[Important update]",
+        ])
+        .expect("CLI parsing should succeed");
+
+        match args.subcmd {
+            Commands::Issue(issue_args) => {
+                let fields = issue_args.issue_fields.expect("issue fields to be parsed");
+                assert_eq!(fields.len(), 2);
+                assert_eq!(fields[0], ("summary".to_string(), "New issue".to_string()));
+
+                let expected_doc = "{\"content\":[{\"content\":[{\"text\":\"Important update\",\"type\":\"text\"}],\"type\":\"paragraph\"}],\"type\":\"doc\",\"version\":1}".to_string();
+                assert_eq!(fields[1], ("description".to_string(), expected_doc));
+            }
+            other => panic!("unexpected command parsed: {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_cli_rejects_malformed_issue_field_argument() {
+        let result = JirustCliArgs::try_parse_from([
+            "jirust-cli",
+            "issue",
+            "create",
+            "-k",
+            "TEST",
+            "-f",
+            "missing_delimiter",
+        ]);
+
+        assert!(result.is_err());
+        if let Err(err) = result {
+            assert!(err.to_string().contains("invalid KEY=value"));
+        }
     }
 }

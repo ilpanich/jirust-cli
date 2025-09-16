@@ -1,19 +1,25 @@
 #[cfg(test)]
 mod tests {
     use crate::args::commands::{
-        IssueActionValues, IssueArgs, ProjectActionValues, ProjectArgs, 
-        VersionActionValues, VersionArgs, LinkIssueArgs, TransitionArgs,
-        PaginationArgs, OutputArgs, OutputValues, OutputTypes,
-        TransitionActionValues, LinkIssueActionValues
+        IssueActionValues, IssueArgs, LinkIssueActionValues, LinkIssueArgs, OutputArgs,
+        OutputTypes, OutputValues, PaginationArgs, ProjectActionValues, ProjectArgs,
+        TransitionActionValues, TransitionArgs, VersionActionValues, VersionArgs,
     };
     use crate::config::config_file::ConfigFile;
     use crate::executors::jira_commands_executors::{
-        jira_issue_executor::IssueExecutor,
-        jira_project_executor::ProjectExecutor,
-        jira_version_executor::VersionExecutor,
+        ExecJiraCommand, jira_issue_executor::IssueExecutor,
         jira_issue_link_executor::LinkIssueExecutor,
         jira_issue_transition_executor::IssueTransitionExecutor,
+        jira_project_executor::ProjectExecutor, jira_version_executor::VersionExecutor,
     };
+    use crate::runners::jira_cmd_runners::issue_cmd_runner::MockIssueCmdRunnerApi;
+    use crate::runners::jira_cmd_runners::link_issue_cmd_runner::MockLinkIssueCmdRunnerApi;
+    use crate::runners::jira_cmd_runners::project_cmd_runner::MockProjectCmdRunnerApi;
+    use crate::runners::jira_cmd_runners::version_cmd_runner::MockVersionCmdRunnerApi;
+    use crate::utils::PrintableData;
+    use jira_v3_openapi::models::{IssueTransition, Transitions, Version, project::Project};
+    use serde_json::json;
+    use std::io::{Error as IoError, ErrorKind};
     use toml::Table;
 
     fn create_test_config() -> ConfigFile {
@@ -129,9 +135,9 @@ mod tests {
     fn test_issue_executor_creation() {
         let config = create_test_config();
         let args = create_test_issue_args();
-        
+
         let _executor = IssueExecutor::new(config, IssueActionValues::Get, args);
-        
+
         // Test passes if no panic occurs during creation
         assert!(true);
     }
@@ -140,9 +146,9 @@ mod tests {
     fn test_project_executor_creation() {
         let config = create_test_config();
         let args = create_test_project_args();
-        
+
         let _executor = ProjectExecutor::new(config, ProjectActionValues::List, args);
-        
+
         // Test passes if no panic occurs during creation
         assert!(true);
     }
@@ -151,9 +157,9 @@ mod tests {
     fn test_version_executor_creation() {
         let config = create_test_config();
         let args = create_test_version_args();
-        
+
         let _executor = VersionExecutor::new(config, VersionActionValues::List, args);
-        
+
         // Test passes if no panic occurs during creation
         assert!(true);
     }
@@ -162,9 +168,9 @@ mod tests {
     fn test_link_issue_executor_creation() {
         let config = create_test_config();
         let args = create_test_link_args();
-        
+
         let _executor = LinkIssueExecutor::new(config, LinkIssueActionValues::Create, args);
-        
+
         // Test passes if no panic occurs during creation
         assert!(true);
     }
@@ -173,9 +179,9 @@ mod tests {
     fn test_issue_transition_executor_creation() {
         let config = create_test_config();
         let args = create_test_transition_args();
-        
+
         let _executor = IssueTransitionExecutor::new(config, TransitionActionValues::List, args);
-        
+
         // Test passes if no panic occurs during creation
         assert!(true);
     }
@@ -186,15 +192,209 @@ mod tests {
         let args = create_test_issue_args();
 
         // Test creating executors with different actions
-        let _get_executor = IssueExecutor::new(config.clone(), IssueActionValues::Get, args.clone());
-        let _create_executor = IssueExecutor::new(config.clone(), IssueActionValues::Create, args.clone());
-        let _update_executor = IssueExecutor::new(config.clone(), IssueActionValues::Update, args.clone());
-        let _delete_executor = IssueExecutor::new(config.clone(), IssueActionValues::Delete, args.clone());
-        let _search_executor = IssueExecutor::new(config.clone(), IssueActionValues::Search, args.clone());
+        let _get_executor =
+            IssueExecutor::new(config.clone(), IssueActionValues::Get, args.clone());
+        let _create_executor =
+            IssueExecutor::new(config.clone(), IssueActionValues::Create, args.clone());
+        let _update_executor =
+            IssueExecutor::new(config.clone(), IssueActionValues::Update, args.clone());
+        let _delete_executor =
+            IssueExecutor::new(config.clone(), IssueActionValues::Delete, args.clone());
+        let _search_executor =
+            IssueExecutor::new(config.clone(), IssueActionValues::Search, args.clone());
         let _assign_executor = IssueExecutor::new(config, IssueActionValues::Assign, args);
 
         // All constructors should work without panicking
         assert!(true);
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_assign_success() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_assign_jira_issue().returning(|params| {
+            assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
+            assert_eq!(params.assignee.as_deref(), Some("user@example.com"));
+            Ok(json!({"ok": true}))
+        });
+
+        let args = IssueArgs {
+            issue_act: IssueActionValues::Assign,
+            project_key: Some("TEST".to_string()),
+            issue_key: Some("TEST-123".to_string()),
+            issue_fields: None,
+            transition_to: None,
+            assignee: Some("user@example.com".to_string()),
+            query: None,
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: None,
+                output_type: None,
+            },
+        };
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Assign, args);
+        let result = executor.exec_jira_command().await.expect("assign succeeds");
+        let first = result.first().expect("printable data available");
+        match first {
+            PrintableData::Generic { data } => {
+                assert_eq!(
+                    data,
+                    &vec![serde_json::Value::String(
+                        "Issue assigned successfully".to_string()
+                    )]
+                );
+            }
+            _ => panic!("unexpected printable data variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_get_error_surface() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_get_jira_issue().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "boom")) as Box<dyn std::error::Error>)
+        });
+
+        let args = IssueArgs {
+            issue_act: IssueActionValues::Get,
+            project_key: Some("TEST".to_string()),
+            issue_key: Some("TEST-123".to_string()),
+            issue_fields: None,
+            transition_to: None,
+            assignee: None,
+            query: None,
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: None,
+                output_type: None,
+            },
+        };
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Get, args);
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error retrieving issue")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_project_executor_list_success() {
+        let mut mock_runner = MockProjectCmdRunnerApi::new();
+        mock_runner
+            .expect_list_jira_projects()
+            .returning(|_| Ok(vec![Project::default()]));
+
+        let args = create_test_project_args();
+        let executor = ProjectExecutor::with_runner(mock_runner, ProjectActionValues::List, args);
+
+        let result = executor.exec_jira_command().await.expect("list succeeds");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::Project { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_project_executor_create_error() {
+        let mut mock_runner = MockProjectCmdRunnerApi::new();
+        mock_runner.expect_create_jira_project().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "fail")) as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_project_args();
+        args.project_act = ProjectActionValues::Create;
+        let executor = ProjectExecutor::with_runner(mock_runner, ProjectActionValues::Create, args);
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error creating project")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_list_success() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner
+            .expect_list_jira_versions()
+            .returning(|_| Ok(vec![Version::default()]));
+
+        let args = create_test_version_args();
+        let executor = VersionExecutor::with_runner(mock_runner, VersionActionValues::List, args);
+
+        let result = executor.exec_jira_command().await.expect("list succeeds");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::Version { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_delete_error() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner.expect_delete_jira_version().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "nope")) as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::Delete;
+        let executor = VersionExecutor::with_runner(mock_runner, VersionActionValues::Delete, args);
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error deleting version")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_link_issue_executor_success() {
+        let mut mock_runner = MockLinkIssueCmdRunnerApi::new();
+        mock_runner.expect_link_jira_issues().returning(|params| {
+            assert_eq!(params.origin_issue_key, "TEST-123");
+            Ok(json!({"linked": true}))
+        });
+
+        let args = create_test_link_args();
+        let executor =
+            LinkIssueExecutor::with_runner(mock_runner, LinkIssueActionValues::Create, args);
+
+        let result = executor.exec_jira_command().await.expect("link succeeds");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::Generic { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_issue_transition_executor_success() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner
+            .expect_get_issue_available_transitions()
+            .returning(|_| {
+                let transitions = Transitions {
+                    transitions: Some(vec![IssueTransition::default()]),
+                    ..Default::default()
+                };
+                Ok(transitions)
+            });
+
+        let args = create_test_transition_args();
+        let executor =
+            IssueTransitionExecutor::with_runner(mock_runner, TransitionActionValues::List, args);
+
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("transition succeeds");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::IssueTransitions { .. })
+        ));
     }
 
     #[test]
@@ -203,7 +403,8 @@ mod tests {
         let args = create_test_project_args();
 
         // Test creating executors with different actions
-        let _list_executor = ProjectExecutor::new(config.clone(), ProjectActionValues::List, args.clone());
+        let _list_executor =
+            ProjectExecutor::new(config.clone(), ProjectActionValues::List, args.clone());
         let _create_executor = ProjectExecutor::new(config, ProjectActionValues::Create, args);
 
         // All constructors should work without panicking
@@ -216,11 +417,16 @@ mod tests {
         let args = create_test_version_args();
 
         // Test creating executors with different actions
-        let _list_executor = VersionExecutor::new(config.clone(), VersionActionValues::List, args.clone());
-        let _create_executor = VersionExecutor::new(config.clone(), VersionActionValues::Create, args.clone());
-        let _update_executor = VersionExecutor::new(config.clone(), VersionActionValues::Update, args.clone());
-        let _delete_executor = VersionExecutor::new(config.clone(), VersionActionValues::Delete, args.clone());
-        let _release_executor = VersionExecutor::new(config.clone(), VersionActionValues::Release, args.clone());
+        let _list_executor =
+            VersionExecutor::new(config.clone(), VersionActionValues::List, args.clone());
+        let _create_executor =
+            VersionExecutor::new(config.clone(), VersionActionValues::Create, args.clone());
+        let _update_executor =
+            VersionExecutor::new(config.clone(), VersionActionValues::Update, args.clone());
+        let _delete_executor =
+            VersionExecutor::new(config.clone(), VersionActionValues::Delete, args.clone());
+        let _release_executor =
+            VersionExecutor::new(config.clone(), VersionActionValues::Release, args.clone());
         let _archive_executor = VersionExecutor::new(config, VersionActionValues::Archive, args);
 
         // All constructors should work without panicking
@@ -233,29 +439,29 @@ mod tests {
 
         // Test creating multiple different executor types
         let _issue_executor = IssueExecutor::new(
-            config.clone(), 
-            IssueActionValues::Get, 
-            create_test_issue_args()
+            config.clone(),
+            IssueActionValues::Get,
+            create_test_issue_args(),
         );
         let _project_executor = ProjectExecutor::new(
-            config.clone(), 
-            ProjectActionValues::List, 
-            create_test_project_args()
+            config.clone(),
+            ProjectActionValues::List,
+            create_test_project_args(),
         );
         let _version_executor = VersionExecutor::new(
-            config.clone(), 
-            VersionActionValues::List, 
-            create_test_version_args()
+            config.clone(),
+            VersionActionValues::List,
+            create_test_version_args(),
         );
         let _link_executor = LinkIssueExecutor::new(
             config.clone(),
             LinkIssueActionValues::Create,
-            create_test_link_args()
+            create_test_link_args(),
         );
         let _transition_executor = IssueTransitionExecutor::new(
             config,
             TransitionActionValues::List,
-            create_test_transition_args()
+            create_test_transition_args(),
         );
 
         // Test that all executors were created successfully
@@ -297,7 +503,8 @@ mod tests {
                 output_type: None,
             },
         };
-        let _executor_minimal = IssueExecutor::new(config.clone(), IssueActionValues::Get, minimal_args);
+        let _executor_minimal =
+            IssueExecutor::new(config.clone(), IssueActionValues::Get, minimal_args);
 
         // Test with comprehensive args
         let comprehensive_args = IssueArgs {
@@ -322,7 +529,8 @@ mod tests {
                 output_type: Some(OutputTypes::Full),
             },
         };
-        let _executor_comprehensive = IssueExecutor::new(config, IssueActionValues::Create, comprehensive_args);
+        let _executor_comprehensive =
+            IssueExecutor::new(config, IssueActionValues::Create, comprehensive_args);
 
         // Both should create successfully
         assert!(true);
@@ -343,10 +551,7 @@ mod tests {
         assert_eq!(issue_actions.len(), 7);
 
         // Test all ProjectActionValues variants
-        let project_actions = [
-            ProjectActionValues::Create,
-            ProjectActionValues::List,
-        ];
+        let project_actions = [ProjectActionValues::Create, ProjectActionValues::List];
         assert_eq!(project_actions.len(), 2);
 
         // Test all VersionActionValues variants
