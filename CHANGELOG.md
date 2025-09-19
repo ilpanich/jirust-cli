@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.16.8] 2025-09-19
+### Changed
+- Applied cargo clippy code fixes suggestions
+
 ## [0.16.7] 2025-09-19
 ### Changed
 - Improved tests coverage (with the help of Codex GPT-5)
