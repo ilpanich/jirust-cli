@@ -14,7 +14,7 @@ use jirust_cli::{manage_config, process_command};
 /// Run without arguments to see the help message
 #[cfg(any(windows, unix))]
 #[tokio::main(flavor = "multi_thread")]
-async fn main() -> Result<(), Box<(dyn std::error::Error + 'static)>> {
+async fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
     let config_file_path = match env::var_os("HOME") {
         Some(home) => format!("{}/.jirust-cli/jirust-cli.toml", home.to_string_lossy()),
         None => ".jirust-cli/jirust-cli.toml".to_string(),

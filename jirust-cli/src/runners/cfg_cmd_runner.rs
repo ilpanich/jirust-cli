@@ -53,6 +53,7 @@ impl ConfigCmdRunner {
         fs::OpenOptions::new()
             .write(true)
             .create(true)
+            .truncate(false)
             .open(path)
             .map(|_| ())
     }
