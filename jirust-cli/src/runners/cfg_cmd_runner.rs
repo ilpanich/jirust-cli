@@ -41,6 +41,22 @@ impl ConfigCmdRunner {
         ConfigCmdRunner { cfg_file }
     }
 
+    /// Ensure the CLI can create or update the configuration file before asking for input.
+    fn ensure_cfg_writable(&self) -> Result<(), std::io::Error> {
+        let path = Path::new(&self.cfg_file);
+        if let Some(parent) = path.parent() {
+            if !parent.as_os_str().is_empty() && !parent.exists() {
+                fs::create_dir_all(parent)?;
+            }
+        }
+
+        fs::OpenOptions::new()
+            .write(true)
+            .create(true)
+            .open(path)
+            .map(|_| ())
+    }
+
     /// Initializes the configuration file
     ///
     /// # Returns
@@ -84,6 +100,7 @@ impl ConfigCmdRunner {
     /// cfg_runner.set_cfg_auth(cfg);
     /// ```
     pub fn set_cfg_auth(&self, cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
+        self.ensure_cfg_writable()?;
         println!("Your username: ");
         let stdin = std::io::stdin();
         let mut reader = stdin.lock();
@@ -131,6 +148,7 @@ impl ConfigCmdRunner {
     /// cfg_runner.set_cfg_jira(cfg);
     /// ```
     pub fn set_cfg_jira(&self, cfg: ConfigFile) -> Result<ConfigFile, std::io::Error> {
+        self.ensure_cfg_writable()?;
         println!("Your Jira instance URL: ");
         let stdin = std::io::stdin();
         let mut reader = stdin.lock();
@@ -228,6 +246,7 @@ impl ConfigCmdRunner {
         R: BufRead,
         P: FnMut() -> Result<String, std::io::Error>,
     {
+        self.ensure_cfg_writable()?;
         self.read_auth_from_sources(cfg, reader, password_reader)
     }
 
@@ -240,6 +259,7 @@ impl ConfigCmdRunner {
     where
         R: BufRead,
     {
+        self.ensure_cfg_writable()?;
         self.read_jira_from_reader(cfg, reader)
     }
 }
