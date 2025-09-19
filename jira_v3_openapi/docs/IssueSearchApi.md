@@ -9,8 +9,8 @@ Method | HTTP request | Description
 [**match_issues**](IssueSearchApi.md#match_issues) | **POST** /rest/api/3/jql/match | Check issues against JQL
 [**search_and_reconsile_issues_using_jql**](IssueSearchApi.md#search_and_reconsile_issues_using_jql) | **GET** /rest/api/3/search/jql | Search for issues using JQL enhanced search (GET)
 [**search_and_reconsile_issues_using_jql_post**](IssueSearchApi.md#search_and_reconsile_issues_using_jql_post) | **POST** /rest/api/3/search/jql | Search for issues using JQL enhanced search (POST)
-[**search_for_issues_using_jql**](IssueSearchApi.md#search_for_issues_using_jql) | **GET** /rest/api/3/search | Search for issues using JQL (GET)
-[**search_for_issues_using_jql_post**](IssueSearchApi.md#search_for_issues_using_jql_post) | **POST** /rest/api/3/search | Search for issues using JQL (POST)
+[**search_for_issues_using_jql**](IssueSearchApi.md#search_for_issues_using_jql) | **GET** /rest/api/3/search | Currently being removed. Search for issues using JQL (GET)
+[**search_for_issues_using_jql_post**](IssueSearchApi.md#search_for_issues_using_jql_post) | **POST** /rest/api/3/search | Currently being removed. Search for issues using JQL (POST)
 
 
 
@@ -180,9 +180,9 @@ Name | Type | Description  | Required | Notes
 ## search_for_issues_using_jql
 
 > models::SearchResults search_for_issues_using_jql(jql, start_at, max_results, validate_query, fields, expand, properties, fields_by_keys, fail_fast)
-Search for issues using JQL (GET)
+Currently being removed. Search for issues using JQL (GET)
 
-Searches for issues using [JQL](https://confluence.atlassian.com/x/egORLQ).  If the JQL query expression is too large to be encoded as a query parameter, use the [POST](#api-rest-api-3-search-post) version of this resource.  This operation can be accessed anonymously.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+Endpoint is currently being removed. [More details](https://developer.atlassian.com/changelog/#CHANGE-2046)  Searches for issues using [JQL](https://confluence.atlassian.com/x/egORLQ).  If the JQL query expression is too large to be encoded as a query parameter, use the [POST](#api-rest-api-3-search-post) version of this resource.  This operation can be accessed anonymously.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
 
 ### Parameters
 
@@ -218,9 +218,9 @@ Name | Type | Description  | Required | Notes
 ## search_for_issues_using_jql_post
 
 > models::SearchResults search_for_issues_using_jql_post(search_request_bean)
-Search for issues using JQL (POST)
+Currently being removed. Search for issues using JQL (POST)
 
-Searches for issues using [JQL](https://confluence.atlassian.com/x/egORLQ).  There is a [GET](#api-rest-api-3-search-get) version of this resource that can be used for smaller JQL query expressions.  This operation can be accessed anonymously.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+Endpoint is currently being removed. [More details](https://developer.atlassian.com/changelog/#CHANGE-2046)  Searches for issues using [JQL](https://confluence.atlassian.com/x/egORLQ).  There is a [GET](#api-rest-api-3-search-get) version of this resource that can be used for smaller JQL query expressions.  This operation can be accessed anonymously.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
 
 ### Parameters
 

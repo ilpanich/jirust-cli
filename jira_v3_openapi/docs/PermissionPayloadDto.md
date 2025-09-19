@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**add_addon_role** | Option<**bool**> | Configuration to generate addon role. Default is false if null | [optional]
+**add_addon_role** | Option<**bool**> | Configuration to generate addon role. Default is false if null. Only applies to GLOBAL-scoped permission scheme | [optional]
 **description** | Option<**String**> | The description of the permission scheme | [optional]
 **grants** | Option<[**Vec<models::PermissionGrantDto>**](PermissionGrantDTO.md)> | List of permission grants | [optional]
 **name** | Option<**String**> | The name of the permission scheme | [optional]

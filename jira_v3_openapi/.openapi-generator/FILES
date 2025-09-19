@@ -22,6 +22,7 @@ docs/ApplicationProperty.md
 docs/ApplicationRole.md
 docs/ApplicationRolesApi.md
 docs/ApprovalConfiguration.md
+docs/ApprovalConfigurationPreview.md
 docs/ArchiveIssueAsyncRequest.md
 docs/ArchivedIssuesFilterRequest.md
 docs/AssociateFieldConfigurationsWithIssueTypesRequest.md
@@ -188,6 +189,7 @@ docs/CustomFieldReplacement.md
 docs/CustomFieldUpdatedContextOptionsList.md
 docs/CustomFieldValueUpdate.md
 docs/CustomFieldValueUpdateDetails.md
+docs/CustomTemplateOptions.md
 docs/CustomTemplateRequestDto.md
 docs/CustomTemplatesProjectDetails.md
 docs/Dashboard.md
@@ -211,6 +213,7 @@ docs/DetailedErrorCollection.md
 docs/DocumentVersion.md
 docs/DuplicatePlanRequest.md
 docs/DynamicModulesApi.md
+docs/EditTemplateRequest.md
 docs/EntityProperty.md
 docs/EntityPropertyDetails.md
 docs/Error.md
@@ -330,7 +333,7 @@ docs/IssueFieldOptionScopeBean.md
 docs/IssueFieldsApi.md
 docs/IssueFilterForBulkPropertyDelete.md
 docs/IssueFilterForBulkPropertySet.md
-docs/IssueLayouItemtPayload.md
+docs/IssueLayoutItemPayload.md
 docs/IssueLayoutPayload.md
 docs/IssueLimitReportResponseBean.md
 docs/IssueLink.md
@@ -464,6 +467,7 @@ docs/JiraUrlField.md
 docs/JiraUserField.md
 docs/JiraVersionField.md
 docs/JiraWorkflow.md
+docs/JiraWorkflowPreviewStatus.md
 docs/JiraWorkflowStatus.md
 docs/JqlApi.md
 docs/JqlCountRequestBean.md
@@ -622,6 +626,9 @@ docs/PermissionsApi.md
 docs/PermissionsKeysBean.md
 docs/PermittedProjects.md
 docs/PlansApi.md
+docs/PreviewConditionGroupConfiguration.md
+docs/PreviewRuleConfiguration.md
+docs/PreviewTrigger.md
 docs/Priority.md
 docs/PriorityId.md
 docs/PriorityMapping.md
@@ -632,6 +639,7 @@ docs/PrioritySchemesApi.md
 docs/PriorityWithSequence.md
 docs/Project.md
 docs/ProjectAndIssueTypePair.md
+docs/ProjectArchetype.md
 docs/ProjectAvatars.md
 docs/ProjectAvatarsApi.md
 docs/ProjectCategoriesApi.md
@@ -660,7 +668,7 @@ docs/ProjectIssueSecurityLevels.md
 docs/ProjectIssueTypeHierarchy.md
 docs/ProjectIssueTypeMapping.md
 docs/ProjectIssueTypeMappings.md
-docs/ProjectIssueTypes.md
+docs/ProjectIssueTypeQueryContext.md
 docs/ProjectIssueTypesHierarchyLevel.md
 docs/ProjectKeyAndNameValidationApi.md
 docs/ProjectLandingPageInfo.md
@@ -676,6 +684,8 @@ docs/ProjectRoleGroup.md
 docs/ProjectRoleUser.md
 docs/ProjectRolesApi.md
 docs/ProjectScopeBean.md
+docs/ProjectTemplateKey.md
+docs/ProjectTemplateModel.md
 docs/ProjectTemplatesApi.md
 docs/ProjectType.md
 docs/ProjectTypesApi.md
@@ -714,6 +724,9 @@ docs/RuleConfiguration.md
 docs/RulePayload.md
 docs/SanitizedJqlQueries.md
 docs/SanitizedJqlQuery.md
+docs/SaveProjectTemplateRequest.md
+docs/SaveTemplateRequest.md
+docs/SaveTemplateResponse.md
 docs/Scope.md
 docs/ScopePayload.md
 docs/Screen.md
@@ -764,7 +777,6 @@ docs/SimpleErrorCollection.md
 docs/SimpleLink.md
 docs/SimpleListWrapperApplicationRole.md
 docs/SimpleListWrapperGroupName.md
-docs/SimpleUsage.md
 docs/SimplifiedHierarchyLevel.md
 docs/SimplifiedIssueTransition.md
 docs/SingleRedactionRequest.md
@@ -819,7 +831,9 @@ docs/TimeTrackingDetails.md
 docs/TimeTrackingProvider.md
 docs/ToLayoutPayload.md
 docs/Transition.md
+docs/TransitionLink.md
 docs/TransitionPayload.md
+docs/TransitionPreview.md
 docs/TransitionScreenDetails.md
 docs/TransitionUpdateDto.md
 docs/Transitions.md
@@ -896,6 +910,7 @@ docs/WorkflowCreate.md
 docs/WorkflowCreateRequest.md
 docs/WorkflowCreateResponse.md
 docs/WorkflowCreateValidateRequest.md
+docs/WorkflowDocumentVersionBean.md
 docs/WorkflowElementReference.md
 docs/WorkflowId.md
 docs/WorkflowIds.md
@@ -904,6 +919,13 @@ docs/WorkflowMetadataAndIssueTypeRestModel.md
 docs/WorkflowMetadataRestModel.md
 docs/WorkflowOperations.md
 docs/WorkflowPayload.md
+docs/WorkflowPreview.md
+docs/WorkflowPreviewLayout.md
+docs/WorkflowPreviewRequest.md
+docs/WorkflowPreviewResponse.md
+docs/WorkflowPreviewScope.md
+docs/WorkflowPreviewStatus.md
+docs/WorkflowProjectIdScope.md
 docs/WorkflowProjectIssueTypeUsage.md
 docs/WorkflowProjectIssueTypeUsageDto.md
 docs/WorkflowProjectIssueTypeUsagePage.md
@@ -960,7 +982,6 @@ docs/WorkflowUpdate.md
 docs/WorkflowUpdateRequest.md
 docs/WorkflowUpdateResponse.md
 docs/WorkflowUpdateValidateRequestBean.md
-docs/WorkflowUsages.md
 docs/WorkflowValidationError.md
 docs/WorkflowValidationErrorList.md
 docs/WorkflowsApi.md
@@ -1085,6 +1106,7 @@ src/models/application.rs
 src/models/application_property.rs
 src/models/application_role.rs
 src/models/approval_configuration.rs
+src/models/approval_configuration_preview.rs
 src/models/archive_issue_async_request.rs
 src/models/archived_issues_filter_request.rs
 src/models/associate_field_configurations_with_issue_types_request.rs
@@ -1248,6 +1270,7 @@ src/models/custom_field_replacement.rs
 src/models/custom_field_updated_context_options_list.rs
 src/models/custom_field_value_update.rs
 src/models/custom_field_value_update_details.rs
+src/models/custom_template_options.rs
 src/models/custom_template_request_dto.rs
 src/models/custom_templates_project_details.rs
 src/models/dashboard.rs
@@ -1269,6 +1292,7 @@ src/models/deprecated_workflow.rs
 src/models/detailed_error_collection.rs
 src/models/document_version.rs
 src/models/duplicate_plan_request.rs
+src/models/edit_template_request.rs
 src/models/entity_property.rs
 src/models/entity_property_details.rs
 src/models/error.rs
@@ -1372,7 +1396,7 @@ src/models/issue_field_option_create_bean.rs
 src/models/issue_field_option_scope_bean.rs
 src/models/issue_filter_for_bulk_property_delete.rs
 src/models/issue_filter_for_bulk_property_set.rs
-src/models/issue_layou_itemt_payload.rs
+src/models/issue_layout_item_payload.rs
 src/models/issue_layout_payload.rs
 src/models/issue_limit_report_response_bean.rs
 src/models/issue_link.rs
@@ -1483,6 +1507,7 @@ src/models/jira_url_field.rs
 src/models/jira_user_field.rs
 src/models/jira_version_field.rs
 src/models/jira_workflow.rs
+src/models/jira_workflow_preview_status.rs
 src/models/jira_workflow_status.rs
 src/models/jql_count_request_bean.rs
 src/models/jql_count_results_bean.rs
@@ -1634,6 +1659,9 @@ src/models/permission_schemes.rs
 src/models/permissions.rs
 src/models/permissions_keys_bean.rs
 src/models/permitted_projects.rs
+src/models/preview_condition_group_configuration.rs
+src/models/preview_rule_configuration.rs
+src/models/preview_trigger.rs
 src/models/priority.rs
 src/models/priority_id.rs
 src/models/priority_mapping.rs
@@ -1643,6 +1671,7 @@ src/models/priority_scheme_with_paginated_priorities_and_projects.rs
 src/models/priority_with_sequence.rs
 src/models/project.rs
 src/models/project_and_issue_type_pair.rs
+src/models/project_archetype.rs
 src/models/project_avatars.rs
 src/models/project_category.rs
 src/models/project_component.rs
@@ -1665,7 +1694,7 @@ src/models/project_issue_security_levels.rs
 src/models/project_issue_type_hierarchy.rs
 src/models/project_issue_type_mapping.rs
 src/models/project_issue_type_mappings.rs
-src/models/project_issue_types.rs
+src/models/project_issue_type_query_context.rs
 src/models/project_issue_types_hierarchy_level.rs
 src/models/project_landing_page_info.rs
 src/models/project_payload.rs
@@ -1676,6 +1705,8 @@ src/models/project_role_details.rs
 src/models/project_role_group.rs
 src/models/project_role_user.rs
 src/models/project_scope_bean.rs
+src/models/project_template_key.rs
+src/models/project_template_model.rs
 src/models/project_type.rs
 src/models/project_usage.rs
 src/models/project_usage_page.rs
@@ -1710,6 +1741,9 @@ src/models/rule_configuration.rs
 src/models/rule_payload.rs
 src/models/sanitized_jql_queries.rs
 src/models/sanitized_jql_query.rs
+src/models/save_project_template_request.rs
+src/models/save_template_request.rs
+src/models/save_template_response.rs
 src/models/scope.rs
 src/models/scope_payload.rs
 src/models/screen.rs
@@ -1754,7 +1788,6 @@ src/models/simple_error_collection.rs
 src/models/simple_link.rs
 src/models/simple_list_wrapper_application_role.rs
 src/models/simple_list_wrapper_group_name.rs
-src/models/simple_usage.rs
 src/models/simplified_hierarchy_level.rs
 src/models/simplified_issue_transition.rs
 src/models/single_redaction_request.rs
@@ -1805,7 +1838,9 @@ src/models/time_tracking_details.rs
 src/models/time_tracking_provider.rs
 src/models/to_layout_payload.rs
 src/models/transition.rs
+src/models/transition_link.rs
 src/models/transition_payload.rs
+src/models/transition_preview.rs
 src/models/transition_screen_details.rs
 src/models/transition_update_dto.rs
 src/models/transitions.rs
@@ -1876,6 +1911,7 @@ src/models/workflow_create.rs
 src/models/workflow_create_request.rs
 src/models/workflow_create_response.rs
 src/models/workflow_create_validate_request.rs
+src/models/workflow_document_version_bean.rs
 src/models/workflow_element_reference.rs
 src/models/workflow_id.rs
 src/models/workflow_ids.rs
@@ -1884,6 +1920,13 @@ src/models/workflow_metadata_and_issue_type_rest_model.rs
 src/models/workflow_metadata_rest_model.rs
 src/models/workflow_operations.rs
 src/models/workflow_payload.rs
+src/models/workflow_preview.rs
+src/models/workflow_preview_layout.rs
+src/models/workflow_preview_request.rs
+src/models/workflow_preview_response.rs
+src/models/workflow_preview_scope.rs
+src/models/workflow_preview_status.rs
+src/models/workflow_project_id_scope.rs
 src/models/workflow_project_issue_type_usage.rs
 src/models/workflow_project_issue_type_usage_dto.rs
 src/models/workflow_project_issue_type_usage_page.rs
@@ -1933,7 +1976,6 @@ src/models/workflow_update.rs
 src/models/workflow_update_request.rs
 src/models/workflow_update_response.rs
 src/models/workflow_update_validate_request_bean.rs
-src/models/workflow_usages.rs
 src/models/workflow_validation_error.rs
 src/models/workflow_validation_error_list.rs
 src/models/workflows_with_transition_rules_details.rs

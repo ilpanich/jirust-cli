@@ -13,6 +13,7 @@ Method | HTTP request | Description
 [**get_workflow_project_issue_type_usages**](WorkflowsApi.md#get_workflow_project_issue_type_usages) | **GET** /rest/api/3/workflow/{workflowId}/project/{projectId}/issueTypeUsages | Get issue types in a project that are using a given workflow
 [**get_workflow_scheme_usages_for_workflow**](WorkflowsApi.md#get_workflow_scheme_usages_for_workflow) | **GET** /rest/api/3/workflow/{workflowId}/workflowSchemes | Get workflow schemes which are using a given workflow
 [**get_workflows_paginated**](WorkflowsApi.md#get_workflows_paginated) | **GET** /rest/api/3/workflow/search | Get workflows paginated
+[**read_workflow_previews**](WorkflowsApi.md#read_workflow_previews) | **POST** /rest/api/3/workflows/preview | Preview workflow
 [**read_workflows**](WorkflowsApi.md#read_workflows) | **POST** /rest/api/3/workflows | Bulk get workflows
 [**search_workflows**](WorkflowsApi.md#search_workflows) | **GET** /rest/api/3/workflows/search | Search workflows
 [**update_workflows**](WorkflowsApi.md#update_workflows) | **POST** /rest/api/3/workflows/update | Bulk update workflows
@@ -302,9 +303,39 @@ Name | Type | Description  | Required | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
+## read_workflow_previews
+
+> models::WorkflowPreviewResponse read_workflow_previews(workflow_preview_request)
+Preview workflow
+
+Returns a requested workflow within a given project. The response provides a read-only preview of the workflow, omitting full configuration details.  **[Permissions](#permissions) required:**   *  At least one of the *Administer projects* and *View (read-only) workflow* project permissions
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**workflow_preview_request** | [**WorkflowPreviewRequest**](WorkflowPreviewRequest.md) |  | [required] |
+
+### Return type
+
+[**models::WorkflowPreviewResponse**](WorkflowPreviewResponse.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
 ## read_workflows
 
-> models::WorkflowReadResponse read_workflows(workflow_read_request, expand, use_approval_configuration)
+> models::WorkflowReadResponse read_workflows(workflow_read_request, use_approval_configuration)
 Bulk get workflows
 
 Returns a list of workflows and related statuses by providing workflow names, workflow IDs, or project and issue types.  **[Permissions](#permissions) required:**   *  *Administer Jira* global permission to access all, including project-scoped, workflows  *  At least one of the *Administer projects* and *View (read-only) workflow* project permissions to access project-scoped workflows
@@ -315,7 +346,6 @@ Returns a list of workflows and related statuses by providing workflow names, wo
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **workflow_read_request** | [**WorkflowReadRequest**](WorkflowReadRequest.md) |  | [required] |
-**expand** | Option<**String**> | Deprecated. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/changelog/#CHANGE-2298) for details.  Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `workflows.usages` Returns the project and issue types that each workflow is associated with.  *  `statuses.usages` Returns the project and issue types that each status is associated with. |  |
 **use_approval_configuration** | Option<**bool**> | Return the new field `approvalConfiguration` instead of the deprecated status properties for approval configuration. |  |[default to false]
 
 ### Return type
@@ -372,7 +402,7 @@ Name | Type | Description  | Required | Notes
 
 ## update_workflows
 
-> models::WorkflowUpdateResponse update_workflows(workflow_update_request, expand)
+> models::WorkflowUpdateResponse update_workflows(workflow_update_request)
 Bulk update workflows
 
 Update workflows and related statuses.  **[Permissions](#permissions) required:**   *  *Administer Jira* project permission to create all, including global-scoped, workflows  *  *Administer projects* project permissions to create project-scoped workflows
@@ -383,7 +413,6 @@ Update workflows and related statuses.  **[Permissions](#permissions) required:*
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **workflow_update_request** | [**WorkflowUpdateRequest**](WorkflowUpdateRequest.md) |  | [required] |
-**expand** | Option<**String**> | Deprecated. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/changelog/#CHANGE-2298) for details. Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `workflows.usages` Returns the project and issue types that each workflow is associated with.  *  `statuses.usages` Returns the project and issue types that each status is associated with. |  |
 
 ### Return type
 

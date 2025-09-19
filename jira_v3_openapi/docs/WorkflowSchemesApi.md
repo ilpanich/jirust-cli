@@ -371,7 +371,7 @@ Name | Type | Description  | Required | Notes
 
 ## read_workflow_schemes
 
-> Vec<models::WorkflowSchemeReadResponse> read_workflow_schemes(workflow_scheme_read_request, expand)
+> Vec<models::WorkflowSchemeReadResponse> read_workflow_schemes(workflow_scheme_read_request)
 Bulk get workflow schemes
 
 Returns a list of workflow schemes by providing workflow scheme IDs or project IDs.  **[Permissions](#permissions) required:**   *  *Administer Jira* global permission to access all, including project-scoped, workflow schemes  *  *Administer projects* project permissions to access project-scoped workflow schemes
@@ -382,7 +382,6 @@ Returns a list of workflow schemes by providing workflow scheme IDs or project I
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **workflow_scheme_read_request** | [**WorkflowSchemeReadRequest**](WorkflowSchemeReadRequest.md) |  | [required] |
-**expand** | Option<**String**> | Deprecated. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/changelog/#CHANGE-2298) for details.  Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `workflows.usages` Returns the project and issue types that each workflow in the workflow scheme is associated with. |  |
 
 ### Return type
 

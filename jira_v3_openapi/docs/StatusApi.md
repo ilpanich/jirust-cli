@@ -142,7 +142,7 @@ Name | Type | Description  | Required | Notes
 
 ## get_statuses_by_id
 
-> Vec<models::JiraStatus> get_statuses_by_id(id, expand)
+> Vec<models::JiraStatus> get_statuses_by_id(id)
 Bulk get statuses
 
 Returns a list of the statuses specified by one or more status IDs.  **[Permissions](#permissions) required:**   *  *Administer projects* [project permission.](https://confluence.atlassian.com/x/yodKLg)  *  *Administer Jira* [project permission.](https://confluence.atlassian.com/x/yodKLg)
@@ -153,7 +153,6 @@ Returns a list of the statuses specified by one or more status IDs.  **[Permissi
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **id** | [**Vec<String>**](String.md) | The list of status IDs. To include multiple IDs, provide an ampersand-separated list. For example, id=10000&id=10001.  Min items `1`, Max items `50` | [required] |
-**expand** | Option<**String**> | Deprecated. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/changelog/#CHANGE-2298) for details.  Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `usages` Returns the project and issue types that use the status in their workflow.  *  `workflowUsages` Returns the workflows that use the status. |  |
 
 ### Return type
 
@@ -205,7 +204,7 @@ Name | Type | Description  | Required | Notes
 
 ## search
 
-> models::PageOfStatuses search(expand, project_id, start_at, max_results, search_string, status_category)
+> models::PageOfStatuses search(project_id, start_at, max_results, search_string, status_category)
 Search statuses paginated
 
 Returns a [paginated](https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/#pagination) list of statuses that match a search on name or project.  **[Permissions](#permissions) required:**   *  *Administer projects* [project permission.](https://confluence.atlassian.com/x/yodKLg)  *  *Administer Jira* [project permission.](https://confluence.atlassian.com/x/yodKLg)
@@ -215,7 +214,6 @@ Returns a [paginated](https://developer.atlassian.com/cloud/jira/platform/rest/v
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**expand** | Option<**String**> | Deprecated. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/changelog/#CHANGE-2298) for details.  Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include:   *  `usages` Returns the project and issue types that use the status in their workflow.  *  `workflowUsages` Returns the workflows that use the status. |  |
 **project_id** | Option<**String**> | The project the status is part of or null for global statuses. |  |
 **start_at** | Option<**i64**> | The index of the first item to return in a page of results (page offset). |  |[default to 0]
 **max_results** | Option<**i32**> | The maximum number of items to return per page. |  |[default to 200]

@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **description** | Option<**String**> | The description of the workflow scheme. | [optional]
 **id** | **String** | The ID of the workflow scheme. | 
 **name** | **String** | The name of the workflow scheme. | 
-**project_ids_using_scheme** | Option<**Vec<String>**> | Deprecated. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/changelog/#CHANGE-2298) for details.  The IDs of projects using the workflow scheme. | [optional]
 **scope** | [**models::WorkflowScope**](WorkflowScope.md) |  | 
 **task_id** | Option<**String**> | Indicates if there's an [asynchronous task](#async-operations) for this workflow scheme. | [optional]
 **version** | [**models::DocumentVersion**](DocumentVersion.md) |  | 

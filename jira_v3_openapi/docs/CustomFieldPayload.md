@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **name** | Option<**String**> | The name of the custom field | [optional]
 **on_conflict** | Option<**String**> | The strategy to use when there is a conflict with an existing custom field. FAIL - Fail execution, this always needs to be unique; USE - Use the existing entity and ignore new entity parameters | [optional]
 **pcri** | Option<[**models::ProjectCreateResourceIdentifier**](ProjectCreateResourceIdentifier.md)> |  | [optional]
+**scope** | Option<**String**> | Allows an overwrite to declare the new Custom Field to be created as a GLOBAL-scoped field. Leave this as empty or null to use the project's default scope. | [optional]
 **searcher_key** | Option<**String**> | The searcher key of the custom field | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

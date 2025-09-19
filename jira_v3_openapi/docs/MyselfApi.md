@@ -4,7 +4,6 @@ All URIs are relative to *https://your-domain.atlassian.net*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**delete_locale**](MyselfApi.md#delete_locale) | **DELETE** /rest/api/3/mypreferences/locale | Delete locale
 [**get_current_user**](MyselfApi.md#get_current_user) | **GET** /rest/api/3/myself | Get current user
 [**get_locale**](MyselfApi.md#get_locale) | **GET** /rest/api/3/mypreferences/locale | Get locale
 [**get_preference**](MyselfApi.md#get_preference) | **GET** /rest/api/3/mypreferences | Get preference
@@ -12,33 +11,6 @@ Method | HTTP request | Description
 [**set_locale**](MyselfApi.md#set_locale) | **PUT** /rest/api/3/mypreferences/locale | Set locale
 [**set_preference**](MyselfApi.md#set_preference) | **PUT** /rest/api/3/mypreferences | Set preference
 
-
-
-## delete_locale
-
-> serde_json::Value delete_locale()
-Delete locale
-
-Deprecated, use [ Update a user profile](https://developer.atlassian.com/cloud/admin/user-management/rest/#api-users-account-id-manage-profile-patch) from the user management REST API instead.  Deletes the locale of the user, which restores the default setting.  **[Permissions](#permissions) required:** Permission to access Jira.
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-[**serde_json::Value**](serde_json::Value.md)
-
-### Authorization
-
-[basicAuth](../README.md#basicAuth)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
 ## get_current_user

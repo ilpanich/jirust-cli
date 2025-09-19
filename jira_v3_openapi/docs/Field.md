@@ -17,6 +17,7 @@ Name | Type | Description | Notes
 **screens_count** | Option<**i64**> | Number of screens where the field is used. | [optional]
 **searcher_key** | Option<**String**> | The searcher key of the field. Returned for custom fields. | [optional]
 **stable_id** | Option<**String**> | The stable ID of the field. | [optional]
+**type_display_name** | Option<**String**> | The display name of the field type | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
