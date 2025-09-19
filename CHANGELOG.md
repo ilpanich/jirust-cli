@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.16.7] 2025-09-19
+### Changed
+- Improved tests coverage (with the help of Codex GPT-5)
+- Improved release build
+- Updated dependencies
+- Refactored tests modules
+
 ## [0.16.6] 2025-09-16
 ### Changed
 - Improved tests coverage (with the help of Codex GPT-5)
