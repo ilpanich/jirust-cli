@@ -27,6 +27,7 @@ jira-v3-openapi-spec/The\ Jira\ Cloud\ platform\ REST\ API\/**
 
 # Coverage report stuff
 coverage-reports/*
+build_rs_cov.profraw
 
 # Claude stuff
 .claude/*
