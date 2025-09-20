@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::args::commands::{OutputArgs, OutputTypes, OutputValues};
-    use crate::utils::PrintableData;
+    use crate::utils::{OutputType, PrintableData, print_data};
     use jira_v3_openapi::models::{
         CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition,
         IssueTypeIssueCreateMetadata, Project, Version,
@@ -321,5 +321,59 @@ mod tests {
             }
             _ => panic!("Expected Generic variant"),
         }
+    }
+
+    #[test]
+    fn test_output_type_from_variants() {
+        assert!(matches!(
+            OutputType::from(OutputTypes::Full),
+            OutputType::Full
+        ));
+        assert!(matches!(
+            OutputType::from(OutputTypes::Basic),
+            OutputType::Basic
+        ));
+        assert!(matches!(
+            OutputType::from(OutputTypes::Single),
+            OutputType::Single
+        ));
+    }
+
+    #[test]
+    fn test_print_data_dispatches_to_json() {
+        let payload = PrintableData::Generic {
+            data: vec![serde_json::json!({"key": "value"})],
+        };
+        print_data(payload, OutputValues::Json, OutputType::Full);
+    }
+
+    #[test]
+    fn test_print_data_dispatches_to_table_variants() {
+        let base_version = Version {
+            id: Some("100".to_string()),
+            name: Some("v1".to_string()),
+            ..Default::default()
+        };
+        print_data(
+            PrintableData::Version {
+                versions: vec![base_version.clone()],
+            },
+            OutputValues::Table,
+            OutputType::Full,
+        );
+        print_data(
+            PrintableData::Version {
+                versions: vec![base_version.clone()],
+            },
+            OutputValues::Table,
+            OutputType::Basic,
+        );
+        print_data(
+            PrintableData::Version {
+                versions: vec![base_version],
+            },
+            OutputValues::Table,
+            OutputType::Single,
+        );
     }
 }

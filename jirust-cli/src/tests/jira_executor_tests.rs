@@ -17,7 +17,11 @@ mod tests {
     use crate::runners::jira_cmd_runners::project_cmd_runner::MockProjectCmdRunnerApi;
     use crate::runners::jira_cmd_runners::version_cmd_runner::MockVersionCmdRunnerApi;
     use crate::utils::PrintableData;
-    use jira_v3_openapi::models::{IssueTransition, Transitions, Version, project::Project};
+    use jira_v3_openapi::apis::Error as JiraApiError;
+    use jira_v3_openapi::models::{
+        FieldCreateMetadata, IssueTransition, IssueTypeIssueCreateMetadata, Transitions, Version,
+        VersionRelatedWork, project::Project, project_identifiers::ProjectIdentifiers,
+    };
     use serde_json::json;
     use std::io::{Error as IoError, ErrorKind};
     use toml::Table;
@@ -301,6 +305,49 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_project_executor_list_error() {
+        let mut mock_runner = MockProjectCmdRunnerApi::new();
+        mock_runner.expect_list_jira_projects().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "no projects"))
+                as Box<dyn std::error::Error>)
+        });
+
+        let args = create_test_project_args();
+        let executor = ProjectExecutor::with_runner(mock_runner, ProjectActionValues::List, args);
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error listing projects")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_project_executor_create_success() {
+        let mut mock_runner = MockProjectCmdRunnerApi::new();
+        mock_runner.expect_create_jira_project().returning(|_| {
+            Ok(ProjectIdentifiers::new(
+                42,
+                "TEST".to_string(),
+                "url".to_string(),
+            ))
+        });
+
+        let mut args = create_test_project_args();
+        args.project_act = ProjectActionValues::Create;
+        let executor = ProjectExecutor::with_runner(mock_runner, ProjectActionValues::Create, args);
+
+        let result = executor.exec_jira_command().await.expect("create succeeds");
+        match result.first().expect("missing data") {
+            PrintableData::Project { projects } => {
+                assert_eq!(projects.len(), 1);
+                assert_eq!(projects[0].id.as_deref(), Some("42"));
+                assert_eq!(projects[0].key.as_deref(), Some("TEST"));
+            }
+            _ => panic!("expected project data"),
+        }
+    }
+
+    #[tokio::test]
     async fn test_project_executor_create_error() {
         let mut mock_runner = MockProjectCmdRunnerApi::new();
         mock_runner.expect_create_jira_project().returning(|_| {
@@ -335,6 +382,204 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_version_executor_create_success_with_transitions() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner.expect_create_jira_version().returning(|_| {
+            let mut version = Version::default();
+            version.id = Some("123".to_string());
+            Ok((
+                version,
+                Some(vec![(
+                    "ISSUE-1".to_string(),
+                    "Done".to_string(),
+                    "user".to_string(),
+                    "1.0.0".to_string(),
+                )]),
+            ))
+        });
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::Create;
+        let executor = VersionExecutor::with_runner(mock_runner, VersionActionValues::Create, args);
+
+        let result = executor.exec_jira_command().await.expect("create succeeds");
+        assert_eq!(result.len(), 2);
+        assert!(matches!(result[0], PrintableData::Version { .. }));
+        assert!(matches!(result[1], PrintableData::TransitionedIssue { .. }));
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_create_error() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner.expect_create_jira_version().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "boom")) as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::Create;
+        let executor = VersionExecutor::with_runner(mock_runner, VersionActionValues::Create, args);
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error creating version")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_update_success() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner.expect_get_jira_version().returning(|_| {
+            let mut version = Version::default();
+            version.id = Some("123".to_string());
+            Ok(version)
+        });
+        mock_runner.expect_update_jira_version().returning(|_| {
+            let mut updated = Version::default();
+            updated.name = Some("updated".to_string());
+            Ok(updated)
+        });
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::Update;
+        let executor = VersionExecutor::with_runner(mock_runner, VersionActionValues::Update, args);
+
+        let result = executor.exec_jira_command().await.expect("update succeeds");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::Version { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_update_error_on_get() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner.expect_get_jira_version().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "missing")) as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::Update;
+        let executor = VersionExecutor::with_runner(mock_runner, VersionActionValues::Update, args);
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error retrieving version")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_update_error_on_update() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner.expect_get_jira_version().returning(|_| {
+            let mut version = Version::default();
+            version.id = Some("123".to_string());
+            Ok(version)
+        });
+        mock_runner.expect_update_jira_version().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "nope")) as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::Update;
+        let executor = VersionExecutor::with_runner(mock_runner, VersionActionValues::Update, args);
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error updating version")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_project_executor_issue_types_success() {
+        let mut mock_runner = MockProjectCmdRunnerApi::new();
+        mock_runner
+            .expect_get_jira_project_issue_types()
+            .returning(|_| Ok(vec![IssueTypeIssueCreateMetadata::default()]));
+
+        let mut args = create_test_project_args();
+        args.project_act = ProjectActionValues::GetIssueTypes;
+        let executor =
+            ProjectExecutor::with_runner(mock_runner, ProjectActionValues::GetIssueTypes, args);
+
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("issue types succeed");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::IssueType { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_project_executor_issue_types_error() {
+        let mut mock_runner = MockProjectCmdRunnerApi::new();
+        mock_runner
+            .expect_get_jira_project_issue_types()
+            .returning(|_| {
+                Err(Box::new(IoError::new(ErrorKind::Other, "bad")) as Box<dyn std::error::Error>)
+            });
+
+        let mut args = create_test_project_args();
+        args.project_act = ProjectActionValues::GetIssueTypes;
+        let executor =
+            ProjectExecutor::with_runner(mock_runner, ProjectActionValues::GetIssueTypes, args);
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error listing issue types")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_project_executor_issue_type_fields_success() {
+        let mut mock_runner = MockProjectCmdRunnerApi::new();
+        mock_runner
+            .expect_get_jira_project_issue_type_id()
+            .returning(|_| Ok(vec![FieldCreateMetadata::default()]));
+
+        let mut args = create_test_project_args();
+        args.project_act = ProjectActionValues::GetIssueTypeFields;
+        let executor = ProjectExecutor::with_runner(
+            mock_runner,
+            ProjectActionValues::GetIssueTypeFields,
+            args,
+        );
+
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("issue type fields succeed");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::IssueTypeField { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_project_executor_issue_type_fields_error() {
+        let mut mock_runner = MockProjectCmdRunnerApi::new();
+        mock_runner
+            .expect_get_jira_project_issue_type_id()
+            .returning(|_| {
+                Err(Box::new(IoError::new(ErrorKind::Other, "fail")) as Box<dyn std::error::Error>)
+            });
+
+        let mut args = create_test_project_args();
+        args.project_act = ProjectActionValues::GetIssueTypeFields;
+        let executor = ProjectExecutor::with_runner(
+            mock_runner,
+            ProjectActionValues::GetIssueTypeFields,
+            args,
+        );
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error listing issue type fields")),
+        }
+    }
+
+    #[tokio::test]
     async fn test_version_executor_delete_error() {
         let mut mock_runner = MockVersionCmdRunnerApi::new();
         mock_runner.expect_delete_jira_version().returning(|_| {
@@ -348,6 +593,131 @@ mod tests {
         match executor.exec_jira_command().await {
             Ok(_) => panic!("expected error, got success"),
             Err(err) => assert!(err.to_string().contains("Error deleting version")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_release_success() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner.expect_get_jira_version().returning(|_| {
+            let mut version = Version::default();
+            version.id = Some("123".to_string());
+            Ok(version)
+        });
+        mock_runner.expect_update_jira_version().returning(|_| {
+            let mut released = Version::default();
+            released.released = Some(true);
+            Ok(released)
+        });
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::Release;
+        let executor =
+            VersionExecutor::with_runner(mock_runner, VersionActionValues::Release, args);
+
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("release succeeds");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::Version { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_release_error_on_update() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner.expect_get_jira_version().returning(|_| {
+            let mut version = Version::default();
+            version.id = Some("123".to_string());
+            Ok(version)
+        });
+        mock_runner.expect_update_jira_version().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "transition fail"))
+                as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::Release;
+        let executor =
+            VersionExecutor::with_runner(mock_runner, VersionActionValues::Release, args);
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error releasing version")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_archive_success() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner.expect_get_jira_version().returning(|_| {
+            let mut version = Version::default();
+            version.id = Some("123".to_string());
+            Ok(version)
+        });
+        mock_runner.expect_update_jira_version().returning(|_| {
+            let mut archived = Version::default();
+            archived.archived = Some(true);
+            Ok(archived)
+        });
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::Archive;
+        let executor =
+            VersionExecutor::with_runner(mock_runner, VersionActionValues::Archive, args);
+
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("archive succeeds");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::Version { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_related_work_success() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner
+            .expect_get_jira_version_related_work()
+            .returning(|_| Ok(vec![VersionRelatedWork::default()]));
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::RelatedWorkItems;
+        let executor =
+            VersionExecutor::with_runner(mock_runner, VersionActionValues::RelatedWorkItems, args);
+
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("related work succeeds");
+        assert!(matches!(
+            result.first(),
+            Some(PrintableData::VersionRelatedWork { .. })
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_version_executor_related_work_error() {
+        let mut mock_runner = MockVersionCmdRunnerApi::new();
+        mock_runner
+            .expect_get_jira_version_related_work()
+            .returning(|_| Err(JiraApiError::from(IoError::new(ErrorKind::Other, "fail"))));
+
+        let mut args = create_test_version_args();
+        args.version_act = VersionActionValues::RelatedWorkItems;
+        let executor =
+            VersionExecutor::with_runner(mock_runner, VersionActionValues::RelatedWorkItems, args);
+
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(
+                err.to_string()
+                    .contains("Error listing version Related Workitems")
+            ),
         }
     }
 
