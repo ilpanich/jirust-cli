@@ -153,13 +153,13 @@ mod issue_search_api_signatures {
     use jira_v3_openapi::models;
 
     #[test]
-    fn search_for_issues_using_jql_post_signature_is_stable() {
+    fn search_and_reconsile_issues_using_jql_post_signature_is_stable() {
         fn assert_future<Fut>(future: Fut)
         where
             Fut: Future<
                 Output = std::result::Result<
-                    models::SearchResults,
-                    apis::Error<issue_search_api::SearchForIssuesUsingJqlPostError>,
+                    models::SearchAndReconcileResults,
+                    apis::Error<issue_search_api::SearchAndReconsileIssuesUsingJqlPostError>,
                 >,
             >,
         {
@@ -167,10 +167,8 @@ mod issue_search_api_signatures {
         }
 
         let cfg = configuration::Configuration::new();
-        let request: models::SearchRequestBean = Default::default();
-        assert_future(issue_search_api::search_for_issues_using_jql_post(
-            &cfg, request,
-        ));
+        let request: models::SearchAndReconcileRequestBean = Default::default();
+        assert_future(issue_search_api::search_and_reconsile_issues_using_jql_post(&cfg, request));
     }
 }
 

@@ -48,6 +48,7 @@ pub enum SearchAndReconsileIssuesUsingJqlError {
 }
 
 /// struct for typed errors of method [`search_and_reconsile_issues_using_jql_post`]
+#[cfg(feature = "issues_api")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum SearchAndReconsileIssuesUsingJqlPostError {
@@ -66,7 +67,6 @@ pub enum SearchForIssuesUsingJqlError {
 }
 
 /// struct for typed errors of method [`search_for_issues_using_jql_post`]
-#[cfg(feature = "issues_api")]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum SearchForIssuesUsingJqlPostError {
@@ -392,6 +392,7 @@ pub async fn search_and_reconsile_issues_using_jql(
 }
 
 /// Searches for issues using [JQL](https://confluence.atlassian.com/x/egORLQ). Recent updates might not be immediately visible in the returned search results. If you need [read-after-write](https://developer.atlassian.com/cloud/jira/platform/search-and-reconcile/) consistency, you can utilize the `reconcileIssues` parameter to ensure stronger consistency assurances. This operation can be accessed anonymously.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
+#[cfg(feature = "issues_api")]
 pub async fn search_and_reconsile_issues_using_jql_post(
     configuration: &configuration::Configuration,
     search_and_reconcile_request_bean: models::SearchAndReconcileRequestBean,
@@ -563,7 +564,6 @@ pub async fn search_for_issues_using_jql(
 }
 
 /// Endpoint is currently being removed. [More details](https://developer.atlassian.com/changelog/#CHANGE-2046)  Searches for issues using [JQL](https://confluence.atlassian.com/x/egORLQ).  There is a [GET](#api-rest-api-3-search-get) version of this resource that can be used for smaller JQL query expressions.  This operation can be accessed anonymously.  **[Permissions](#permissions) required:** Issues are included in the response where the user has:   *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue.  *  If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.
-#[cfg(feature = "issues_api")]
 pub async fn search_for_issues_using_jql_post(
     configuration: &configuration::Configuration,
     search_request_bean: models::SearchRequestBean,
