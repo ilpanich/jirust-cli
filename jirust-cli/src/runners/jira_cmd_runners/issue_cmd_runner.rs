@@ -1,9 +1,9 @@
 use async_trait::async_trait;
-use jira_v3_openapi::apis::issue_search_api::search_for_issues_using_jql_post;
+use jira_v3_openapi::apis::issue_search_api::search_and_reconsile_issues_using_jql_post;
 use jira_v3_openapi::apis::issues_api::*;
 use jira_v3_openapi::models::user::AccountType;
 use jira_v3_openapi::models::{
-    CreatedIssue, IssueBean, IssueTransition, SearchRequestBean, Transitions, User,
+    CreatedIssue, IssueBean, IssueTransition, SearchAndReconcileRequestBean, Transitions, User,
 };
 use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDetails};
 use serde_json::Value;
@@ -290,11 +290,12 @@ impl IssueCmdRunner {
         &self,
         params: IssueCmdParams,
     ) -> Result<Vec<IssueBean>, Box<dyn std::error::Error>> {
-        let search_params: SearchRequestBean = SearchRequestBean {
+        let search_params: SearchAndReconcileRequestBean = SearchAndReconcileRequestBean {
+            fields: Some(vec!["*navigable".to_string(), "-comment".to_string()]),
             jql: params.query,
             ..Default::default()
         };
-        match search_for_issues_using_jql_post(&self.cfg, search_params).await {
+        match search_and_reconsile_issues_using_jql_post(&self.cfg, search_params).await {
             Ok(result) => {
                 if let Some(issues) = result.issues {
                     Ok(issues)
