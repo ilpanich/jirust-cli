@@ -927,7 +927,7 @@ dependencies = [
 
 [[package]]
 name = "jirust-cli"
-version = "0.16.8"
+version = "0.16.9"
 dependencies = [
  "async-trait",
  "base64",
