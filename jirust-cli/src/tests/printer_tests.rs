@@ -6,8 +6,8 @@ mod tests {
         table_printer::{print_table_basic, print_table_full, print_table_single},
     };
     use jira_v3_openapi::models::{
-        CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition,
-        IssueTypeIssueCreateMetadata, Project, ProjectCategory, Version, VersionRelatedWork,
+        CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition, IssueTypeIssueCreateMetadata,
+        JsonTypeBean, Project, ProjectCategory, Version, VersionRelatedWork,
     };
     use serde_json::json;
     use std::collections::HashMap;
@@ -151,6 +151,67 @@ mod tests {
 
         let printable = PrintableData::TransitionedIssue { issues };
         print_json(printable);
+        assert!(true);
+    }
+
+    #[test]
+    fn test_json_printer_issue_type_variants() {
+        let mut issue_type = IssueTypeIssueCreateMetadata::default();
+        issue_type.id = Some("123".to_string());
+        issue_type.name = Some("Bug".to_string());
+
+        let field = FieldCreateMetadata::new(
+            "customfield_10000".to_string(),
+            "customfield_10000".to_string(),
+            "Summary".to_string(),
+            vec!["set".to_string()],
+            true,
+            JsonTypeBean::new("string".to_string()),
+        );
+
+        let printable_issue_types = PrintableData::IssueType {
+            issue_types: vec![issue_type.clone()],
+        };
+        print_json(printable_issue_types);
+
+        let printable_fields = PrintableData::IssueTypeField {
+            issue_type_fields: vec![field.clone()],
+        };
+        print_json(printable_fields);
+
+        // Exercise variant again with empty vectors to ensure no panics
+        print_json(PrintableData::IssueType { issue_types: vec![] });
+        print_json(PrintableData::IssueTypeField {
+            issue_type_fields: vec![],
+        });
+
+        assert!(true);
+    }
+
+    #[test]
+    fn test_json_printer_project_version_related_work_variants() {
+        let mut project = Project::default();
+        project.id = Some("1000".to_string());
+        project.key = Some("PRJ".to_string());
+        project.name = Some("Project".to_string());
+
+        let mut version = Version::default();
+        version.id = Some("2000".to_string());
+        version.name = Some("1.0.0".to_string());
+
+        let mut related_work = VersionRelatedWork::new("ReleaseNotes".to_string());
+        related_work.title = Some("Release notes".to_string());
+
+        print_json(PrintableData::Project {
+            projects: vec![project.clone()],
+        });
+        print_json(PrintableData::Version {
+            versions: vec![version.clone()],
+        });
+        print_json(PrintableData::VersionRelatedWork {
+            version_related_work_items: vec![related_work.clone()],
+        });
+
         assert!(true);
     }
 

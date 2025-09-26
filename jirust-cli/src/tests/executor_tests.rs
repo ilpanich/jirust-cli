@@ -4,7 +4,9 @@ mod tests {
     use crate::config::config_file::ConfigFile;
     use crate::executors::config_executor::ConfigExecutor;
     use crate::utils::PrintableData;
+    use std::fs::{self, File};
     use toml::Table;
+    use tempfile::tempdir;
 
     fn create_test_config() -> ConfigFile {
         ConfigFile::new(
@@ -139,5 +141,96 @@ mod tests {
         ];
 
         assert_eq!(executors.len(), 4);
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn test_config_executor_auth_error_when_file_not_writable() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = tempdir().expect("create temp dir");
+        let config_path = temp_dir.path().join("readonly.toml");
+        File::create(&config_path).expect("seed file");
+        let mut perms = fs::metadata(&config_path)
+            .expect("metadata")
+            .permissions();
+        perms.set_mode(0o400);
+        fs::set_permissions(&config_path, perms).expect("set permissions");
+
+        let executor = ConfigExecutor::new(
+            config_path.to_string_lossy().to_string(),
+            ConfigActionValues::Auth,
+        );
+
+        let result = executor.exec_config_command(ConfigFile::default()).await;
+        match result {
+            Ok(_) => panic!("expected authentication error"),
+            Err(err) => {
+                assert!(err
+                    .to_string()
+                    .contains("Error storing authentication configuration"));
+            }
+        }
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn test_config_executor_jira_error_when_file_not_writable() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = tempdir().expect("create temp dir");
+        let config_path = temp_dir.path().join("readonly_jira.toml");
+        File::create(&config_path).expect("seed file");
+        let mut perms = fs::metadata(&config_path)
+            .expect("metadata")
+            .permissions();
+        perms.set_mode(0o400);
+        fs::set_permissions(&config_path, perms).expect("set permissions");
+
+        let executor = ConfigExecutor::new(
+            config_path.to_string_lossy().to_string(),
+            ConfigActionValues::Jira,
+        );
+
+        let result = executor.exec_config_command(ConfigFile::default()).await;
+        match result {
+            Ok(_) => panic!("expected initialization error"),
+            Err(err) => {
+                assert!(err
+                    .to_string()
+                    .contains("Error storing initialization configuration"));
+            }
+        }
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn test_config_executor_setup_error_when_directory_not_writable() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = tempdir().expect("create temp dir");
+        let blocked_dir = temp_dir.path().join("blocked");
+        fs::create_dir(&blocked_dir).expect("create blocked dir");
+        let mut perms = fs::metadata(&blocked_dir)
+            .expect("metadata")
+            .permissions();
+        perms.set_mode(0o500);
+        fs::set_permissions(&blocked_dir, perms).expect("set permissions");
+        let config_path = blocked_dir.join("config.toml");
+
+        let executor = ConfigExecutor::new(
+            config_path.to_string_lossy().to_string(),
+            ConfigActionValues::Setup,
+        );
+
+        let result = executor.exec_config_command(ConfigFile::default()).await;
+        match result {
+            Ok(_) => panic!("expected setup error"),
+            Err(err) => {
+                assert!(
+                    err.to_string().contains("Error setting up configuration")
+                );
+            }
+        }
     }
 }

@@ -19,8 +19,9 @@ mod tests {
     use crate::utils::PrintableData;
     use jira_v3_openapi::apis::Error as JiraApiError;
     use jira_v3_openapi::models::{
-        FieldCreateMetadata, IssueTransition, IssueTypeIssueCreateMetadata, Transitions, Version,
-        VersionRelatedWork, project::Project, project_identifiers::ProjectIdentifiers,
+        CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition, IssueTypeIssueCreateMetadata,
+        Transitions, Version, VersionRelatedWork, project::Project,
+        project_identifiers::ProjectIdentifiers,
     };
     use serde_json::json;
     use std::io::{Error as IoError, ErrorKind};
@@ -284,6 +285,296 @@ mod tests {
         match executor.exec_jira_command().await {
             Ok(_) => panic!("expected error, got success"),
             Err(err) => assert!(err.to_string().contains("Error retrieving issue")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_get_success() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_get_jira_issue().returning(|params| {
+            assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
+            let mut issue = IssueBean::default();
+            issue.id = Some("10001".to_string());
+            issue.key = Some("TEST-123".to_string());
+            Ok(issue)
+        });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Get;
+        args.issue_key = Some("TEST-123".to_string());
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Get, args);
+        let result = executor.exec_jira_command().await.expect("get succeeds");
+        match result.first().expect("missing printable data") {
+            PrintableData::IssueData { issues } => {
+                assert_eq!(issues.len(), 1);
+                assert_eq!(issues[0].key.as_deref(), Some("TEST-123"));
+            }
+            _ => panic!("unexpected printable variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_create_success() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_create_jira_issue().returning(|params| {
+            assert_eq!(params.project_key.as_deref(), Some("TEST"));
+            let mut issue = CreatedIssue::default();
+            issue.id = Some("10001".to_string());
+            issue.key = Some("TEST-123".to_string());
+            Ok(issue)
+        });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Create;
+        args.issue_key = Some("TEST-123".to_string());
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Create, args);
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("create succeeds");
+
+        match result.first().expect("missing printable data") {
+            PrintableData::IssueCreated { issues } => {
+                assert_eq!(issues.len(), 1);
+                assert_eq!(issues[0].key.as_deref(), Some("TEST-123"));
+            }
+            _ => panic!("unexpected printable variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_create_error() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_create_jira_issue().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "cannot create"))
+                as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Create;
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Create, args);
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error creating issue")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_delete_success() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner
+            .expect_delete_jira_issue()
+            .returning(|params| {
+                assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
+                Ok(())
+            });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Delete;
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Delete, args);
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("delete succeeds");
+
+        match result.first().expect("missing printable data") {
+            PrintableData::Generic { data } => {
+                assert_eq!(
+                    data,
+                    &vec![serde_json::Value::String(
+                        "Issue deleted successfully".to_string()
+                    )]
+                );
+            }
+            _ => panic!("unexpected printable variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_delete_error() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_delete_jira_issue().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "cannot delete"))
+                as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Delete;
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Delete, args);
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error deleting issue")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_search_success() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner
+            .expect_search_jira_issues()
+            .returning(|params| {
+                assert_eq!(params.project_key.as_deref(), Some("TEST"));
+                let mut issue = IssueBean::default();
+                issue.key = Some("TEST-999".to_string());
+                Ok(vec![issue])
+            });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Search;
+        args.query = Some("project = TEST".to_string());
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Search, args);
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("search succeeds");
+
+        match result.first().expect("missing printable data") {
+            PrintableData::IssueData { issues } => {
+                assert_eq!(issues.len(), 1);
+                assert_eq!(issues[0].key.as_deref(), Some("TEST-999"));
+            }
+            _ => panic!("unexpected printable variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_search_error() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_search_jira_issues().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "cannot search"))
+                as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Search;
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Search, args);
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error searching issues")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_transition_success() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner
+            .expect_transition_jira_issue()
+            .returning(|params| {
+                assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
+                Ok(json!({"status": "transitioned"}))
+            });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Transition;
+        args.transition_to = Some("Done".to_string());
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Transition, args);
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("transition succeeds");
+
+        match result.first().expect("missing printable data") {
+            PrintableData::Generic { data } => {
+                assert_eq!(
+                    data,
+                    &vec![serde_json::Value::String(
+                        "Issue transitioned successfully".to_string()
+                    )]
+                );
+            }
+            _ => panic!("unexpected printable variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_transition_error() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_transition_jira_issue().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "cannot transition"))
+                as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Transition;
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Transition, args);
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error transitioning issue")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_update_success() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_update_jira_issue().returning(|params| {
+            assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
+            Ok(json!({"status": "updated"}))
+        });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Update;
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Update, args);
+        let result = executor
+            .exec_jira_command()
+            .await
+            .expect("update succeeds");
+
+        match result.first().expect("missing printable data") {
+            PrintableData::Generic { data } => {
+                assert_eq!(
+                    data,
+                    &vec![serde_json::Value::String(
+                        "Issue updated successfully".to_string()
+                    )]
+                );
+            }
+            _ => panic!("unexpected printable variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_update_error() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_update_jira_issue().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "cannot update"))
+                as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Update;
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Update, args);
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error updating issue")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_assign_error() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner.expect_assign_jira_issue().returning(|_| {
+            Err(Box::new(IoError::new(ErrorKind::Other, "cannot assign"))
+                as Box<dyn std::error::Error>)
+        });
+
+        let mut args = create_test_issue_args();
+        args.issue_act = IssueActionValues::Assign;
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Assign, args);
+        match executor.exec_jira_command().await {
+            Ok(_) => panic!("expected error, got success"),
+            Err(err) => assert!(err.to_string().contains("Error assigning issue")),
         }
     }
 

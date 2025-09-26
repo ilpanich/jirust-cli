@@ -5,7 +5,22 @@ mod tests {
     use crate::utils::PrintableData;
     use jira_v3_openapi::models::{CreatedIssue, Project, Version};
     use serde_json;
+    use std::env;
+    use std::process::Command;
+    use tempfile::tempdir;
     use toml::{Table, Value};
+
+    fn cli_binary_path() -> std::path::PathBuf {
+        let mut binary_path = env::current_exe().expect("test exe path");
+        binary_path.pop();
+        binary_path.pop();
+        binary_path.push(if cfg!(windows) {
+            "jirust-cli.exe"
+        } else {
+            "jirust-cli"
+        });
+        binary_path
+    }
 
     #[test]
     fn test_end_to_end_config_creation() {
@@ -331,5 +346,80 @@ mod tests {
         assert_eq!(config.get_jira_url(), "https://initial.atlassian.net");
         assert_eq!(config.get_standard_resolution(), "Fixed");
         assert!(config.get_transition_name("fix").is_some());
+    }
+
+    #[test]
+    fn test_cli_config_show_command_executes_via_main() {
+        let home_dir = tempdir().expect("create temp home");
+        let config_dir = home_dir.path().join(".jirust-cli");
+        std::fs::create_dir_all(&config_dir).expect("create config dir");
+        let config_path = config_dir.join("jirust-cli.toml");
+
+        let auth = AuthData::new("user".to_string(), "token".to_string()).to_base64();
+        let config = ConfigFile::new(
+            auth,
+            "http://127.0.0.1:0".to_string(),
+            "Done".to_string(),
+            "Completed".to_string(),
+            Table::new(),
+        );
+        config
+            .write_to_file(config_path.to_str().expect("config path"))
+            .expect("write config file");
+
+        let output = Command::new(cli_binary_path())
+            .arg("config")
+            .arg("show")
+            .env("HOME", home_dir.path())
+            .output()
+            .expect("run cli binary");
+
+        assert!(output.status.success());
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        assert!(stdout.contains("DONE!"));
+    }
+
+    #[test]
+    fn test_cli_config_show_without_home_env_uses_relative_path() {
+        let working_dir = tempdir().expect("create temp dir");
+        let relative_dir = working_dir.path().join(".jirust-cli");
+        std::fs::create_dir_all(&relative_dir).expect("create relative config dir");
+        let config_path = relative_dir.join("jirust-cli.toml");
+
+        let auth = AuthData::new("user".to_string(), "token".to_string()).to_base64();
+        let config = ConfigFile::new(
+            auth,
+            "http://127.0.0.1:0".to_string(),
+            "Done".to_string(),
+            "Completed".to_string(),
+            Table::new(),
+        );
+        config
+            .write_to_file(config_path.to_str().expect("config path"))
+            .expect("write config file");
+
+        let output = Command::new(cli_binary_path())
+            .arg("config")
+            .arg("show")
+            .current_dir(working_dir.path())
+            .env_remove("HOME")
+            .output()
+            .expect("run cli binary");
+
+        assert!(output.status.success());
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        assert!(stdout.contains("DONE!"));
+    }
+
+    #[test]
+    fn test_cli_reports_parse_error_for_unknown_flag() {
+        let output = Command::new(cli_binary_path())
+            .arg("--definitely-invalid-flag")
+            .output()
+            .expect("run cli binary");
+
+        assert!(!output.status.success());
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(stderr.to_lowercase().contains("error"));
     }
 }
