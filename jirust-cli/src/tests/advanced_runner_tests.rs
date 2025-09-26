@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod advanced_runner_tests {
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{AuthData, ConfigFile};
     use crate::runners::jira_cmd_runners::{
         issue_cmd_runner::{IssueCmdRunner, IssueCmdParams, IssueTransitionCmdParams},
         project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams},
@@ -16,6 +16,8 @@ mod advanced_runner_tests {
     use serde_json::Value;
     use std::collections::HashMap;
     use toml::Table;
+    use tempfile::NamedTempFile;
+    use std::io::Write;
 
     // Test utilities
     fn create_test_config() -> ConfigFile {
@@ -166,7 +168,7 @@ mod advanced_runner_tests {
     async fn test_project_runner_create_with_all_fields() {
         let config = create_test_config();
         let runner = ProjectCmdRunner::new(&config);
-        
+
         let params = ProjectCmdParams {
             project_key: Some("NEWPROJ".to_string()),
             project_issue_type: Some("Task".to_string()),
@@ -454,6 +456,94 @@ mod advanced_runner_tests {
         assert_eq!(params.link_type, "Clones");
     }
 
+    #[tokio::test]
+    async fn test_link_issue_runner_with_direct_destination() {
+        let auth = AuthData::new("user".to_string(), "token".to_string()).to_base64();
+        let config = ConfigFile::new(
+            auth,
+            "http://127.0.0.1:0".to_string(),
+            "{}".to_string(),
+            "{}".to_string(),
+            Table::new(),
+        );
+
+        let runner = LinkIssueCmdRunner::new(&config);
+        let params = LinkIssueCmdParams {
+            project_key: None,
+            origin_issue_key: "SRC-1".to_string(),
+            destination_issue_key: Some("DST-2".to_string()),
+            link_type: "Relates".to_string(),
+            changelog_file: None,
+        };
+
+        let result = runner
+            .link_jira_issues(params)
+            .await
+            .expect("link operation returns a value");
+        assert_eq!(result, Value::String("Linking KO".to_string()));
+    }
+
+    #[tokio::test]
+    async fn test_link_issue_runner_with_changelog_extraction() {
+        let auth = AuthData::new("user".to_string(), "token".to_string()).to_base64();
+        let config = ConfigFile::new(
+            auth,
+            "http://127.0.0.1:0".to_string(),
+            "{}".to_string(),
+            "{}".to_string(),
+            Table::new(),
+        );
+
+        let runner = LinkIssueCmdRunner::new(&config);
+
+        let mut changelog = NamedTempFile::new().expect("create changelog file");
+        writeln!(
+            changelog,
+            "## [1.2.3] 2024-01-01\n- Fixed TEST-101\n- Resolved TEST-202\n\n## [1.2.2] 2023-12-01\n- Previous notes"
+        )
+        .expect("write changelog");
+
+        let params = LinkIssueCmdParams {
+            project_key: Some("TEST".to_string()),
+            origin_issue_key: "SRC-99".to_string(),
+            destination_issue_key: None,
+            link_type: "Blocks".to_string(),
+            changelog_file: Some(changelog.path().display().to_string()),
+        };
+
+        let result = runner
+            .link_jira_issues(params)
+            .await
+            .expect("link operation completes");
+        assert_eq!(result, Value::String("Linking KO".to_string()));
+    }
+
+    #[tokio::test]
+    async fn test_link_issue_runner_error_without_project_key() {
+        let auth = AuthData::new("user".to_string(), "token".to_string()).to_base64();
+        let config = ConfigFile::new(
+            auth,
+            "http://127.0.0.1:0".to_string(),
+            "{}".to_string(),
+            "{}".to_string(),
+            Table::new(),
+        );
+
+        let runner = LinkIssueCmdRunner::new(&config);
+        let params = LinkIssueCmdParams {
+            project_key: None,
+            origin_issue_key: "SRC-1".to_string(),
+            destination_issue_key: None,
+            link_type: "Blocks".to_string(),
+            changelog_file: None,
+        };
+
+        let err = runner.link_jira_issues(params).await.expect_err("should fail");
+        assert!(err
+            .to_string()
+            .contains("Error linking issues: Empty project key"));
+    }
+
     // ===== COMPREHENSIVE DEFAULT AND FROM TRAIT TESTS =====
 
     #[test]
@@ -500,6 +590,130 @@ mod advanced_runner_tests {
         let link_params = LinkIssueCmdParams::new();
         assert_eq!(link_params.origin_issue_key, "");
         assert_eq!(link_params.link_type, "");
+    }
+
+    #[test]
+    fn test_version_cmd_params_merge_args_variants() {
+        let mut current_version = Version::default();
+        current_version.id = Some("123".to_string());
+        current_version.project_id = Some(101);
+        current_version.project = Some("TEST".to_string());
+        current_version.name = Some("1.0.0".to_string());
+        current_version.description = Some("Current description".to_string());
+        current_version.start_date = Some("2024-01-01".to_string());
+        current_version.release_date = Some("2024-02-01".to_string());
+        current_version.archived = Some(false);
+        current_version.released = Some(false);
+
+        let version_args = VersionArgs {
+            version_act: VersionActionValues::Update,
+            project_key: "DIFF".to_string(),
+            project_id: Some(202),
+            version_id: Some("999".to_string()),
+            version_name: Some("2.0.0".to_string()),
+            version_description: Some("Override description".to_string()),
+            version_start_date: Some("2025-01-10".to_string()),
+            version_release_date: Some("2025-02-20".to_string()),
+            version_archived: Some(true),
+            version_released: Some(true),
+            changelog_file: Some("CHANGELOG.md".to_string()),
+            transition_issues: Some(true),
+            transition_assignee: Some("user-123".to_string()),
+            pagination: PaginationArgs {
+                page_size: Some(50),
+                page_offset: Some(5),
+            },
+            output: OutputArgs {
+                output_format: Some(OutputValues::Json),
+                output_type: Some(OutputTypes::Full),
+            },
+        };
+
+        let merged = VersionCmdParams::merge_args(current_version.clone(), Some(&version_args));
+        assert_eq!(merged.project, "TEST");
+        assert_eq!(merged.project_id, Some(101));
+        assert_eq!(merged.version_id, Some("123".to_string()));
+        assert_eq!(merged.version_name, Some("2.0.0".to_string()));
+        assert_eq!(
+            merged.version_description,
+            Some("Override description".to_string())
+        );
+        assert_eq!(merged.version_start_date, Some("2025-01-10".to_string()));
+        assert_eq!(merged.version_release_date, Some("2025-02-20".to_string()));
+        assert_eq!(merged.version_archived, Some(true));
+        assert_eq!(merged.version_released, Some(true));
+        assert!(merged.transition_assignee.is_none());
+        assert!(merged.transition_issues.is_none());
+
+        let merged_without_args = VersionCmdParams::merge_args(current_version.clone(), None);
+        assert_eq!(merged_without_args.project, "TEST");
+        assert_eq!(merged_without_args.project_id, Some(101));
+        assert_eq!(merged_without_args.version_id, Some("123".to_string()));
+        assert_eq!(merged_without_args.version_name, Some("1.0.0".to_string()));
+        assert_eq!(
+            merged_without_args.version_description,
+            Some("Current description".to_string())
+        );
+        assert_eq!(merged_without_args.version_start_date, Some("2024-01-01".to_string()));
+        assert_eq!(merged_without_args.version_release_date, Some("2024-02-01".to_string()));
+        assert_eq!(merged_without_args.version_archived, Some(false));
+        assert_eq!(merged_without_args.version_released, Some(false));
+
+        let merged_default = VersionCmdParams::merge_args(Version::default(), None);
+        assert_eq!(merged_default.project, "");
+        assert!(merged_default.version_id.is_none());
+    }
+
+    #[test]
+    fn test_version_cmd_params_mark_helpers_and_from() {
+        let mut version = Version::default();
+        version.id = Some("321".to_string());
+        version.project = Some("HELPER".to_string());
+        version.project_id = Some(303);
+        version.name = Some("0.1.0".to_string());
+
+        let released = VersionCmdParams::mark_released(version.clone());
+        assert_eq!(released.version_released, Some(true));
+        assert!(released.version_release_date.is_some());
+
+        let archived = VersionCmdParams::mark_archived(version.clone());
+        assert_eq!(archived.version_archived, Some(true));
+        assert_eq!(archived.version_id, version.id);
+
+        let version_args = VersionArgs {
+            version_act: VersionActionValues::List,
+            project_key: "PARAM".to_string(),
+            project_id: Some(404),
+            version_id: Some("555".to_string()),
+            version_name: Some("3.0.0".to_string()),
+            version_description: Some("From args".to_string()),
+            version_start_date: None,
+            version_release_date: None,
+            version_archived: None,
+            version_released: None,
+            changelog_file: None,
+            transition_issues: Some(false),
+            transition_assignee: Some("assistant".to_string()),
+            pagination: PaginationArgs {
+                page_size: Some(20),
+                page_offset: Some(2),
+            },
+            output: OutputArgs {
+                output_format: None,
+                output_type: None,
+            },
+        };
+
+        let params = VersionCmdParams::from(&version_args);
+        assert_eq!(params.project, "PARAM".to_string());
+        assert_eq!(params.project_id, Some(404));
+        assert_eq!(params.version_id, Some("555".to_string()));
+        assert_eq!(params.version_name, Some("3.0.0".to_string()));
+        assert!(params.version_start_date.is_some());
+        assert_eq!(params.versions_page_size, Some(20));
+        assert_eq!(params.versions_page_offset, Some(2));
+        assert_eq!(params.transition_assignee, Some("assistant".to_string()));
+        assert_eq!(params.transition_issues, Some(false));
     }
 
     // ===== RUNNER CONFIGURATION EDGE CASES =====
@@ -642,6 +856,33 @@ mod advanced_runner_tests {
         let results: Vec<_> = handles.into_iter().map(|h| h.join().unwrap()).collect();
         assert_eq!(results.len(), 100);
         assert_eq!(results[99], 99); // Last thread returned correct ID
+    }
+
+    #[tokio::test]
+    async fn test_project_runner_create_errors_on_missing_key() {
+        let config = create_test_config();
+        let runner = ProjectCmdRunner::new(&config);
+        let params = ProjectCmdParams::new();
+
+        let err = runner
+            .create_jira_project(params)
+            .await
+            .expect_err("missing key should error");
+        assert!(err.to_string().contains("Empty project key"));
+    }
+
+    #[tokio::test]
+    async fn test_project_runner_create_errors_on_missing_name() {
+        let config = create_test_config();
+        let runner = ProjectCmdRunner::new(&config);
+        let mut params = ProjectCmdParams::new();
+        params.project_key = Some("TEST".to_string());
+
+        let err = runner
+            .create_jira_project(params)
+            .await
+            .expect_err("missing name should error");
+        assert!(err.to_string().contains("Empty project name"));
     }
 
     // ===== CONFIGURATION SERIALIZATION TESTS =====
