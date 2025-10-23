@@ -9,6 +9,7 @@ Method | HTTP request | Description
 [**get_project_issue_type_usages_for_status**](StatusApi.md#get_project_issue_type_usages_for_status) | **GET** /rest/api/3/statuses/{statusId}/project/{projectId}/issueTypeUsages | Get issue type usages by status and project
 [**get_project_usages_for_status**](StatusApi.md#get_project_usages_for_status) | **GET** /rest/api/3/statuses/{statusId}/projectUsages | Get project usages by status
 [**get_statuses_by_id**](StatusApi.md#get_statuses_by_id) | **GET** /rest/api/3/statuses | Bulk get statuses
+[**get_statuses_by_name**](StatusApi.md#get_statuses_by_name) | **GET** /rest/api/3/statuses/byNames | Bulk get statuses by name
 [**get_workflow_usages_for_status**](StatusApi.md#get_workflow_usages_for_status) | **GET** /rest/api/3/statuses/{statusId}/workflowUsages | Get workflow usages by status
 [**search**](StatusApi.md#search) | **GET** /rest/api/3/statuses/search | Search statuses paginated
 [**update_statuses**](StatusApi.md#update_statuses) | **PUT** /rest/api/3/statuses | Bulk update statuses
@@ -153,6 +154,37 @@ Returns a list of the statuses specified by one or more status IDs.  **[Permissi
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **id** | [**Vec<String>**](String.md) | The list of status IDs. To include multiple IDs, provide an ampersand-separated list. For example, id=10000&id=10001.  Min items `1`, Max items `50` | [required] |
+
+### Return type
+
+[**Vec<models::JiraStatus>**](JiraStatus.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## get_statuses_by_name
+
+> Vec<models::JiraStatus> get_statuses_by_name(name, project_id)
+Bulk get statuses by name
+
+Returns a list of the statuses specified by one or more status names.  **[Permissions](#permissions) required:**   *  *Administer projects* [project permission.](https://confluence.atlassian.com/x/yodKLg)  *  *Administer Jira* [project permission.](https://confluence.atlassian.com/x/yodKLg)  *  *Browse projects* [project permission.](https://confluence.atlassian.com/x/yodKLg)
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**name** | [**Vec<String>**](String.md) | The list of status names. To include multiple names, provide an ampersand-separated list. For example, name=nameXX&name=nameYY.  Min items `1`, Max items `50` | [required] |
+**project_id** | Option<**String**> | The project the status is part of or null for global statuses. |  |
 
 ### Return type
 

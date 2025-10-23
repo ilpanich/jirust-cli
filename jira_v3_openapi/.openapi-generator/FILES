@@ -271,6 +271,9 @@ docs/GetCrossProjectReleaseResponse.md
 docs/GetCustomFieldResponse.md
 docs/GetDateFieldResponse.md
 docs/GetExclusionRulesResponse.md
+docs/GetForgeAppProperty200Response.md
+docs/GetForgeAppPropertyKeys200Response.md
+docs/GetForgeAppPropertyKeys200ResponseKeysInner.md
 docs/GetIssueSourceResponse.md
 docs/GetPermissionHolderResponse.md
 docs/GetPermissionResponse.md
@@ -1348,6 +1351,9 @@ src/models/get_cross_project_release_response.rs
 src/models/get_custom_field_response.rs
 src/models/get_date_field_response.rs
 src/models/get_exclusion_rules_response.rs
+src/models/get_forge_app_property_200_response.rs
+src/models/get_forge_app_property_keys_200_response.rs
+src/models/get_forge_app_property_keys_200_response_keys_inner.rs
 src/models/get_issue_source_response.rs
 src/models/get_permission_holder_response.rs
 src/models/get_permission_response.rs

@@ -9,6 +9,8 @@ Method | HTTP request | Description
 [**addon_properties_resource_period_get_addon_property_get**](AppPropertiesApi.md#addon_properties_resource_period_get_addon_property_get) | **GET** /rest/atlassian-connect/1/addons/{addonKey}/properties/{propertyKey} | Get app property
 [**addon_properties_resource_period_put_addon_property_put**](AppPropertiesApi.md#addon_properties_resource_period_put_addon_property_put) | **PUT** /rest/atlassian-connect/1/addons/{addonKey}/properties/{propertyKey} | Set app property
 [**delete_forge_app_property**](AppPropertiesApi.md#delete_forge_app_property) | **DELETE** /rest/forge/1/app/properties/{propertyKey} | Delete app property (Forge)
+[**get_forge_app_property**](AppPropertiesApi.md#get_forge_app_property) | **GET** /rest/forge/1/app/properties/{propertyKey} | Get app property (Forge)
+[**get_forge_app_property_keys**](AppPropertiesApi.md#get_forge_app_property_keys) | **GET** /rest/forge/1/app/properties | Get app property keys (Forge)
 [**put_forge_app_property**](AppPropertiesApi.md#put_forge_app_property) | **PUT** /rest/forge/1/app/properties/{propertyKey} | Set app property (Forge)
 
 
@@ -142,7 +144,7 @@ Name | Type | Description  | Required | Notes
 > delete_forge_app_property(property_key)
 Delete app property (Forge)
 
-Deletes a Forge app's property.  **[Permissions](#permissions) required:** Only Forge apps can make this request.  The new `write:app-data:jira` OAuth scope is 100% optional now, and not using it won't break your app. However, we recommend adding it to your app's scope list because we will eventually make it mandatory.
+Deletes a Forge app's property.  **[Permissions](#permissions) required:** Only Forge apps can make this request. This API can only be accessed using **[asApp()](https://developer.atlassian.com/platform/forge/apis-reference/fetch-api-product.requestjira/#method-signature)** requests from Forge.  The new `write:app-data:jira` OAuth scope is 100% optional now, and not using it won't break your app. However, we recommend adding it to your app's scope list because we will eventually make it mandatory.
 
 ### Parameters
 
@@ -167,12 +169,69 @@ Name | Type | Description  | Required | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
+## get_forge_app_property
+
+> models::GetForgeAppProperty200Response get_forge_app_property(property_key)
+Get app property (Forge)
+
+Returns the value of a Forge app's property.  **[Permissions](#permissions) required:** Only Forge apps can make this request. This API can only be accessed using **[asApp()](https://developer.atlassian.com/platform/forge/apis-reference/fetch-api-product.requestjira/#method-signature)** requests from Forge.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**property_key** | **String** | The key of the property. | [required] |
+
+### Return type
+
+[**models::GetForgeAppProperty200Response**](getForgeAppProperty_200_response.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## get_forge_app_property_keys
+
+> models::GetForgeAppPropertyKeys200Response get_forge_app_property_keys()
+Get app property keys (Forge)
+
+Returns all property keys for the Forge app.  **[Permissions](#permissions) required:** Only Forge apps can make this request. This API can only be accessed using **[asApp()](https://developer.atlassian.com/platform/forge/apis-reference/fetch-api-product.requestjira/#method-signature)** requests from Forge.
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**models::GetForgeAppPropertyKeys200Response**](getForgeAppPropertyKeys_200_response.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
 ## put_forge_app_property
 
 > models::OperationMessage put_forge_app_property(property_key, body)
 Set app property (Forge)
 
-Sets the value of a Forge app's property. These values can be retrieved in [Jira expressions](/cloud/jira/platform/jira-expressions/) through the `app` [context variable](/cloud/jira/platform/jira-expressions/#context-variables). They are also available in [entity property display conditions](/platform/forge/manifest-reference/display-conditions/entity-property-conditions/).  For other use cases, use the [Storage API](/platform/forge/runtime-reference/storage-api/).  The value of the request body must be a [valid](http://tools.ietf.org/html/rfc4627), non-empty JSON blob. The maximum length is 32768 characters.  **[Permissions](#permissions) required:** Only Forge apps can make this request.  The new `write:app-data:jira` OAuth scope is 100% optional now, and not using it won't break your app. However, we recommend adding it to your app's scope list because we will eventually make it mandatory.
+Sets the value of a Forge app's property. These values can be retrieved in [Jira expressions](/cloud/jira/platform/jira-expressions/) through the `app` [context variable](/cloud/jira/platform/jira-expressions/#context-variables). They are also available in [entity property display conditions](/platform/forge/manifest-reference/display-conditions/entity-property-conditions/).  For other use cases, use the [Storage API](/platform/forge/runtime-reference/storage-api/).  The value of the request body must be a [valid](http://tools.ietf.org/html/rfc4627), non-empty JSON blob. The maximum length is 32768 characters.  **[Permissions](#permissions) required:** Only Forge apps can make this request. This API can only be accessed using **[asApp()](https://developer.atlassian.com/platform/forge/apis-reference/fetch-api-product.requestjira/#method-signature)** requests from Forge.  The new `write:app-data:jira` OAuth scope is 100% optional now, and not using it won't break your app. However, we recommend adding it to your app's scope list because we will eventually make it mandatory.
 
 ### Parameters
 
