@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.16.3] 2025-12-07
+### Reverted
+- Changes to the github action to build & Release jirust-cli to corectly release on NPM using the `NPM Trusted Publisher` flow (due to some issues found during the release); moved back to the previous behavior
+
 ## [0.16.12] 2025-12-07
 ### Fixed
 - Fixed github action to build & Release jirust-cli to corectly release on NPM using the `NPM Trusted Publisher` flow
