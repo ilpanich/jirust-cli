@@ -89,6 +89,13 @@ impl ProjectExecutor {
 }
 
 impl<R: ProjectCmdRunnerApi> ProjectExecutor<R> {
+    /// Builds an executor with the provided project runner.
+    ///
+    /// # Arguments
+    ///
+    /// * `project_cmd_runner` - Runner that executes Jira project APIs.
+    /// * `project_action` - Project action requested by the CLI.
+    /// * `project_args` - Parsed CLI arguments for project commands.
     pub fn with_runner(
         project_cmd_runner: R,
         project_action: ProjectActionValues,

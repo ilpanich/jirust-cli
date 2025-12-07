@@ -1,3 +1,6 @@
+//! JiRust CLI library entry points for parsing arguments and dispatching Jira commands.
+//! This crate wires the CLI parsing to the executor layer and exposes helpers used by
+//! both the binary and the WebAssembly target.
 #[macro_use]
 extern crate prettytable;
 
@@ -23,10 +26,15 @@ use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 #[cfg(target_family = "wasm")]
 use wasm_bindgen_futures::js_sys;
 
+/// Command-line argument parsers and command enums.
 pub mod args;
+/// Configuration helpers used to read and write local settings.
 pub mod config;
+/// Executors responsible for invoking Jira operations.
 pub mod executors;
+/// Runners that implement the actual Jira calls.
 pub mod runners;
+/// Shared utilities for printing and data handling.
 pub mod utils;
 
 #[cfg(test)]

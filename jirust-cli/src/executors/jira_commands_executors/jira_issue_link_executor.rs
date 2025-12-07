@@ -75,6 +75,13 @@ impl LinkIssueExecutor {
 }
 
 impl<R: LinkIssueCmdRunnerApi> LinkIssueExecutor<R> {
+    /// Builds an executor with a specific runner implementation.
+    ///
+    /// # Arguments
+    ///
+    /// * `link_issue_cmd_runner` - Runner handling link operations.
+    /// * `link_issue_action` - Link issue action to execute.
+    /// * `link_issue_args` - Parsed CLI arguments for the link issue command.
     pub fn with_runner(
         link_issue_cmd_runner: R,
         link_issue_action: LinkIssueActionValues,

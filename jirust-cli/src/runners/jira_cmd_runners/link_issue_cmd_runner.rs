@@ -323,9 +323,11 @@ impl Default for LinkIssueCmdParams {
     }
 }
 
+/// API contract for linking Jira issues together.
 #[cfg_attr(test, automock)]
 #[async_trait(?Send)]
 pub trait LinkIssueCmdRunnerApi: Send + Sync {
+    /// Creates a link between two Jira issues.
     async fn link_jira_issues(
         &self,
         params: LinkIssueCmdParams,

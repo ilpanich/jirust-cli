@@ -8,6 +8,7 @@ use std::fs;
 ///
 /// * `changelog_file` - The path to the changelog file
 pub struct ChangelogExtractor {
+    /// Path to the changelog file used to derive release notes.
     pub changelog_file: String,
 }
 

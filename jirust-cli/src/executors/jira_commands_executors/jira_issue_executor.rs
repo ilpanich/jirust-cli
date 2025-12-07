@@ -80,6 +80,13 @@ impl IssueExecutor {
 }
 
 impl<R: IssueCmdRunnerApi> IssueExecutor<R> {
+    /// Builds an executor with a custom runner (useful for testing).
+    ///
+    /// # Arguments
+    ///
+    /// * `issue_cmd_runner` - Runner that performs Jira issue operations.
+    /// * `issue_action` - Jira issue action to execute.
+    /// * `issue_args` - Parsed CLI arguments for the issue command.
     pub fn with_runner(
         issue_cmd_runner: R,
         issue_action: IssueActionValues,

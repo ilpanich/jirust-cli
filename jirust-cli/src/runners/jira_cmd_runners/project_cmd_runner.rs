@@ -314,20 +314,35 @@ impl ProjectCmdRunner {
 /// * `projects_page_size` - The page size for the project command, optional.
 /// * `projects_page_offset` - The page offset for the project command, optional.
 pub struct ProjectCmdParams {
+    /// Jira project key when acting on an existing project.
     pub project_key: Option<String>,
+    /// Issue type identifier used when querying issue type fields.
     pub project_issue_type: Option<String>,
+    /// Name for the project being created.
     pub project_name: Option<String>,
+    /// Description for the project being created.
     pub project_description: Option<String>,
+    /// Field configuration id to associate to the project.
     pub project_field_configuration_id: Option<i64>,
+    /// Issue security scheme id linked to the project.
     pub project_issue_security_scheme_id: Option<i64>,
+    /// Issue type scheme id to apply to the project.
     pub project_issue_type_scheme_id: Option<i64>,
+    /// Issue type screen scheme id to apply to the project.
     pub project_issue_type_screen_scheme_id: Option<i64>,
+    /// Notification scheme id to attach to the project.
     pub project_notification_scheme_id: Option<i64>,
+    /// Permission scheme id to attach to the project.
     pub project_permission_scheme_id: Option<i64>,
+    /// Workflow scheme id to attach to the project.
     pub project_workflow_scheme_id: Option<i64>,
+    /// Account id for the project lead.
     pub project_lead_account_id: Option<String>,
+    /// Default assignee type for the project.
     pub project_assignee_type: Option<String>,
+    /// Page size used when listing projects.
     pub projects_page_size: Option<i32>,
+    /// Page offset used when listing projects.
     pub projects_page_offset: Option<i32>,
 }
 
@@ -466,24 +481,29 @@ impl Default for ProjectCmdParams {
     }
 }
 
+/// API contract for performing Jira project operations.
 #[cfg_attr(test, automock)]
 #[async_trait(?Send)]
 pub trait ProjectCmdRunnerApi: Send + Sync {
+    /// Creates a Jira project with the provided parameters.
     async fn create_jira_project(
         &self,
         params: ProjectCmdParams,
     ) -> Result<ProjectIdentifiers, Box<dyn std::error::Error>>;
 
+    /// Lists Jira projects using pagination if provided.
     async fn list_jira_projects(
         &self,
         params: ProjectCmdParams,
     ) -> Result<Vec<Project>, Box<dyn std::error::Error>>;
 
+    /// Retrieves issue types available for a project key.
     async fn get_jira_project_issue_types(
         &self,
         params: ProjectCmdParams,
     ) -> Result<Vec<IssueTypeIssueCreateMetadata>, Box<dyn std::error::Error>>;
 
+    /// Retrieves fields for a specific project issue type.
     async fn get_jira_project_issue_type_id(
         &self,
         params: ProjectCmdParams,

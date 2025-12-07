@@ -77,6 +77,13 @@ impl IssueTransitionExecutor {
 }
 
 impl<R: IssueCmdRunnerApi> IssueTransitionExecutor<R> {
+    /// Builds an executor with a custom issue runner used for transitions.
+    ///
+    /// # Arguments
+    ///
+    /// * `issue_transition_cmd_runner` - Runner that performs transition calls.
+    /// * `issue_transition_action` - Transition action requested by the CLI.
+    /// * `issue_transition_args` - Parsed CLI arguments for transitions.
     pub fn with_runner(
         issue_transition_cmd_runner: R,
         issue_transition_action: TransitionActionValues,

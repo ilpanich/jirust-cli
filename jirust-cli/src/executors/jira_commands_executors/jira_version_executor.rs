@@ -84,6 +84,13 @@ impl VersionExecutor {
 }
 
 impl<R: VersionCmdRunnerApi> VersionExecutor<R> {
+    /// Builds an executor with a specific version runner implementation.
+    ///
+    /// # Arguments
+    ///
+    /// * `version_cmd_runner` - Runner that performs Jira version operations.
+    /// * `version_action` - Version action requested by the CLI.
+    /// * `version_args` - Parsed CLI arguments for version commands.
     pub fn with_runner(
         version_cmd_runner: R,
         version_action: VersionActionValues,

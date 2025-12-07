@@ -720,44 +720,53 @@ impl Default for IssueCmdParams {
     }
 }
 
+/// API contract for running Jira issue operations.
 #[cfg_attr(test, automock)]
 #[async_trait(?Send)]
 pub trait IssueCmdRunnerApi: Send + Sync {
+    /// Assigns a Jira issue to a user or placeholder account.
     async fn assign_jira_issue(
         &self,
         params: IssueCmdParams,
     ) -> Result<Value, Box<dyn std::error::Error>>;
 
+    /// Creates a Jira issue using the provided parameters.
     async fn create_jira_issue(
         &self,
         params: IssueCmdParams,
     ) -> Result<CreatedIssue, Box<dyn std::error::Error>>;
 
+    /// Deletes a Jira issue by key.
     async fn delete_jira_issue(
         &self,
         params: IssueCmdParams,
     ) -> Result<(), Box<dyn std::error::Error>>;
 
+    /// Retrieves a Jira issue by key.
     async fn get_jira_issue(
         &self,
         params: IssueCmdParams,
     ) -> Result<IssueBean, Box<dyn std::error::Error>>;
 
+    /// Executes a search query and returns the matching issues.
     async fn search_jira_issues(
         &self,
         params: IssueCmdParams,
     ) -> Result<Vec<IssueBean>, Box<dyn std::error::Error>>;
 
+    /// Transitions an issue to a new status.
     async fn transition_jira_issue(
         &self,
         params: IssueCmdParams,
     ) -> Result<Value, Box<dyn std::error::Error>>;
 
+    /// Updates an issue fields payload.
     async fn update_jira_issue(
         &self,
         params: IssueCmdParams,
     ) -> Result<Value, Box<dyn std::error::Error>>;
 
+    /// Fetches the available transitions for an issue.
     async fn get_issue_available_transitions(
         &self,
         params: IssueTransitionCmdParams,

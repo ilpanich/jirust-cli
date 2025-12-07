@@ -103,7 +103,7 @@ impl VersionCmdRunner {
     ///
     /// # Returns
     ///
-    /// * A Result containing a Version struct or a Box<dyn std::error::Error>
+    /// * A Result containing a Version struct or a `Box<dyn std::error::Error>`
     ///
     /// # Examples
     ///
@@ -231,7 +231,7 @@ impl VersionCmdRunner {
     ///
     /// # Returns
     ///
-    /// * A Result containing a Version struct or a Box<dyn std::error::Error>
+    /// * A Result containing a Version struct or a `Box<dyn std::error::Error>`
     ///
     /// # Examples
     ///
@@ -472,7 +472,7 @@ impl VersionCmdRunner {
     ///
     /// # Returns
     ///
-    /// * A Result containing a Version struct or an Error<GetVersionError>
+    /// * A Result containing a Version struct or an `Error<GetVersionError>`
     ///
     /// # Examples
     ///
@@ -519,7 +519,7 @@ impl VersionCmdRunner {
     ///
     /// # Returns
     ///
-    /// * A Result containing a vector of Version structs or a Box<dyn std::error::Error>
+    /// * A Result containing a vector of Version structs or a `Box<dyn std::error::Error>`
     ///
     /// # Examples
     ///
@@ -578,7 +578,7 @@ impl VersionCmdRunner {
     ///
     /// # Returns
     ///
-    /// * A Result containing a Version struct or an Error<UpdateVersionError>
+    /// * A Result containing a Version struct or an `Error<UpdateVersionError>`
     ///
     /// # Examples
     ///
@@ -641,7 +641,7 @@ impl VersionCmdRunner {
     ///
     /// # Returns
     ///
-    /// * A Result containing a serde_json::Value or an Error<DeleteAndReplaceVersionError>
+    /// * A Result containing a serde_json::Value or an `Error<DeleteAndReplaceVersionError>`
     ///
     /// # Examples
     ///
@@ -904,19 +904,33 @@ impl VersionCmdRunner {
 /// * `versions_page_size` - The page size for the version, optional.
 /// * `versions_page_offset` - The page offset for the version, optional.
 pub struct VersionCmdParams {
+    /// Jira project key (required for all version operations).
     pub project: String,
+    /// Jira project id when key is not available.
     pub project_id: Option<i64>,
+    /// Version name to create or update.
     pub version_name: Option<String>,
+    /// Version id required for archive, delete, release, and update operations.
     pub version_id: Option<String>,
+    /// Human readable version description.
     pub version_description: Option<String>,
+    /// Version start date in yyyy-mm-dd format.
     pub version_start_date: Option<String>,
+    /// Version release date in yyyy-mm-dd format.
     pub version_release_date: Option<String>,
+    /// Flag indicating whether the version is archived.
     pub version_archived: Option<bool>,
+    /// Flag indicating whether the version is released.
     pub version_released: Option<bool>,
+    /// Optional changelog file path used to build the description.
     pub changelog_file: Option<String>,
+    /// Whether to transition issues found in the changelog.
     pub transition_issues: Option<bool>,
+    /// Account id used when reassigning transitioned issues.
     pub transition_assignee: Option<String>,
+    /// Page size used when listing versions.
     pub versions_page_size: Option<i32>,
+    /// Page offset used when listing versions.
     pub versions_page_offset: Option<i64>,
 }
 
@@ -1262,34 +1276,41 @@ impl Default for VersionCmdParams {
     }
 }
 
+/// API contract for performing Jira version operations.
 #[cfg_attr(test, automock)]
 #[async_trait(?Send)]
 pub trait VersionCmdRunnerApi: Send + Sync {
+    /// Creates a Jira version and optionally transitions referenced issues.
     async fn create_jira_version(
         &self,
         params: VersionCmdParams,
     ) -> Result<(Version, Option<Vec<(String, String, String, String)>>), Box<dyn std::error::Error>>;
 
+    /// Lists versions for a project with optional pagination.
     async fn list_jira_versions(
         &self,
         params: VersionCmdParams,
     ) -> Result<Vec<Version>, Box<dyn std::error::Error>>;
 
+    /// Retrieves a Jira version by id or name.
     async fn get_jira_version(
         &self,
         params: VersionCmdParams,
     ) -> Result<Version, Box<dyn std::error::Error>>;
 
+    /// Updates an existing Jira version.
     async fn update_jira_version(
         &self,
         params: VersionCmdParams,
     ) -> Result<Version, Box<dyn std::error::Error>>;
 
+    /// Deletes a Jira version, optionally replacing it.
     async fn delete_jira_version(
         &self,
         params: VersionCmdParams,
     ) -> Result<(), Box<dyn std::error::Error>>;
 
+    /// Retrieves work items related to a Jira version.
     async fn get_jira_version_related_work(
         &self,
         params: VersionCmdParams,

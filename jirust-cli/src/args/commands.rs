@@ -34,8 +34,8 @@ pub enum Commands {
 
 /// Available pagination command line arguments
 ///
-/// * page_size: Option<i32>
-/// * page_offset: Option<i64>
+/// * page_size: `Option<i32>`
+/// * page_offset: `Option<i64>`
 #[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct PaginationArgs {
     /// page size for lists
@@ -94,7 +94,7 @@ pub enum OutputTypes {
 
 /// Available output values
 ///
-/// * output: Option<OutputValues> - Output format
+/// * output: `Option<OutputValues>` - Output format
 #[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct OutputArgs {
     /// Output format
@@ -154,17 +154,17 @@ pub enum ConfigActionValues {
 ///
 /// * version_act: VersionActionValues - Version action
 /// * project_key: String - Jira Project key
-/// * project_id: Option<i64> - Jira Project ID
-/// * version_id: Option<String> - Jira Project version ID
-/// * version_name: Option<String> - Jira Project version name
-/// * version_description: Option<String> - Jira Project version description
-/// * version_start_date: Option<String> - Jira Project version start date
-/// * version_release_date: Option<String> - Jira Project version release date
-/// * version_archived: Option<bool> - Jira Project version archived
-/// * version_released: Option<bool> - Jira Project version released
-/// * changelog_file: Option<String> - Jira Project version changelog file
-/// * transition_issues: Option<bool> - Jira Project version automatically transition issues in changelog
-/// * transition_assignee: Option<String> - Jira Project version transition assignee
+/// * project_id: `Option<i64>` - Jira Project ID
+/// * version_id: `Option<String>` - Jira Project version ID
+/// * version_name: `Option<String>` - Jira Project version name
+/// * version_description: `Option<String>` - Jira Project version description
+/// * version_start_date: `Option<String>` - Jira Project version start date
+/// * version_release_date: `Option<String>` - Jira Project version release date
+/// * version_archived: `Option<bool>` - Jira Project version archived
+/// * version_released: `Option<bool>` - Jira Project version released
+/// * changelog_file: `Option<String>` - Jira Project version changelog file
+/// * transition_issues: `Option<bool>` - Jira Project version automatically transition issues in changelog
+/// * transition_assignee: `Option<String>` - Jira Project version transition assignee
 /// * pagination: PaginationArgs - Jira Project version pagination
 /// * output: OutputArgs - Jira Project version actions result output format
 ///
@@ -318,19 +318,19 @@ pub enum VersionActionValues {
 /// Available project command line arguments
 ///
 /// * project_act: ProjectActionValues - Project action
-/// * project_key: Option<String> - Jira Project key
-/// * project_issue_type: Option<String> - Jira Project issue type ID
-/// * project_name: Option<String> - Jira Project name
-/// * project_description: Option<String> - Jira Project description
-/// * project_field_configuration_id: Option<i64> - Jira Project field configuration ID
-/// * project_issue_security_scheme_id: Option<i64> - Jira Project issue security scheme ID
-/// * project_permission_scheme_id: Option<i64> - Jira Project permission scheme ID
-/// * project_issue_type_scheme_id: Option<i64> - Jira Project issue type scheme ID
-/// * project_issue_type_screen_scheme_id: Option<i64> - Jira Project issue type screen scheme ID
-/// * project_notification_scheme_id: Option<i64> - Jira Project notification scheme ID
-/// * project_workflow_scheme_id: Option<i64> - Jira Project workflow scheme ID
-/// * project_lead_account_id: Option<String> - Jira Project lead account ID
-/// * project_assignee_type: Option<String> - Jira Project assignee type
+/// * project_key: `Option<String>` - Jira Project key
+/// * project_issue_type: `Option<String>` - Jira Project issue type ID
+/// * project_name: `Option<String>` - Jira Project name
+/// * project_description: `Option<String>` - Jira Project description
+/// * project_field_configuration_id: `Option<i64>` - Jira Project field configuration ID
+/// * project_issue_security_scheme_id: `Option<i64>` - Jira Project issue security scheme ID
+/// * project_permission_scheme_id: `Option<i64>` - Jira Project permission scheme ID
+/// * project_issue_type_scheme_id: `Option<i64>` - Jira Project issue type scheme ID
+/// * project_issue_type_screen_scheme_id: `Option<i64>` - Jira Project issue type screen scheme ID
+/// * project_notification_scheme_id: `Option<i64>` - Jira Project notification scheme ID
+/// * project_workflow_scheme_id: `Option<i64>` - Jira Project workflow scheme ID
+/// * project_lead_account_id: `Option<String>` - Jira Project lead account ID
+/// * project_assignee_type: `Option<String>` - Jira Project assignee type
 /// * pagination: PaginationArgs - Jira Project pagination
 /// * output: OutputArgs - Jira Project actions result output format
 #[derive(Args, Clone, Debug, Serialize, Deserialize)]
@@ -410,7 +410,7 @@ pub struct ProjectArgs {
         help = "Jira Project permission scheme ID"
     )]
     pub project_permission_scheme_id: Option<i64>,
-    // Jira project workflow scheme ID
+    /// Jira project workflow scheme ID
     #[clap(
         long,
         value_name = "project_workflow_scheme_id",
@@ -472,11 +472,11 @@ pub enum ProjectActionValues {
 ///
 /// * issue_act: IssueActionValues - Issue action
 /// * project_key: String - Jira Project key
-/// * issue_key: Option<String> - Jira Project issue key
-/// * issue_fields: Option<Vec<(String, String)>> - Jira Project issue fields
-/// * transition_to: Option<String> - Jira Project issue transition to
-/// * assignee: Option<String> - Jira Project issue assignee
-/// * query: Option<String> - Jira Project issue JQL query to search for issues
+/// * issue_key: `Option<String>` - Jira Project issue key
+/// * issue_fields: `Option<Vec<(String, String)>>` - Jira Project issue fields
+/// * transition_to: `Option<String>` - Jira Project issue transition to
+/// * assignee: `Option<String>` - Jira Project issue assignee
+/// * query: `Option<String>` - Jira Project issue JQL query to search for issues
 /// * pagination: PaginationArgs - Jira Project issue pagination
 /// * output: OutputArgs - Jira Project issue actions result output format
 #[derive(Args, Clone, Debug, Serialize, Deserialize)]
@@ -581,14 +581,14 @@ pub enum IssueActionValues {
 /// Available issues' links command line arguments
 ///
 /// * link_act: LinkIssueActionValues - Jira link issue command available actions
-/// * project_key: Option<String> - Jira Project key
+/// * project_key: `Option<String>` - Jira Project key
 /// * origin_issue_key: String - Jira origin issue link key
-/// * destination_issue_key: Option<String> - Jira destination issue link key
+/// * destination_issue_key: `Option<String>` - Jira destination issue link key
 /// * link_type: String - Jira issue link type
-/// * changelog_file: Option<String> - Jira Project version changelog file
+/// * changelog_file: `Option<String>` - Jira Project version changelog file
 #[derive(Args, Clone, Debug, Serialize, Deserialize)]
 pub struct LinkIssueArgs {
-    // Jira link issue command available actions
+    /// Jira link issue command available actions
     #[arg(
         value_name = "create",
         help_heading = "Jira issues links management",
