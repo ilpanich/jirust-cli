@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.16.11] 2025-12-07
+### Changed
+- Update `jira_doc_std_field` macro to Rust 2024 Edition version
+- Updated dependencies
+- Improved tests coverage (with the help of Claude Code)
+- Improved docs (with the help of ChatGPT Codex)
+
 ## [0.16.10] 2025-10-23
 ### Changed
 - Updated dependencies
