@@ -114,14 +114,16 @@ jobs:
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
+          always-auth: true
 
       - name: Publish WASM package on npmjs
         env:
           SCCACHE_GHA_ENABLED: "true"
           RUSTC_WRAPPER: "sccache"
+          NPM_CONFIG_PROVENANCE: "true"
+          NPM_CONFIG_REGISTRY: "https://registry.npmjs.org"
         run: |
-          cd jirust-cli
-          wasm-pack publish
+          npm publish --provenance --access public dist/jirust-cli-wasm.tgz
 
       - name: Generate SBOM
         env:
