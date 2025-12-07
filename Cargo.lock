@@ -853,6 +853,8 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 [[package]]
 name = "jira_v3_openapi"
 version = "1.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f34860a7afad53eecf3412b2242b609ffd222b949eba4a64c33b7c19b6b6935c"
 dependencies = [
  "reqwest",
  "serde",
@@ -865,9 +867,7 @@ dependencies = [
 
 [[package]]
 name = "jira_v3_openapi"
-version = "1.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f34860a7afad53eecf3412b2242b609ffd222b949eba4a64c33b7c19b6b6935c"
+version = "1.4.2"
 dependencies = [
  "reqwest",
  "serde",
@@ -889,7 +889,7 @@ dependencies = [
  "clap_derive",
  "console_error_panic_hook",
  "futures",
- "jira_v3_openapi 1.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "jira_v3_openapi 1.4.1",
  "mockall",
  "prettytable-rs",
  "regex",
