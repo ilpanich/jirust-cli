@@ -852,9 +852,7 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
 name = "jira_v3_openapi"
-version = "1.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f34860a7afad53eecf3412b2242b609ffd222b949eba4a64c33b7c19b6b6935c"
+version = "1.4.2"
 dependencies = [
  "reqwest",
  "serde",
@@ -868,6 +866,8 @@ dependencies = [
 [[package]]
 name = "jira_v3_openapi"
 version = "1.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ead67bf3c88bb6c24d23fd3ad863398b335eda1870ddbfad3f04ea08f5597de"
 dependencies = [
  "reqwest",
  "serde",
@@ -889,7 +889,7 @@ dependencies = [
  "clap_derive",
  "console_error_panic_hook",
  "futures",
- "jira_v3_openapi 1.4.1",
+ "jira_v3_openapi 1.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "mockall",
  "prettytable-rs",
  "regex",
@@ -1013,9 +1013,9 @@ dependencies = [
 
 [[package]]
 name = "mockall"
-version = "0.13.1"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39a6bfcc6c8c7eed5ee98b9c3e33adc726054389233e201c95dab2d41a3839d2"
+checksum = "f58d964098a5f9c6b63d0798e5372fd04708193510a7af313c22e9f29b7b620b"
 dependencies = [
  "cfg-if",
  "downcast",
@@ -1027,9 +1027,9 @@ dependencies = [
 
 [[package]]
 name = "mockall_derive"
-version = "0.13.1"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25ca3004c2efe9011bd4e461bd8256445052b9615405b4f7ea43fc8ca5c20898"
+checksum = "ca41ce716dda6a9be188b385aa78ee5260fc25cd3802cb2a8afdc6afbe6b6dbf"
 dependencies = [
  "cfg-if",
  "proc-macro2",
