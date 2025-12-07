@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.16.12] 2025-12-07
+### Fixed
+- Fixed github action to build & Release jirust-cli to corectly release on NPM using the `NPM Trusted Publisher` flow
+
 ## [0.16.11] 2025-12-07
 ### Changed
 - Update `jira_doc_std_field` macro to Rust 2024 Edition version
