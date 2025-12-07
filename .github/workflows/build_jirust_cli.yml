@@ -109,13 +109,17 @@ jobs:
           cargo login "$CARGO_ACCESS_TOKEN"
           cargo publish -p jirust-cli
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
       - name: Publish WASM package on npmjs
         env:
           SCCACHE_GHA_ENABLED: "true"
           RUSTC_WRAPPER: "sccache"
-          NPM_ACCESS_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_ACCESS_TOKEN}" > ~/.npmrc
           cd jirust-cli
           wasm-pack publish
 
