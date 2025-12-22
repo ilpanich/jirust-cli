@@ -163,6 +163,22 @@ impl<R: IssueCmdRunnerApi> ExecJiraCommand for IssueExecutor<R> {
                     )))),
                 }
             }
+            IssueActionValues::Attach => {
+                match self
+                    .issue_cmd_runner
+                    .attach_file_to_jira_issue(IssueCmdParams::from(&self.issue_args))
+                    .await
+                {
+                    Ok(_) => Ok(vec![PrintableData::Generic {
+                        data: vec![serde_json::Value::String(
+                            "File attached successfully".to_string(),
+                        )],
+                    }]),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error attaching file to issue: {err}"
+                    )))),
+                }
+            }
             IssueActionValues::Create => {
                 match self
                     .issue_cmd_runner

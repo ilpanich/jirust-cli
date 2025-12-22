@@ -535,6 +535,14 @@ pub struct IssueArgs {
         help = "Jira Project issue query"
     )]
     pub query: Option<String>,
+    /// Jira Project issue attachments file path
+    #[clap(
+        long,
+        short = 'p',
+        value_name = "attachment_file_path",
+        help = "Jira Project issue attachment file path"
+    )]
+    pub attachment_file_path: Option<String>,
     /// Jira Project issue pagination
     #[clap(flatten)]
     pub pagination: PaginationArgs,
@@ -546,6 +554,7 @@ pub struct IssueArgs {
 /// Available issue action values
 ///
 /// * Assign: Assign a Jira Project issue
+/// * Attach: Attach a file to a Jira Project issue
 /// * Create: Create a Jira Project issue
 /// * Delete: Delete a Jira Project issue
 /// * Get: Get a specific Jira Project issue
@@ -558,6 +567,9 @@ pub enum IssueActionValues {
     /// Assign a Jira Project issue
     #[value(name = "assign", help = "Assign a Jira Project issue")]
     Assign,
+    /// Attach a file to a Jira Project issue
+    #[value(name = "attach", help = "Attach a file to a Jira Project issue")]
+    Attach,
     /// Create a Jira Project issue
     #[value(name = "create", help = "Create a Jira Project issue")]
     Create,

@@ -1,19 +1,23 @@
 use async_trait::async_trait;
+use jira_v3_openapi::additional_apis::issue_attachments_api::add_attachment;
 use jira_v3_openapi::apis::issue_search_api::search_and_reconsile_issues_using_jql_post;
 use jira_v3_openapi::apis::issues_api::*;
 use jira_v3_openapi::models::user::AccountType;
 use jira_v3_openapi::models::{
-    CreatedIssue, IssueBean, IssueTransition, SearchAndReconcileRequestBean, Transitions, User,
+    Attachment, CreatedIssue, IssueBean, IssueTransition, SearchAndReconcileRequestBean,
+    Transitions, User,
 };
 use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDetails};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::io::Error;
+use std::path::Path;
 
 #[cfg(test)]
 use mockall::automock;
 
 use crate::args::commands::TransitionArgs;
+use crate::utils::cached_scanner::CachedYaraScanner;
 use crate::{
     args::commands::IssueArgs,
     config::config_file::{AuthData, ConfigFile},
@@ -121,6 +125,76 @@ impl IssueCmdRunner {
         };
 
         Ok(assign_issue(&self.cfg, i_key, user_data).await?)
+    }
+
+    /// Attaches a file to a Jira issue
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - Issue command parameters
+    ///
+    /// # Returns
+    ///
+    /// * `Attachment` - Attachment object
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
+    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use toml::Table;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
+    /// let mut params = IssueCmdParams::new();
+    /// params.issue_key = Some("issue_key".to_string());
+    /// params.attachment_file_path = Some("path/to/file".to_string());
+    ///
+    /// let result = issue_cmd_runner.attach_file_to_issue(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
+    /// ```
+    pub async fn attach_file_to_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Vec<Attachment>, Box<dyn std::error::Error>> {
+        let i_key = if let Some(key) = &params.issue_key {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::other(
+                "Error attaching file to issue: Empty issue key".to_string(),
+            )));
+        };
+        let scanner = CachedYaraScanner::new()?;
+        if let Some(path) = &params.attachment_file_path {
+            let attachment_bytes = std::fs::read(path)?;
+            let file_name = Path::new(path)
+                .file_name()
+                .and_then(|name| name.to_str())
+                .unwrap_or("attachment")
+                .to_string();
+
+            let scan_result = scanner
+                .scan_buffer(&attachment_bytes, file_name.as_str())
+                .unwrap_or(vec![]);
+            if !scan_result.is_empty() {
+                return Err(Box::new(Error::other(format!(
+                    "Attachment file '{}' blocked by YARA rules: {:?}",
+                    file_name, scan_result
+                ))));
+            }
+
+            return Ok(
+                add_attachment(&self.cfg, i_key, attachment_bytes, file_name.as_str()).await?,
+            );
+        } else {
+            return Err(Box::new(Error::other(
+                "Error attaching file to issue: Empty attachment file path".to_string(),
+            )));
+        };
     }
 
     /// Creates a Jira issue
@@ -500,6 +574,8 @@ pub struct IssueCmdParams {
     pub assignee: Option<String>,
     /// Jira issue query
     pub query: Option<String>,
+    /// Jira issue file path for attachment
+    pub attachment_file_path: Option<String>,
 }
 
 /// Implementation of IssueCmdParams struct
@@ -529,6 +605,7 @@ impl IssueCmdParams {
             transition: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
         }
     }
 }
@@ -563,6 +640,7 @@ impl From<&IssueArgs> for IssueCmdParams {
     ///    transition_to: Some("transition_to".to_string()),
     ///    assignee: Some("assignee".to_string()),
     ///    query: None,
+    ///    attachment_file_path: None,
     ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
@@ -595,6 +673,7 @@ impl From<&IssueArgs> for IssueCmdParams {
             transition: value.transition_to.clone(),
             assignee: value.assignee.clone(),
             query: value.query.clone(),
+            attachment_file_path: value.attachment_file_path.clone(),
         }
     }
 }
@@ -730,6 +809,12 @@ pub trait IssueCmdRunnerApi: Send + Sync {
         params: IssueCmdParams,
     ) -> Result<Value, Box<dyn std::error::Error>>;
 
+    /// Attaches a file to a Jira issue.
+    async fn attach_file_to_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Vec<Attachment>, Box<dyn std::error::Error>>;
+
     /// Creates a Jira issue using the provided parameters.
     async fn create_jira_issue(
         &self,
@@ -780,6 +865,13 @@ impl IssueCmdRunnerApi for IssueCmdRunner {
         params: IssueCmdParams,
     ) -> Result<Value, Box<dyn std::error::Error>> {
         IssueCmdRunner::assign_jira_issue(self, params).await
+    }
+
+    async fn attach_file_to_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Vec<Attachment>, Box<dyn std::error::Error>> {
+        IssueCmdRunner::attach_file_to_jira_issue(self, params).await
     }
 
     async fn create_jira_issue(
