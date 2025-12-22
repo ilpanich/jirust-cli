@@ -88,6 +88,7 @@ async fn test_process_command_all_commands() {
             output_type: Some(OutputTypes::Basic),
         },
         query: None,
+        attachment_file_path: None,
     });
     let result = process_command(issue_command, None, config.clone()).await;
     // This might fail due to network call, but the function should be called
@@ -210,6 +211,7 @@ async fn test_process_command_with_various_output_formats() {
             output_type: Some(OutputTypes::Full),
         },
         query: None,
+        attachment_file_path: None,
     });
 
     let table_command = Commands::Issue(IssueArgs {
@@ -228,6 +230,7 @@ async fn test_process_command_with_various_output_formats() {
             output_type: Some(OutputTypes::Basic),
         },
         query: None,
+        attachment_file_path: None,
     });
 
     let result1 = process_command(json_command, None, config.clone()).await;
@@ -404,6 +407,7 @@ async fn test_command_execution_coverage() {
                 output_type: None,
             },
             query: None,
+            attachment_file_path: None,
         }),
         Commands::Project(ProjectArgs {
             project_act: ProjectActionValues::List,
