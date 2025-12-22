@@ -119,6 +119,7 @@ mod coverage_boost_tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -190,9 +191,10 @@ standard_resolution_comment = "Task completed"
         assert!(result.is_err());
         if let Err(err) = result {
             assert_eq!(err.kind(), std::io::ErrorKind::NotFound);
-            assert!(err
-                .to_string()
-                .contains("Missing basic configuration, setup mandatory!"));
+            assert!(
+                err.to_string()
+                    .contains("Missing basic configuration, setup mandatory!")
+            );
         }
     }
 
@@ -434,10 +436,7 @@ standard_resolution_comment = "Task completed"
             table_basic.output_format,
             Some(OutputValues::Table)
         ));
-        assert!(matches!(
-            table_basic.output_type,
-            Some(OutputTypes::Basic)
-        ));
+        assert!(matches!(table_basic.output_type, Some(OutputTypes::Basic)));
 
         // Test Table + Single
         let table_single = OutputArgs {

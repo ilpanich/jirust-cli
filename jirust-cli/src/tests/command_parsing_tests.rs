@@ -241,6 +241,7 @@ mod tests {
             transition_to: Some("In Progress".to_string()),
             assignee: Some("developer@example.com".to_string()),
             query: Some("project = COMP AND status = 'To Do' ORDER BY priority DESC".to_string()),
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: Some(50),
                 page_offset: Some(0),
@@ -298,6 +299,7 @@ mod tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -481,6 +483,7 @@ mod tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -536,6 +539,7 @@ mod tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -557,6 +561,7 @@ mod tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -578,6 +583,7 @@ mod tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -603,6 +609,7 @@ mod tests {
             transition_to: Some("".to_string()),
             assignee: Some("".to_string()),
             query: Some("".to_string()),
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,

@@ -19,8 +19,8 @@ mod tests {
     use crate::utils::PrintableData;
     use jira_v3_openapi::apis::Error as JiraApiError;
     use jira_v3_openapi::models::{
-        CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition, IssueTypeIssueCreateMetadata,
-        Transitions, Version, VersionRelatedWork, project::Project,
+        CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition,
+        IssueTypeIssueCreateMetadata, Transitions, Version, VersionRelatedWork, project::Project,
         project_identifiers::ProjectIdentifiers,
     };
     use serde_json::json;
@@ -50,6 +50,7 @@ mod tests {
             transition_to: None,
             assignee: Some("test.user".to_string()),
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -230,6 +231,7 @@ mod tests {
             transition_to: None,
             assignee: Some("user@example.com".to_string()),
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -271,6 +273,7 @@ mod tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -330,10 +333,7 @@ mod tests {
         args.issue_key = Some("TEST-123".to_string());
 
         let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Create, args);
-        let result = executor
-            .exec_jira_command()
-            .await
-            .expect("create succeeds");
+        let result = executor.exec_jira_command().await.expect("create succeeds");
 
         match result.first().expect("missing printable data") {
             PrintableData::IssueCreated { issues } => {
@@ -365,21 +365,16 @@ mod tests {
     #[tokio::test]
     async fn test_issue_executor_delete_success() {
         let mut mock_runner = MockIssueCmdRunnerApi::new();
-        mock_runner
-            .expect_delete_jira_issue()
-            .returning(|params| {
-                assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
-                Ok(())
-            });
+        mock_runner.expect_delete_jira_issue().returning(|params| {
+            assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
+            Ok(())
+        });
 
         let mut args = create_test_issue_args();
         args.issue_act = IssueActionValues::Delete;
 
         let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Delete, args);
-        let result = executor
-            .exec_jira_command()
-            .await
-            .expect("delete succeeds");
+        let result = executor.exec_jira_command().await.expect("delete succeeds");
 
         match result.first().expect("missing printable data") {
             PrintableData::Generic { data } => {
@@ -415,24 +410,19 @@ mod tests {
     #[tokio::test]
     async fn test_issue_executor_search_success() {
         let mut mock_runner = MockIssueCmdRunnerApi::new();
-        mock_runner
-            .expect_search_jira_issues()
-            .returning(|params| {
-                assert_eq!(params.project_key.as_deref(), Some("TEST"));
-                let mut issue = IssueBean::default();
-                issue.key = Some("TEST-999".to_string());
-                Ok(vec![issue])
-            });
+        mock_runner.expect_search_jira_issues().returning(|params| {
+            assert_eq!(params.project_key.as_deref(), Some("TEST"));
+            let mut issue = IssueBean::default();
+            issue.key = Some("TEST-999".to_string());
+            Ok(vec![issue])
+        });
 
         let mut args = create_test_issue_args();
         args.issue_act = IssueActionValues::Search;
         args.query = Some("project = TEST".to_string());
 
         let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Search, args);
-        let result = executor
-            .exec_jira_command()
-            .await
-            .expect("search succeeds");
+        let result = executor.exec_jira_command().await.expect("search succeeds");
 
         match result.first().expect("missing printable data") {
             PrintableData::IssueData { issues } => {
@@ -498,8 +488,10 @@ mod tests {
     async fn test_issue_executor_transition_error() {
         let mut mock_runner = MockIssueCmdRunnerApi::new();
         mock_runner.expect_transition_jira_issue().returning(|_| {
-            Err(Box::new(IoError::new(ErrorKind::Other, "cannot transition"))
-                as Box<dyn std::error::Error>)
+            Err(
+                Box::new(IoError::new(ErrorKind::Other, "cannot transition"))
+                    as Box<dyn std::error::Error>,
+            )
         });
 
         let mut args = create_test_issue_args();
@@ -524,10 +516,7 @@ mod tests {
         args.issue_act = IssueActionValues::Update;
 
         let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Update, args);
-        let result = executor
-            .exec_jira_command()
-            .await
-            .expect("update succeeds");
+        let result = executor.exec_jira_command().await.expect("update succeeds");
 
         match result.first().expect("missing printable data") {
             PrintableData::Generic { data } => {
@@ -1155,6 +1144,7 @@ mod tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -1181,6 +1171,7 @@ mod tests {
             transition_to: Some("In Progress".to_string()),
             assignee: Some("user@test.com".to_string()),
             query: Some("project = COMP".to_string()),
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: Some(50),
                 page_offset: Some(0),

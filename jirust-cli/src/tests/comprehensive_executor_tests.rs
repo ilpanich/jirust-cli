@@ -37,6 +37,7 @@ mod comprehensive_executor_tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -73,6 +74,7 @@ mod comprehensive_executor_tests {
             transition_to: Some("In Progress".to_string()),
             assignee: Some("test.assignee@example.com".to_string()),
             query: Some("project = COMP AND status = 'To Do'".to_string()),
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: Some(50),
                 page_offset: Some(0),
