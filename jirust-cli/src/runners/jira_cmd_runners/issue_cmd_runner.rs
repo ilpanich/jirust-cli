@@ -189,10 +189,10 @@ impl IssueCmdRunner {
                 add_attachment(&self.cfg, i_key, attachment_bytes, file_name.as_str()).await?,
             );
         } else {
-            return Err(Box::new(Error::other(
+            Err(Box::new(Error::other(
                 "Error attaching file to issue: Empty attachment file path".to_string(),
-            )));
-        };
+            )))
+        }
     }
 
     /// Creates a Jira issue
