@@ -177,9 +177,7 @@ impl IssueCmdRunner {
                 .unwrap_or("attachment")
                 .to_string();
 
-            let scan_result = scanner
-                .scan_buffer(&attachment_bytes, file_name.as_str())
-                .unwrap_or(vec![]);
+            let scan_result = scanner.scan_buffer(&attachment_bytes).unwrap_or(vec![]);
             if !scan_result.is_empty() {
                 return Err(Box::new(Error::other(format!(
                     "Attachment file '{}' blocked by YARA rules: {:?}",

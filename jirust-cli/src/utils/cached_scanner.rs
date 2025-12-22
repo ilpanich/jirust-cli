@@ -94,7 +94,7 @@ impl CachedYaraScanner {
 
     /// Store compiled rules in cache
     fn save_to_cache(rules: &Rules, version: &Option<String>) -> Result<()> {
-        let serialized = rules.serialize();
+        let serialized = rules.serialize()?;
 
         fs::write(CACHE_FILE, serialized).context("Can't write cache")?;
 
@@ -130,7 +130,7 @@ impl CachedYaraScanner {
                 let extension = path.extension().and_then(|s| s.to_str());
                 if matches!(extension, Some("yar") | Some("yara")) {
                     match fs::read_to_string(path) {
-                        Ok(content) => match compiler.add_source(&content) {
+                        Ok(content) => match compiler.add_source(&*content) {
                             Ok(_) => {
                                 compiled_count += 1;
                                 if compiled_count % 100 == 0 {
@@ -190,7 +190,7 @@ impl CachedYaraScanner {
     }
 
     /// Scan a memory buffer
-    pub fn scan_buffer(&self, buffer: &[u8], name: &str) -> Result<Vec<String>> {
+    pub fn scan_buffer(&self, buffer: &[u8]) -> Result<Vec<String>> {
         let mut scanner = Scanner::new(&self.rules);
         let results = scanner.scan(buffer)?;
 
