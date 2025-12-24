@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::args::commands::OutputValues;
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::utils::{OutputType, PrintableData, print_data};
     use serde_json::json;
     use std::fs;
@@ -26,7 +26,7 @@ mod tests {
             "".to_string(), // Empty Jira URL
             "".to_string(), // Empty resolution
             "".to_string(), // Empty resolution comment
-            toml::Table::new(),
+            toml::Table::new(), YaraSection::default()
         );
 
         // Test that empty values are handled gracefully
@@ -58,6 +58,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             transitions,
+            YaraSection::default(),
         );
 
         // This should handle special characters gracefully
@@ -165,7 +166,7 @@ mod tests {
             "https://test.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            toml::Table::new(),
+            toml::Table::new(), YaraSection::default()
         );
 
         let cloned = original.clone();
@@ -201,7 +202,7 @@ mod tests {
             "https://concurrent.atlassian.net".to_string(),
             "Done".to_string(),
             "Concurrent test completed".to_string(),
-            toml::Table::new(),
+            toml::Table::new(), YaraSection::default()
         ));
 
         let handles: Vec<_> = (0..10)
@@ -234,7 +235,7 @@ mod tests {
             "https://large.atlassian.net".to_string(),
             "Done".to_string(),
             "Large config test".to_string(),
-            toml::Table::new(),
+            toml::Table::new(), YaraSection::default()
         );
 
         // Add transitions using the proper method

@@ -3,7 +3,7 @@ use jirust_cli::args::commands::{
     LinkIssueArgs, OutputArgs, OutputTypes, OutputValues, PaginationArgs, ProjectActionValues,
     ProjectArgs, TransitionActionValues, TransitionArgs, VersionActionValues, VersionArgs,
 };
-use jirust_cli::config::config_file::{AuthData, ConfigFile};
+use jirust_cli::config::config_file::{AuthData, ConfigFile, YaraSection};
 use jirust_cli::process_command;
 use jirust_cli::utils::PrintableData;
 use std::io::{Error, ErrorKind};
@@ -16,6 +16,7 @@ fn create_valid_config() -> ConfigFile {
         "Done".to_string(),
         "Task completed".to_string(),
         Table::new(),
+        YaraSection::default(),
     )
 }
 
@@ -26,6 +27,7 @@ fn create_invalid_config_empty_auth() -> ConfigFile {
         "Done".to_string(),
         "Task completed".to_string(),
         Table::new(),
+        YaraSection::default(),
     )
 }
 
@@ -36,6 +38,7 @@ fn create_invalid_config_empty_url() -> ConfigFile {
         "Done".to_string(),
         "Task completed".to_string(),
         Table::new(),
+        YaraSection::default(),
     )
 }
 
@@ -250,6 +253,7 @@ fn test_config_file_comprehensive_validation() {
         "".to_string(),
         "".to_string(),
         Table::new(),
+        YaraSection::default(),
     );
 
     assert!(both_empty_config.get_auth_key().is_empty());
@@ -262,6 +266,7 @@ fn test_config_file_comprehensive_validation() {
         "Done".to_string(),
         "Comment".to_string(),
         Table::new(),
+        YaraSection::default(),
     );
 
     // These would still be considered non-empty strings
@@ -343,6 +348,7 @@ fn test_config_file_transitions_handling() {
         "Done".to_string(),
         "Task completed".to_string(),
         transitions,
+        YaraSection::default(),
     );
 
     // Test that transitions are properly stored
@@ -372,6 +378,7 @@ fn test_auth_data_integration_with_config() {
         "Done".to_string(),
         "Task completed".to_string(),
         Table::new(),
+        YaraSection::default(),
     );
 
     assert_eq!(config.get_auth_key(), base64_token);

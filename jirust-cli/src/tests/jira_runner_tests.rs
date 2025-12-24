@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::runners::jira_cmd_runners::{
         issue_cmd_runner::{IssueCmdParams, IssueCmdRunner, IssueTransitionCmdParams},
         link_issue_cmd_runner::{LinkIssueCmdParams, LinkIssueCmdRunner},
@@ -17,7 +17,7 @@ mod tests {
             "https://test.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         )
     }
 

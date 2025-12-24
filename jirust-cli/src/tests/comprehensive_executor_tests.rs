@@ -6,7 +6,7 @@ mod comprehensive_executor_tests {
         OutputTypes, OutputValues, PaginationArgs, ProjectActionValues, ProjectArgs,
         TransitionActionValues, TransitionArgs, VersionActionValues, VersionArgs,
     };
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::executors::config_executor::ConfigExecutor;
     use crate::executors::jira_commands_executors::{
         ExecJiraCommand, jira_issue_executor::IssueExecutor,
@@ -24,7 +24,7 @@ mod comprehensive_executor_tests {
             "https://test.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         )
     }
 
@@ -726,7 +726,7 @@ mod comprehensive_executor_tests {
             "https://another.atlassian.net".to_string(),
             "Resolved".to_string(),
             "Issue resolved".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         );
 
         let config3 = ConfigFile::new(
@@ -734,7 +734,7 @@ mod comprehensive_executor_tests {
             "https://team.atlassian.net".to_string(),
             "Closed".to_string(),
             "Issue closed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         );
 
         // Test that all configs work with all executors

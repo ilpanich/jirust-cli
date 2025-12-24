@@ -5,7 +5,7 @@ mod tests {
         OutputTypes, OutputValues, PaginationArgs, ProjectActionValues, ProjectArgs,
         TransitionActionValues, TransitionArgs, VersionActionValues, VersionArgs,
     };
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::executors::jira_commands_executors::{
         ExecJiraCommand, jira_issue_executor::IssueExecutor,
         jira_issue_link_executor::LinkIssueExecutor,
@@ -33,7 +33,7 @@ mod tests {
             "https://test.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         )
     }
 

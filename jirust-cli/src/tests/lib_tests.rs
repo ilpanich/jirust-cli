@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::args::commands::{Commands, ConfigActionValues, ConfigArgs};
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::process_command;
     use std::io::{Error, ErrorKind};
     use toml::Table;
@@ -13,7 +13,7 @@ mod tests {
             "https://valid.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         );
 
         // Test valid config validation logic
@@ -28,7 +28,7 @@ mod tests {
             "https://valid.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         );
 
         // This should be considered invalid due to empty auth key
@@ -43,7 +43,7 @@ mod tests {
             "".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         );
 
         // This should be considered invalid due to empty Jira URL
@@ -208,7 +208,7 @@ mod tests {
             "https://valid.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         )
     }
 
@@ -218,7 +218,7 @@ mod tests {
             "https://valid.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         )
     }
 
@@ -228,7 +228,7 @@ mod tests {
             "".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         )
     }
 }

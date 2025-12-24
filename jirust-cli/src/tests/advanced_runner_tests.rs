@@ -1,11 +1,11 @@
 #[cfg(test)]
 mod advanced_runner_tests {
     use crate::args::commands::{
-        IssueActionValues, IssueArgs, LinkIssueActionValues, LinkIssueArgs, OutputArgs,
-        OutputTypes, OutputValues, PaginationArgs, ProjectActionValues, ProjectArgs,
-        TransitionActionValues, TransitionArgs, VersionActionValues, VersionArgs,
+        IssueActionValues, IssueArgs, OutputArgs, OutputTypes, OutputValues, PaginationArgs,
+        ProjectActionValues, ProjectArgs, TransitionActionValues, TransitionArgs,
+        VersionActionValues, VersionArgs,
     };
-    use crate::config::config_file::{AuthData, ConfigFile};
+    use crate::config::config_file::{AuthData, ConfigFile, YaraSection};
     use crate::runners::jira_cmd_runners::{
         issue_cmd_runner::{IssueCmdParams, IssueCmdRunner, IssueTransitionCmdParams},
         link_issue_cmd_runner::{LinkIssueCmdParams, LinkIssueCmdRunner},
@@ -28,6 +28,7 @@ mod advanced_runner_tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -540,6 +541,7 @@ mod advanced_runner_tests {
             "{}".to_string(),
             "{}".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         let runner = LinkIssueCmdRunner::new(&config);
@@ -567,6 +569,7 @@ mod advanced_runner_tests {
             "{}".to_string(),
             "{}".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         let runner = LinkIssueCmdRunner::new(&config);
@@ -602,6 +605,7 @@ mod advanced_runner_tests {
             "{}".to_string(),
             "{}".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         let runner = LinkIssueCmdRunner::new(&config);
@@ -812,6 +816,7 @@ mod advanced_runner_tests {
             "".to_string(), // Empty resolution
             "".to_string(), // Empty comment
             Table::new(),
+            YaraSection::default(),
         );
 
         let _issue_runner = IssueCmdRunner::new(&minimal_config);
@@ -833,6 +838,7 @@ mod advanced_runner_tests {
             long_resolution,
             long_comment,
             Table::new(),
+            YaraSection::default(),
         );
 
         let _issue_runner = IssueCmdRunner::new(&long_config);
@@ -1042,11 +1048,13 @@ mod advanced_runner_tests {
         complex_table.insert("nested".to_string(), toml::Value::Table(nested_table));
 
         let config = ConfigFile::new(
-            "Y29tcGxleDpjb25maWc=".to_string(), // complex:config
+            "Y29tcGxleDpjb25maWc=".to_string(),
+            // complex:config
             "https://complex.example.com".to_string(),
             "Resolved".to_string(),
             "Automatically resolved by system".to_string(),
             complex_table,
+            YaraSection::default(),
         );
 
         let _issue_runner = IssueCmdRunner::new(&config);

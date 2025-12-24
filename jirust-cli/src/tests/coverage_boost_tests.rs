@@ -6,7 +6,7 @@ mod coverage_boost_tests {
         PaginationArgs, ProjectActionValues, ProjectArgs, TransitionActionValues, TransitionArgs,
         VersionActionValues, VersionArgs,
     };
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
     use crate::{manage_config, process_command};
     use std::fs;
@@ -20,7 +20,7 @@ mod coverage_boost_tests {
             "https://test.atlassian.net".to_string(),
             r#"{"name": "Done"}"#.to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         )
     }
 
@@ -334,7 +334,7 @@ standard_resolution_comment = "Task completed"
             "http://localhost".to_string(),
             "".to_string(),
             "".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         );
         let version_cmd = Commands::Version(VersionArgs {
             version_act: VersionActionValues::List,
@@ -374,11 +374,13 @@ standard_resolution_comment = "Task completed"
         );
 
         let cfg = ConfigFile::new(
-            "dGVzdDp0ZXN0ISRAIyQlXiYqKCk=".to_string(), // test:test!@#$%^&*()
+            "dGVzdDp0ZXN0ISRAIyQlXiYqKCk=".to_string(),
+            // test:test!@#$%^&*()
             "https://test-123.atlassian.net".to_string(),
             r#"{"name": "Done & Complete"}"#.to_string(),
             "Completed with special chars: <>&\"'".to_string(),
             transitions,
+            YaraSection::default(),
         );
 
         assert!(!cfg.get_auth_key().is_empty());

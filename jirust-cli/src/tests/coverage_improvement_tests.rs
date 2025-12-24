@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod coverage_improvement_tests {
     use crate::args::commands::{OutputTypes, OutputValues};
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::runners::jira_cmd_runners::{
         version_cmd_runner::{VersionCmdRunner, VersionCmdParams},
         link_issue_cmd_runner::{LinkIssueCmdRunner, LinkIssueCmdParams},
@@ -29,6 +29,7 @@ mod coverage_improvement_tests {
             r#"{"name": "Done"}"#.to_string(),
             "Task completed".to_string(),
             transitions,
+            YaraSection::default(),
         )
     }
 

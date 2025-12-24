@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::args::commands::ConfigActionValues;
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::executors::config_executor::ConfigExecutor;
     use crate::utils::PrintableData;
     use std::fs::{self, File};
@@ -14,7 +14,7 @@ mod tests {
             "https://test.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(),
+            Table::new(), YaraSection::default()
         )
     }
 

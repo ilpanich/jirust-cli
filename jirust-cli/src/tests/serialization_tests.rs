@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::config::config_file::{AuthData, ConfigFile};
+    use crate::config::config_file::{AuthData, ConfigFile, YaraSection};
     use crate::utils::PrintableData;
     use jira_v3_openapi::models::{CreatedIssue, IssueBean, IssueTransition};
     use serde_json::{Value, json};
@@ -155,6 +155,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             toml::Table::new(),
+            YaraSection::default(),
         );
 
         // Add transitions using the proper method
@@ -198,6 +199,7 @@ mod tests {
             "Resolved".to_string(),
             "Issue resolved".to_string(),
             toml::Table::new(),
+            YaraSection::default(),
         );
 
         let temp_dir = tempdir().expect("Failed to create temp dir");
@@ -449,6 +451,7 @@ mod tests {
             "Resolved".to_string(),
             "Complex resolution comment with unicode 测试 and emoji 🎉".to_string(),
             toml::Table::new(),
+            YaraSection::default(),
         );
 
         // Add various types of transition names using the proper method

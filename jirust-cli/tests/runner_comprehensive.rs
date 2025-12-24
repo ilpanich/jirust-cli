@@ -1,4 +1,4 @@
-use jirust_cli::config::config_file::ConfigFile;
+use jirust_cli::config::config_file::{ConfigFile, YaraSection};
 use jirust_cli::runners::jira_cmd_runners::{
     issue_cmd_runner::{IssueCmdParams, IssueCmdRunner, IssueTransitionCmdParams},
     link_issue_cmd_runner::{LinkIssueCmdParams, LinkIssueCmdRunner},
@@ -17,6 +17,7 @@ fn create_test_config() -> ConfigFile {
         "Done".to_string(),
         "Task completed".to_string(),
         Table::new(),
+        YaraSection::default(),
     )
 }
 
@@ -369,6 +370,7 @@ fn test_runners_with_different_auth_configs() {
         "Resolved".to_string(),
         "Issue resolved".to_string(),
         Table::new(),
+        YaraSection::default(),
     );
 
     // Both configs should work
