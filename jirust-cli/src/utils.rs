@@ -1,5 +1,6 @@
 //! Shared utilities for file security scanning, printing, formatting, and changelog handling.
 /// Utilities for scanning attachment files for malware
+#[cfg(feature = "attachment_scan")]
 pub mod cached_scanner;
 /// Utilities to extract release notes from changelog files.
 pub mod changelog_extractor;

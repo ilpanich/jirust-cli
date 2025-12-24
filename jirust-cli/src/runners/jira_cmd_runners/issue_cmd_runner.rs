@@ -16,9 +16,12 @@ use std::path::Path;
 #[cfg(test)]
 use mockall::automock;
 
-use crate::args::commands::TransitionArgs;
+#[cfg(feature = "attachment_scan")]
 use crate::config::config_file::YaraSection;
+#[cfg(feature = "attachment_scan")]
 use crate::utils::cached_scanner::CachedYaraScanner;
+
+use crate::args::commands::TransitionArgs;
 use crate::{
     args::commands::IssueArgs,
     config::config_file::{AuthData, ConfigFile},
@@ -34,6 +37,7 @@ use crate::{
 pub struct IssueCmdRunner {
     /// Configuration object
     cfg: Configuration,
+    #[cfg(feature = "attachment_scan")]
     yara_config: YaraSection,
 }
 
@@ -78,6 +82,7 @@ impl IssueCmdRunner {
         config.basic_auth = Some((auth_data.0, Some(auth_data.1)));
         IssueCmdRunner {
             cfg: config,
+            #[cfg(feature = "attachment_scan")]
             yara_config: cfg_file.get_yara_section().clone(),
         }
     }
@@ -173,7 +178,7 @@ impl IssueCmdRunner {
                 "Error attaching file to issue: Empty issue key".to_string(),
             )));
         };
-        let scanner = CachedYaraScanner::from_config(&self.yara_config).await?;
+
         if let Some(path) = &params.attachment_file_path {
             let attachment_bytes = std::fs::read(path)?;
             let file_name = Path::new(path)
@@ -182,19 +187,8 @@ impl IssueCmdRunner {
                 .unwrap_or("attachment")
                 .to_string();
 
-            let scan_result = scanner.scan_buffer(&attachment_bytes).unwrap_or_else(|e| {
-                eprintln!("⚠️ YARA scan failed: {}", e);
-                eprintln!("   Proceeding with attachment upload anyway...");
-                vec![]
-            });
-            if !scan_result.is_empty() {
-                println!(
-                    "⚠️ Attachment file triggered the following YARA scanner rules: {:?}",
-                    scan_result
-                );
-            } else {
-                println!("✅ No issue found by YARA scanner in the attachment file");
-            }
+            #[cfg(feature = "attachment_scan")]
+            let _scan_result = self.scan_bytes(&attachment_bytes).await?;
 
             return Ok(
                 add_attachment(&self.cfg, i_key, attachment_bytes, file_name.as_str()).await?,
@@ -204,6 +198,26 @@ impl IssueCmdRunner {
                 "Error attaching file to issue: Empty attachment file path".to_string(),
             )))
         }
+    }
+
+    #[cfg(feature = "attachment_scan")]
+    async fn scan_bytes(&self, bytes: &[u8]) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+        let scanner = CachedYaraScanner::from_config(&self.yara_config).await?;
+        let scan_result = scanner.scan_buffer(bytes).unwrap_or_else(|e| {
+            eprintln!("⚠️ YARA scan failed: {}", e);
+            eprintln!("   Proceeding with attachment upload anyway...");
+            vec![]
+        });
+        if !scan_result.is_empty() {
+            println!(
+                "⚠️ Attachment file triggered the following YARA scanner rules: {:?}",
+                scan_result
+            );
+        } else {
+            println!("✅ No issue found by YARA scanner in the attachment file");
+        }
+
+        Ok(scan_result)
     }
 
     /// Creates a Jira issue
