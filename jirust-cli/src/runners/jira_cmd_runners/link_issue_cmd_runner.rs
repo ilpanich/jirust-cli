@@ -44,7 +44,7 @@ impl LinkIssueCmdRunner {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::link_issue_cmd_runner::LinkIssueCmdRunner;
     /// use toml::Table;
     ///
@@ -74,7 +74,7 @@ impl LinkIssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::link_issue_cmd_runner::{LinkIssueCmdRunner, LinkIssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     /// # use std::error::Error;
     ///

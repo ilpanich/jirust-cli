@@ -47,7 +47,7 @@ impl ProjectCmdRunner {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::ProjectCmdRunner;
     /// use toml::Table;
     ///
@@ -75,7 +75,7 @@ impl ProjectCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -147,7 +147,7 @@ impl ProjectCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -204,7 +204,7 @@ impl ProjectCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -254,7 +254,7 @@ impl ProjectCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {

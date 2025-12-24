@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod coverage_improvement_tests {
-    use crate::args::commands::{OutputTypes, OutputValues};
+    use crate::args::commands::OutputValues;
     use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::runners::jira_cmd_runners::{
         version_cmd_runner::{VersionCmdRunner, VersionCmdParams},
@@ -38,7 +38,7 @@ mod coverage_improvement_tests {
     #[test]
     fn test_version_cmd_runner_new_with_transitions() {
         let config = create_test_config();
-        let runner = VersionCmdRunner::new(&config);
+        let _runner = VersionCmdRunner::new(&config);
 
         // Test that runner was created successfully
         assert!(true);

@@ -37,7 +37,7 @@ mod advanced_runner_tests {
     #[test]
     fn test_issue_runner_all_methods() {
         let config = create_test_config();
-        let runner = IssueCmdRunner::new(&config);
+        let _runner = IssueCmdRunner::new(&config);
 
         // Test that all public methods exist and can be called
         // We can't actually test API calls, but we can test method signatures and error handling
@@ -895,7 +895,7 @@ mod advanced_runner_tests {
     #[test]
     fn test_unicode_and_special_characters() {
         let config = create_test_config();
-        let runner = IssueCmdRunner::new(&config);
+        let _runner = IssueCmdRunner::new(&config);
 
         // Test with Unicode characters, emojis, and special symbols
         let unicode_params = IssueCmdParams {

@@ -63,6 +63,7 @@ impl IssueExecutor {
     ///    transition_to: None,
     ///    assignee: None,
     ///    query: None,
+    ///    attachment_file_path: None,
     ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
@@ -134,6 +135,7 @@ impl<R: IssueCmdRunnerApi> ExecJiraCommand for IssueExecutor<R> {
     ///   transition_to: None,
     ///   assignee: None,
     ///   query: None,
+    ///   attachment_file_path: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///   output: OutputArgs { output_format: None, output_type: None },
     /// };

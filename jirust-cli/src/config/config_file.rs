@@ -251,7 +251,7 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
@@ -292,7 +292,7 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
@@ -333,7 +333,7 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
@@ -374,7 +374,7 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
@@ -541,7 +541,7 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());

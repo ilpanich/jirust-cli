@@ -65,7 +65,7 @@ impl VersionCmdRunner {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
@@ -110,7 +110,7 @@ impl VersionCmdRunner {
     /// ```no_run
     /// use jira_v3_openapi::models::Version;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
@@ -238,7 +238,7 @@ impl VersionCmdRunner {
     /// ```no_run
     /// use jira_v3_openapi::models::Version;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
@@ -479,7 +479,7 @@ impl VersionCmdRunner {
     /// ```no_run
     /// use jira_v3_openapi::models::Version;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
@@ -526,7 +526,7 @@ impl VersionCmdRunner {
     /// ```no_run
     /// use jira_v3_openapi::models::Version;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
@@ -585,7 +585,7 @@ impl VersionCmdRunner {
     /// ```no_run
     /// use jira_v3_openapi::models::Version;
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
@@ -647,7 +647,7 @@ impl VersionCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
@@ -697,7 +697,7 @@ impl VersionCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdParams;
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
@@ -737,7 +737,7 @@ impl VersionCmdRunner {
     /// # Example
     /// ```ignore
     /// use jira_v3_openapi::models::{ User, Version };
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///

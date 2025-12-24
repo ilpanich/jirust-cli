@@ -67,7 +67,7 @@ impl IssueCmdRunner {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::IssueCmdRunner;
     /// use toml::Table;
     ///
@@ -101,7 +101,7 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -151,7 +151,7 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -162,7 +162,7 @@ impl IssueCmdRunner {
     /// params.issue_key = Some("issue_key".to_string());
     /// params.attachment_file_path = Some("path/to/file".to_string());
     ///
-    /// let result = issue_cmd_runner.attach_file_to_issue(params).await?;
+    /// let result = issue_cmd_runner.attach_file_to_jira_issue(params).await?;
     /// # Ok(())
     /// # })
     /// # }
@@ -234,7 +234,7 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -281,7 +281,7 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -325,7 +325,7 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -368,7 +368,7 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -418,7 +418,7 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -482,7 +482,7 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -542,7 +542,7 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueTransitionCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {

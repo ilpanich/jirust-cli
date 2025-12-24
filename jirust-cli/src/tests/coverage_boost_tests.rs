@@ -10,7 +10,6 @@ mod coverage_boost_tests {
     use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
     use crate::{manage_config, process_command};
     use std::fs;
-    use std::io::Write;
     use tempfile::{NamedTempFile, TempDir};
     use toml::Table;
 
@@ -244,7 +243,7 @@ standard_resolution_comment = "Task completed"
 
     #[test]
     fn test_cfg_cmd_runner_new() {
-        let runner = ConfigCmdRunner::new("/tmp/test.toml".to_string());
+        let _runner = ConfigCmdRunner::new("/tmp/test.toml".to_string());
         assert!(true); // Test passes if no panic
     }
 
