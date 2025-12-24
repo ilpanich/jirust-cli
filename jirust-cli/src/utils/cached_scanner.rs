@@ -406,7 +406,10 @@ async fn update_zip_rules(config: &YaraConfig) -> Result<bool> {
     }
 
     // Read response bytes
-    let zip_bytes = response.bytes().await.context("Failed to read response body")?;
+    let zip_bytes = response
+        .bytes()
+        .await
+        .context("Failed to read response body")?;
 
     // Calculate hash for version tracking
     let mut hasher = Sha256::new();
@@ -494,12 +497,12 @@ pub async fn scan_file<P: AsRef<Path>>(file_path: P) -> Result<Vec<String>> {
 mod tests {
     use super::*;
 
-    #[test]
+    #[tokio::test]
     #[ignore]
-    fn test_cached_scanner() {
-        let scanner = CachedYaraScanner::new().unwrap();
+    async fn test_cached_scanner() {
+        let scanner = CachedYaraScanner::new().await.unwrap();
 
-        // Crea un file di test
+        // test file creation
         std::fs::write("/tmp/test_file.txt", b"Hello World").unwrap();
 
         let result = scanner.scan_file("/tmp/test_file.txt");
@@ -508,19 +511,19 @@ mod tests {
         std::fs::remove_file("/tmp/test_file.txt").ok();
     }
 
-    #[test]
+    #[tokio::test]
     #[ignore]
-    fn test_cache_persistence() {
-        // Prima scansione - compila
-        let scanner1 = CachedYaraScanner::new().unwrap();
+    async fn test_cache_persistence() {
+        // First scan - rules should be compiled and cached
+        let scanner1 = CachedYaraScanner::new().await.unwrap();
         drop(scanner1);
 
-        // Seconda scansione - dovrebbe caricare dalla cache
+        // Second scan - rules should be loaded from cache
         let start = std::time::Instant::now();
-        let scanner2 = CachedYaraScanner::new().unwrap();
+        let scanner2 = CachedYaraScanner::new().await.unwrap();
         let elapsed = start.elapsed();
 
-        // Il caricamento dalla cache dovrebbe essere <1s
+        // Cache load should be fast (< 2 seconds)
         assert!(elapsed.as_secs() < 2);
 
         drop(scanner2);

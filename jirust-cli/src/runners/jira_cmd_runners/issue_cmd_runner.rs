@@ -182,7 +182,11 @@ impl IssueCmdRunner {
                 .unwrap_or("attachment")
                 .to_string();
 
-            let scan_result = scanner.scan_buffer(&attachment_bytes).unwrap_or(vec![]);
+            let scan_result = scanner.scan_buffer(&attachment_bytes).unwrap_or_else(|e| {
+                eprintln!("⚠️ YARA scan failed: {}", e);
+                eprintln!("   Proceeding with attachment upload anyway...");
+                vec![]
+            });
             if !scan_result.is_empty() {
                 println!(
                     "⚠️ Attachment file triggered the following YARA scanner rules: {:?}",
