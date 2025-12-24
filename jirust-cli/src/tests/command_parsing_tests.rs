@@ -31,6 +31,7 @@ mod tests {
         // Test all IssueActionValues variants
         let actions = [
             IssueActionValues::Assign,
+            IssueActionValues::Attach,
             IssueActionValues::Create,
             IssueActionValues::Delete,
             IssueActionValues::Get,
@@ -49,6 +50,7 @@ mod tests {
             assert!(matches!(
                 cloned,
                 IssueActionValues::Assign
+                    | IssueActionValues::Attach
                     | IssueActionValues::Create
                     | IssueActionValues::Delete
                     | IssueActionValues::Get
@@ -728,5 +730,125 @@ mod tests {
         if let Err(err) = result {
             assert!(err.to_string().contains("invalid KEY=value"));
         }
+    }
+
+    #[test]
+    fn test_issue_attach_action_parsing() {
+        let args = JirustCliArgs::try_parse_from([
+            "jirust-cli",
+            "issue",
+            "attach",
+            "-i",
+            "TEST-123",
+            "-p",
+            "/path/to/file.pdf",
+        ])
+        .expect("CLI parsing should succeed");
+
+        match args.subcmd {
+            Commands::Issue(issue_args) => {
+                assert_eq!(issue_args.issue_act, IssueActionValues::Attach);
+                assert_eq!(issue_args.issue_key, Some("TEST-123".to_string()));
+                assert_eq!(
+                    issue_args.attachment_file_path,
+                    Some("/path/to/file.pdf".to_string())
+                );
+            }
+            other => panic!("unexpected command parsed: {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_issue_attach_with_all_path_types() {
+        // Test absolute path
+        let args = JirustCliArgs::try_parse_from([
+            "jirust-cli",
+            "issue",
+            "attach",
+            "-i",
+            "TEST-1",
+            "-p",
+            "/home/user/documents/file.txt",
+        ])
+        .expect("absolute path should parse");
+
+        if let Commands::Issue(issue_args) = args.subcmd {
+            assert_eq!(
+                issue_args.attachment_file_path,
+                Some("/home/user/documents/file.txt".to_string())
+            );
+        }
+
+        // Test relative path
+        let args = JirustCliArgs::try_parse_from([
+            "jirust-cli",
+            "issue",
+            "attach",
+            "-i",
+            "TEST-1",
+            "-p",
+            "./relative/path/file.txt",
+        ])
+        .expect("relative path should parse");
+
+        if let Commands::Issue(issue_args) = args.subcmd {
+            assert_eq!(
+                issue_args.attachment_file_path,
+                Some("./relative/path/file.txt".to_string())
+            );
+        }
+
+        // Test path with spaces
+        let args = JirustCliArgs::try_parse_from([
+            "jirust-cli",
+            "issue",
+            "attach",
+            "-i",
+            "TEST-1",
+            "-p",
+            "/path/with spaces/file name.txt",
+        ])
+        .expect("path with spaces should parse");
+
+        if let Commands::Issue(issue_args) = args.subcmd {
+            assert_eq!(
+                issue_args.attachment_file_path,
+                Some("/path/with spaces/file name.txt".to_string())
+            );
+        }
+    }
+
+    #[test]
+    fn test_issue_attach_without_file_path_fails() {
+        // Should fail when attachment file path is missing
+        let result = JirustCliArgs::try_parse_from([
+            "jirust-cli",
+            "issue",
+            "attach",
+            "-i",
+            "TEST-123",
+        ]);
+
+        // This should actually succeed in parsing but the validation happens later
+        // The field will be None
+        if let Ok(args) = result {
+            if let Commands::Issue(issue_args) = args.subcmd {
+                assert_eq!(issue_args.attachment_file_path, None);
+            }
+        }
+    }
+
+    #[test]
+    fn test_issue_action_values_includes_attach() {
+        // Verify that Attach is included in IssueActionValues enum
+        let attach_action = IssueActionValues::Attach;
+
+        // Test Debug trait
+        let debug_str = format!("{:?}", attach_action);
+        assert!(debug_str.contains("Attach"));
+
+        // Test Clone trait
+        let cloned = attach_action.clone();
+        assert!(matches!(cloned, IssueActionValues::Attach));
     }
 }

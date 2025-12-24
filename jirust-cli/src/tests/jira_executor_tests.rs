@@ -208,7 +208,9 @@ mod tests {
             IssueExecutor::new(config.clone(), IssueActionValues::Delete, args.clone());
         let _search_executor =
             IssueExecutor::new(config.clone(), IssueActionValues::Search, args.clone());
-        let _assign_executor = IssueExecutor::new(config, IssueActionValues::Assign, args);
+        let _assign_executor =
+            IssueExecutor::new(config.clone(), IssueActionValues::Assign, args.clone());
+        let _attach_executor = IssueExecutor::new(config, IssueActionValues::Attach, args);
 
         // All constructors should work without panicking
         assert!(true);
@@ -1193,6 +1195,7 @@ mod tests {
         // Test all IssueActionValues variants
         let issue_actions = [
             IssueActionValues::Assign,
+            IssueActionValues::Attach,
             IssueActionValues::Create,
             IssueActionValues::Delete,
             IssueActionValues::Get,
@@ -1200,7 +1203,7 @@ mod tests {
             IssueActionValues::Transition,
             IssueActionValues::Update,
         ];
-        assert_eq!(issue_actions.len(), 7);
+        assert_eq!(issue_actions.len(), 8);
 
         // Test all ProjectActionValues variants
         let project_actions = [ProjectActionValues::Create, ProjectActionValues::List];
@@ -1217,6 +1220,115 @@ mod tests {
             VersionActionValues::Update,
         ];
         assert_eq!(version_actions.len(), 7);
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_attach_success() {
+        use jira_v3_openapi::models::Attachment;
+
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner
+            .expect_attach_file_to_jira_issue()
+            .returning(|params| {
+                assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
+                assert_eq!(
+                    params.attachment_file_path.as_deref(),
+                    Some("/tmp/test.txt")
+                );
+                Ok(vec![Attachment {
+                    id: Some("10001".to_string()),
+                    filename: Some("test.txt".to_string()),
+                    size: Some(100),
+                    ..Default::default()
+                }])
+            });
+
+        let args = IssueArgs {
+            issue_act: IssueActionValues::Attach,
+            project_key: Some("TEST".to_string()),
+            issue_key: Some("TEST-123".to_string()),
+            issue_fields: None,
+            transition_to: None,
+            assignee: None,
+            query: None,
+            attachment_file_path: Some("/tmp/test.txt".to_string()),
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: None,
+                output_type: None,
+            },
+        };
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Attach, args);
+        let result = executor.exec_jira_command().await.expect("attach succeeds");
+        let first = result.first().expect("printable data available");
+        match first {
+            PrintableData::Generic { data } => {
+                assert_eq!(
+                    data,
+                    &vec![serde_json::Value::String(
+                        "File attached successfully".to_string()
+                    )]
+                );
+            }
+            _ => panic!("unexpected printable data variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_attach_error() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner
+            .expect_attach_file_to_jira_issue()
+            .returning(|_| {
+                Err(Box::new(IoError::new(
+                    ErrorKind::NotFound,
+                    "File not found",
+                )) as Box<dyn std::error::Error>)
+            });
+
+        let args = IssueArgs {
+            issue_act: IssueActionValues::Attach,
+            project_key: Some("TEST".to_string()),
+            issue_key: Some("TEST-123".to_string()),
+            issue_fields: None,
+            transition_to: None,
+            assignee: None,
+            query: None,
+            attachment_file_path: Some("/nonexistent/file.txt".to_string()),
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: None,
+                output_type: None,
+            },
+        };
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Attach, args);
+        let result = executor.exec_jira_command().await;
+
+        assert!(result.is_err());
+        if let Err(e) = result {
+            let error_msg = e.to_string();
+            assert!(error_msg.contains("Error attaching file"));
+        }
+    }
+
+    #[test]
+    fn test_issue_executor_with_attach_action() {
+        let config = create_test_config();
+        let mut args = create_test_issue_args();
+        args.attachment_file_path = Some("/path/to/attachment.pdf".to_string());
+
+        let _attach_executor = IssueExecutor::new(config, IssueActionValues::Attach, args);
+
+        // Constructor should work without panicking
+        assert!(true);
     }
 
     #[test]
