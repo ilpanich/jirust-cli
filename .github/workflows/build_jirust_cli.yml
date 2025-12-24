@@ -36,7 +36,7 @@ jobs:
         env:
           SCCACHE_GHA_ENABLED: "true"
           RUSTC_WRAPPER: "sccache"
-        run: cargo test -p jirust-cli
+        run: cargo test -p jirust-cli --all-features
 
       - name: Cargo deny check
         env:
@@ -51,7 +51,7 @@ jobs:
           SCCACHE_GHA_ENABLED: "true"
           RUSTC_WRAPPER: "sccache"
         run: |
-          cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-pc-windows-gnu -- -C linker=x86_64-w64-mingw32-gcc
+          cargo rustc -p jirust-cli --bin jirust-cli --all-features --release --target=x86_64-pc-windows-gnu -- -C linker=x86_64-w64-mingw32-gcc
           mkdir builds/jirust-cli-win64
           cp target/x86_64-pc-windows-gnu/release/jirust-cli.exe builds/jirust-cli-win64
           tar -C builds -czvf dist/jirust-cli-win64.tar.gz jirust-cli-win64
@@ -61,7 +61,7 @@ jobs:
           SCCACHE_GHA_ENABLED: "true"
           RUSTC_WRAPPER: "sccache"
         run: |
-          cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-unknown-linux-gnu
+          cargo rustc -p jirust-cli --bin jirust-cli --all-features --release --target=x86_64-unknown-linux-gnu
           mkdir builds/jirust-cli-linux
           cp target/x86_64-unknown-linux-gnu/release/jirust-cli builds/jirust-cli-linux
           tar -C builds -czvf dist/jirust-cli-linux.tar.gz jirust-cli-linux
@@ -107,7 +107,7 @@ jobs:
           CARGO_ACCESS_TOKEN: ${{ secrets.CARGO_ACCESS_TOKEN }}
         run: |
           cargo login "$CARGO_ACCESS_TOKEN"
-          cargo publish -p jirust-cli
+          cargo publish -p jirust-cli --all-features
 
       - name: Publish WASM package on npmjs
         env:

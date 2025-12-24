@@ -6,11 +6,10 @@ mod coverage_boost_tests {
         PaginationArgs, ProjectActionValues, ProjectArgs, TransitionActionValues, TransitionArgs,
         VersionActionValues, VersionArgs,
     };
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
     use crate::{manage_config, process_command};
     use std::fs;
-    use std::io::Write;
     use tempfile::{NamedTempFile, TempDir};
     use toml::Table;
 
@@ -21,6 +20,7 @@ mod coverage_boost_tests {
             r#"{"name": "Done"}"#.to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -119,6 +119,7 @@ mod coverage_boost_tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -190,9 +191,10 @@ standard_resolution_comment = "Task completed"
         assert!(result.is_err());
         if let Err(err) = result {
             assert_eq!(err.kind(), std::io::ErrorKind::NotFound);
-            assert!(err
-                .to_string()
-                .contains("Missing basic configuration, setup mandatory!"));
+            assert!(
+                err.to_string()
+                    .contains("Missing basic configuration, setup mandatory!")
+            );
         }
     }
 
@@ -242,7 +244,7 @@ standard_resolution_comment = "Task completed"
 
     #[test]
     fn test_cfg_cmd_runner_new() {
-        let runner = ConfigCmdRunner::new("/tmp/test.toml".to_string());
+        let _runner = ConfigCmdRunner::new("/tmp/test.toml".to_string());
         assert!(true); // Test passes if no panic
     }
 
@@ -333,6 +335,7 @@ standard_resolution_comment = "Task completed"
             "".to_string(),
             "".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
         let version_cmd = Commands::Version(VersionArgs {
             version_act: VersionActionValues::List,
@@ -372,11 +375,13 @@ standard_resolution_comment = "Task completed"
         );
 
         let cfg = ConfigFile::new(
-            "dGVzdDp0ZXN0ISRAIyQlXiYqKCk=".to_string(), // test:test!@#$%^&*()
+            "dGVzdDp0ZXN0ISRAIyQlXiYqKCk=".to_string(),
+            // test:test!@#$%^&*()
             "https://test-123.atlassian.net".to_string(),
             r#"{"name": "Done & Complete"}"#.to_string(),
             "Completed with special chars: <>&\"'".to_string(),
             transitions,
+            YaraSection::default(),
         );
 
         assert!(!cfg.get_auth_key().is_empty());
@@ -434,10 +439,7 @@ standard_resolution_comment = "Task completed"
             table_basic.output_format,
             Some(OutputValues::Table)
         ));
-        assert!(matches!(
-            table_basic.output_type,
-            Some(OutputTypes::Basic)
-        ));
+        assert!(matches!(table_basic.output_type, Some(OutputTypes::Basic)));
 
         // Test Table + Single
         let table_single = OutputArgs {

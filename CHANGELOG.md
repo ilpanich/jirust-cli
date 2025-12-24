@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Added
+- Support for jire issue attachments
+
+### Changed
+- Updated dependencies
+- Improved tests coverage (with the help of Claude Code)
+- Improved docs (with the help of ChatGPT Codex)
 
 ## [0.16.3] 2025-12-07
 ### Reverted

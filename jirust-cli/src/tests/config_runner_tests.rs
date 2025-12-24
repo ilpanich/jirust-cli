@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::config::config_file::{AuthData, ConfigFile};
+    use crate::config::config_file::{AuthData, ConfigFile, YaraSection};
     use crate::runners::cfg_cmd_runner::ConfigCmdRunner;
     use std::fs;
     use std::io::Cursor;
@@ -136,6 +136,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             toml::Table::new(),
+            YaraSection::default(),
         );
 
         let temp_dir = tempdir().expect("Failed to create temp dir");
@@ -186,6 +187,7 @@ mod tests {
             "Resolved".to_string(),
             "Issue has been resolved".to_string(),
             transitions,
+            YaraSection::default(),
         );
 
         let temp_dir = tempdir().expect("Failed to create temp dir");
@@ -365,6 +367,7 @@ mod tests {
             "Done".to_string(),
             "Workflow completed".to_string(),
             toml::Table::new(),
+            YaraSection::default(),
         );
 
         // Step 3: Show the config (should not panic)
@@ -394,6 +397,7 @@ mod tests {
             "Done".to_string(),
             "Auth test completed".to_string(),
             toml::Table::new(),
+            YaraSection::default(),
         );
 
         let temp_dir = tempdir().expect("Failed to create temp dir");

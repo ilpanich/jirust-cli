@@ -63,6 +63,7 @@ impl IssueExecutor {
     ///    transition_to: None,
     ///    assignee: None,
     ///    query: None,
+    ///    attachment_file_path: None,
     ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
@@ -134,6 +135,7 @@ impl<R: IssueCmdRunnerApi> ExecJiraCommand for IssueExecutor<R> {
     ///   transition_to: None,
     ///   assignee: None,
     ///   query: None,
+    ///   attachment_file_path: None,
     ///   pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///   output: OutputArgs { output_format: None, output_type: None },
     /// };
@@ -160,6 +162,22 @@ impl<R: IssueCmdRunnerApi> ExecJiraCommand for IssueExecutor<R> {
                     }]),
                     Err(err) => Err(Box::new(Error::other(format!(
                         "Error assigning issue: {err}"
+                    )))),
+                }
+            }
+            IssueActionValues::Attach => {
+                match self
+                    .issue_cmd_runner
+                    .attach_file_to_jira_issue(IssueCmdParams::from(&self.issue_args))
+                    .await
+                {
+                    Ok(_) => Ok(vec![PrintableData::Generic {
+                        data: vec![serde_json::Value::String(
+                            "File attached successfully".to_string(),
+                        )],
+                    }]),
+                    Err(err) => Err(Box::new(Error::other(format!(
+                        "Error attaching file to issue: {err}"
                     )))),
                 }
             }

@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::config::config_file::{AuthData, ConfigFile};
+    use crate::config::config_file::{AuthData, ConfigFile, YaraSection};
     use toml::{Table, Value};
 
     #[test]
@@ -58,6 +58,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             transitions,
+            YaraSection::default(),
         );
 
         assert_eq!(config.get_auth_key(), "dGVzdF91c2VyOnRlc3RfYXBpX2tleQ==");
@@ -160,6 +161,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             transitions,
+            YaraSection::default(),
         );
 
         // Test serialization

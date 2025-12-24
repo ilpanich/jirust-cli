@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::args::commands::{Commands, ConfigActionValues, ConfigArgs};
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::process_command;
     use std::io::{Error, ErrorKind};
     use toml::Table;
@@ -14,6 +14,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         // Test valid config validation logic
@@ -29,6 +30,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         // This should be considered invalid due to empty auth key
@@ -44,6 +46,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         // This should be considered invalid due to empty Jira URL
@@ -209,6 +212,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -219,6 +223,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -229,6 +234,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         )
     }
 }

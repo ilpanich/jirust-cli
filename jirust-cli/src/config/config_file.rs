@@ -15,6 +15,8 @@ pub struct AuthData {
 pub struct ConfigFile {
     auth: AuthSection,
     jira: JiraSection,
+    #[serde(default)]
+    yara: YaraSection,
 }
 
 /// This struct holds the authentication token to be used with the Jira API.
@@ -30,6 +32,15 @@ pub struct JiraSection {
     standard_resolution: String,
     standard_resolution_comment: String,
     transitions_names: Table,
+}
+
+/// This struct holds the YARA scanner configuration.
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct YaraSection {
+    rules_source: String,
+    rules_directory: String,
+    cache_file: String,
+    cache_version_file: String,
 }
 
 /// Implementation of AuthData
@@ -172,6 +183,7 @@ impl ConfigFile {
     /// * standard_resolution - The standard resolution to be used when resolving an issue.
     /// * standard_resolution_comment - The standard comment to be used when resolving an issue.
     /// * transitions_names - The transitions names to be used when transitioning an issue.
+    /// * yara - The YARA scanner configuration section.
     ///
     /// # Returns
     /// * A new ConfigFile struct.
@@ -179,10 +191,10 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     ///
     /// assert_eq!(config.get_auth_key(), "auth_token");
     /// assert_eq!(config.get_jira_url(), "jira_url");
@@ -195,6 +207,7 @@ impl ConfigFile {
         standard_resolution: String,
         standard_resolution_comment: String,
         transitions_names: Table,
+        yara: YaraSection,
     ) -> ConfigFile {
         ConfigFile {
             auth: AuthSection { auth_token },
@@ -204,6 +217,7 @@ impl ConfigFile {
                 standard_resolution_comment,
                 transitions_names,
             },
+            yara,
         }
     }
 
@@ -237,10 +251,10 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let auth_key = config.get_auth_key();
     ///
     /// assert_eq!(auth_key, "auth_token");
@@ -278,10 +292,10 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let jira_url = config.get_jira_url();
     ///
     /// assert_eq!(jira_url, "jira_url");
@@ -319,10 +333,10 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let standard_resolution = config.get_standard_resolution();
     ///
     /// assert_eq!(config.get_standard_resolution(), "standard_resolution");
@@ -360,10 +374,10 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let standard_resolution_comment = config.get_standard_resolution_comment();
     ///
     /// assert_eq!(standard_resolution_comment, "standard_resolution_comment");
@@ -443,6 +457,78 @@ impl ConfigFile {
         )
     }
 
+    /// Get the YARA section from the ConfigFile struct.
+    ///
+    /// # Returns
+    /// * The YARA section from the ConfigFile.
+    pub fn get_yara_section(&self) -> &YaraSection {
+        &self.yara
+    }
+
+    /// Get the YARA rules source URL from the ConfigFile struct.
+    ///
+    /// # Returns
+    /// * The YARA rules source URL.
+    pub fn get_yara_rules_source(&self) -> &str {
+        &self.yara.rules_source
+    }
+
+    /// Get the YARA rules directory from the ConfigFile struct.
+    ///
+    /// # Returns
+    /// * The YARA rules directory name (relative to ~/.jirust-cli/).
+    pub fn get_yara_rules_directory(&self) -> &str {
+        &self.yara.rules_directory
+    }
+
+    /// Get the YARA cache file from the ConfigFile struct.
+    ///
+    /// # Returns
+    /// * The YARA cache file name (relative to ~/.jirust-cli/).
+    pub fn get_yara_cache_file(&self) -> &str {
+        &self.yara.cache_file
+    }
+
+    /// Get the YARA cache version file from the ConfigFile struct.
+    ///
+    /// # Returns
+    /// * The YARA cache version file name (relative to ~/.jirust-cli/).
+    pub fn get_yara_cache_version_file(&self) -> &str {
+        &self.yara.cache_version_file
+    }
+
+    /// Set the YARA rules source URL for the ConfigFile struct.
+    ///
+    /// # Arguments
+    /// * source - The YARA rules source URL (git repo or zip file).
+    pub fn set_yara_rules_source(&mut self, source: String) {
+        self.yara.rules_source = source;
+    }
+
+    /// Set the YARA rules directory for the ConfigFile struct.
+    ///
+    /// # Arguments
+    /// * directory - The YARA rules directory name (relative to ~/.jirust-cli/).
+    pub fn set_yara_rules_directory(&mut self, directory: String) {
+        self.yara.rules_directory = directory;
+    }
+
+    /// Set the YARA cache file for the ConfigFile struct.
+    ///
+    /// # Arguments
+    /// * file - The YARA cache file name (relative to ~/.jirust-cli/).
+    pub fn set_yara_cache_file(&mut self, file: String) {
+        self.yara.cache_file = file;
+    }
+
+    /// Set the YARA cache version file for the ConfigFile struct.
+    ///
+    /// # Arguments
+    /// * file - The YARA cache version file name (relative to ~/.jirust-cli/).
+    pub fn set_yara_cache_version_file(&mut self, file: String) {
+        self.yara.cache_version_file = file;
+    }
+
     /// Stores the configuration to a file.
     /// This will overwrite the file if it already exists.
     ///
@@ -455,10 +541,10 @@ impl ConfigFile {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
-    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let config = ConfigFile::new("auth_token".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let result = config.write_to_file("config.toml");
     ///
     /// assert!(result.is_ok());
@@ -511,6 +597,28 @@ impl ConfigFile {
     }
 }
 
+impl Default for YaraSection {
+    /// Create a new YaraSection struct with default values.
+    /// The default values are:
+    /// - rules_source: "https://github.com/YARAHQ/yara-forge/releases/latest/download/yara-forge-rules-core.zip"
+    /// - rules_directory: "yara-rules"
+    /// - cache_file: "yara_rules.cache"
+    /// - cache_version_file: "yara_rules.cache.version"
+    ///
+    /// # Returns
+    /// * A new YaraSection struct with default values.
+    fn default() -> YaraSection {
+        YaraSection {
+            rules_source: String::from(
+                "https://github.com/YARAHQ/yara-forge/releases/latest/download/yara-forge-rules-core.zip",
+            ),
+            rules_directory: String::from("yara-rules"),
+            cache_file: String::from("yara_rules.cache"),
+            cache_version_file: String::from("yara_rules.cache.version"),
+        }
+    }
+}
+
 impl Default for ConfigFile {
     /// Create a new ConfigFile struct with default values.
     /// This is useful for creating a new configuration file.
@@ -521,6 +629,7 @@ impl Default for ConfigFile {
     /// - standard_resolution: ""
     /// - standard_resolution_comment: ""
     /// - transitions_names: Table::new()
+    /// - yara: YaraSection::default()
     ///
     /// # Returns
     /// * A new ConfigFile struct with default values.
@@ -549,6 +658,39 @@ impl Default for ConfigFile {
                 standard_resolution_comment: String::from(""),
                 transitions_names: Table::new(),
             },
+            yara: YaraSection::default(),
         }
+    }
+}
+
+impl YaraSection {
+    pub fn new(
+        rules_source: String,
+        rules_directory: String,
+        cache_file: String,
+        cache_version_file: String,
+    ) -> YaraSection {
+        YaraSection {
+            rules_source,
+            rules_directory,
+            cache_file,
+            cache_version_file,
+        }
+    }
+
+    pub fn get_rules_source(&self) -> &str {
+        &self.rules_source
+    }
+
+    pub fn get_rules_directory(&self) -> &str {
+        &self.rules_directory
+    }
+
+    pub fn get_cache_file(&self) -> &str {
+        &self.cache_file
+    }
+
+    pub fn get_cache_version_file(&self) -> &str {
+        &self.cache_version_file
     }
 }

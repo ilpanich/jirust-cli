@@ -6,7 +6,7 @@ mod comprehensive_executor_tests {
         OutputTypes, OutputValues, PaginationArgs, ProjectActionValues, ProjectArgs,
         TransitionActionValues, TransitionArgs, VersionActionValues, VersionArgs,
     };
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::executors::config_executor::ConfigExecutor;
     use crate::executors::jira_commands_executors::{
         ExecJiraCommand, jira_issue_executor::IssueExecutor,
@@ -25,6 +25,7 @@ mod comprehensive_executor_tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -37,6 +38,7 @@ mod comprehensive_executor_tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -73,6 +75,7 @@ mod comprehensive_executor_tests {
             transition_to: Some("In Progress".to_string()),
             assignee: Some("test.assignee@example.com".to_string()),
             query: Some("project = COMP AND status = 'To Do'".to_string()),
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: Some(50),
                 page_offset: Some(0),
@@ -258,7 +261,7 @@ mod comprehensive_executor_tests {
         for action in actions {
             let mut args = base_args.clone();
             args.issue_act = action.clone();
-            let executor = IssueExecutor::new(config.clone(), action, args);
+            let _executor = IssueExecutor::new(config.clone(), action, args);
 
             // Test that executor was created successfully
             // Since we can't access private fields, we test through successful construction
@@ -312,7 +315,7 @@ mod comprehensive_executor_tests {
         for action in actions {
             let mut args = base_args.clone();
             args.project_act = action.clone();
-            let executor = ProjectExecutor::new(config.clone(), action, args);
+            let _executor = ProjectExecutor::new(config.clone(), action, args);
 
             assert!(true); // Constructor succeeded
         }
@@ -323,7 +326,7 @@ mod comprehensive_executor_tests {
         let config = create_test_config();
         let args = create_comprehensive_project_args();
 
-        let executor = ProjectExecutor::new(config, ProjectActionValues::Create, args);
+        let _executor = ProjectExecutor::new(config, ProjectActionValues::Create, args);
 
         // Test that executor handles comprehensive arguments without panicking
         assert!(true); // Constructor succeeded
@@ -348,7 +351,7 @@ mod comprehensive_executor_tests {
         for action in actions {
             let mut args = base_args.clone();
             args.version_act = action.clone();
-            let executor = VersionExecutor::new(config.clone(), action, args);
+            let _executor = VersionExecutor::new(config.clone(), action, args);
 
             assert!(true); // Constructor succeeded
         }
@@ -359,7 +362,7 @@ mod comprehensive_executor_tests {
         let config = create_test_config();
         let args = create_comprehensive_version_args();
 
-        let executor = VersionExecutor::new(config, VersionActionValues::Create, args);
+        let _executor = VersionExecutor::new(config, VersionActionValues::Create, args);
 
         // Test that executor handles comprehensive arguments without panicking
         assert!(true); // Constructor succeeded
@@ -372,13 +375,13 @@ mod comprehensive_executor_tests {
 
         // Test with minimal args
         let minimal_args = create_minimal_link_args();
-        let executor =
+        let _executor =
             LinkIssueExecutor::new(config.clone(), LinkIssueActionValues::Create, minimal_args);
         assert!(true);
 
         // Test with comprehensive args
         let comprehensive_args = create_comprehensive_link_args();
-        let executor =
+        let _executor =
             LinkIssueExecutor::new(config, LinkIssueActionValues::Create, comprehensive_args);
         assert!(true);
     }
@@ -390,7 +393,7 @@ mod comprehensive_executor_tests {
 
         // Test with minimal args
         let minimal_args = create_minimal_transition_args();
-        let executor = IssueTransitionExecutor::new(
+        let _executor = IssueTransitionExecutor::new(
             config.clone(),
             TransitionActionValues::List,
             minimal_args,
@@ -399,7 +402,7 @@ mod comprehensive_executor_tests {
 
         // Test with comprehensive args
         let comprehensive_args = create_comprehensive_transition_args();
-        let executor =
+        let _executor =
             IssueTransitionExecutor::new(config, TransitionActionValues::List, comprehensive_args);
         assert!(true);
     }
@@ -418,7 +421,7 @@ mod comprehensive_executor_tests {
         ];
 
         for action in actions {
-            let executor = ConfigExecutor::new(config_path.clone(), action);
+            let _executor = ConfigExecutor::new(config_path.clone(), action);
             assert!(true); // Constructor succeeded
         }
 
@@ -446,27 +449,27 @@ mod comprehensive_executor_tests {
         let config = create_test_config();
 
         // Create multiple executors with the same config
-        let issue_executor = IssueExecutor::new(
+        let _issue_executor = IssueExecutor::new(
             config.clone(),
             IssueActionValues::Get,
             create_minimal_issue_args(),
         );
-        let project_executor = ProjectExecutor::new(
+        let _project_executor = ProjectExecutor::new(
             config.clone(),
             ProjectActionValues::List,
             create_minimal_project_args(),
         );
-        let version_executor = VersionExecutor::new(
+        let _version_executor = VersionExecutor::new(
             config.clone(),
             VersionActionValues::List,
             create_minimal_version_args(),
         );
-        let link_executor = LinkIssueExecutor::new(
+        let _link_executor = LinkIssueExecutor::new(
             config.clone(),
             LinkIssueActionValues::Create,
             create_minimal_link_args(),
         );
-        let transition_executor = IssueTransitionExecutor::new(
+        let _transition_executor = IssueTransitionExecutor::new(
             config,
             TransitionActionValues::List,
             create_minimal_transition_args(),
@@ -525,7 +528,7 @@ mod comprehensive_executor_tests {
             let mut args = create_minimal_issue_args();
             args.output = output_config;
 
-            let executor = IssueExecutor::new(config.clone(), IssueActionValues::Get, args);
+            let _executor = IssueExecutor::new(config.clone(), IssueActionValues::Get, args);
             assert!(true); // Constructor succeeded with this output configuration
         }
     }
@@ -595,7 +598,7 @@ mod comprehensive_executor_tests {
             let mut args = create_minimal_issue_args();
             args.pagination = pagination_config;
 
-            let executor = IssueExecutor::new(config.clone(), IssueActionValues::Search, args);
+            let _executor = IssueExecutor::new(config.clone(), IssueActionValues::Search, args);
             assert!(true); // Constructor succeeded with this pagination configuration
         }
     }
@@ -665,7 +668,7 @@ mod comprehensive_executor_tests {
         let mut args = create_comprehensive_issue_args();
         args.issue_fields = Some(complex_fields);
 
-        let executor = IssueExecutor::new(config, IssueActionValues::Create, args);
+        let _executor = IssueExecutor::new(config, IssueActionValues::Create, args);
         assert!(true); // Constructor succeeded with complex fields
     }
 
@@ -725,6 +728,7 @@ mod comprehensive_executor_tests {
             "Resolved".to_string(),
             "Issue resolved".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         let config3 = ConfigFile::new(
@@ -733,6 +737,7 @@ mod comprehensive_executor_tests {
             "Closed".to_string(),
             "Issue closed".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         // Test that all configs work with all executors

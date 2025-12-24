@@ -44,11 +44,11 @@ impl LinkIssueCmdRunner {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::link_issue_cmd_runner::LinkIssueCmdRunner;
     /// use toml::Table;
     ///
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     ///
     /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(&cfg_file);
     /// ```
@@ -74,13 +74,13 @@ impl LinkIssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::link_issue_cmd_runner::{LinkIssueCmdRunner, LinkIssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     /// # use std::error::Error;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let link_issue_cmd_runner = LinkIssueCmdRunner::new(&cfg_file);
     /// let mut params = LinkIssueCmdParams::new();
     /// params.origin_issue_key = "ISSUE-1".to_string();

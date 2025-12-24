@@ -1,4 +1,4 @@
-use jirust_cli::config::config_file::ConfigFile;
+use jirust_cli::config::config_file::{ConfigFile, YaraSection};
 use jirust_cli::runners::jira_cmd_runners::{
     issue_cmd_runner::{IssueCmdParams, IssueCmdRunner, IssueTransitionCmdParams},
     link_issue_cmd_runner::{LinkIssueCmdParams, LinkIssueCmdRunner},
@@ -17,6 +17,7 @@ fn create_test_config() -> ConfigFile {
         "Done".to_string(),
         "Task completed".to_string(),
         Table::new(),
+        YaraSection::default(),
     )
 }
 
@@ -44,6 +45,7 @@ async fn test_issue_runner_get_issue_error_handling() {
         transition: None,
         assignee: None,
         query: None,
+        attachment_file_path: None,
     };
 
     let result = runner.get_jira_issue(params).await;
@@ -67,6 +69,7 @@ async fn test_issue_runner_assign_issue_error_handling() {
         transition: None,
         assignee: None,
         query: None,
+        attachment_file_path: None,
     };
 
     let _result = runner.assign_jira_issue(params).await;
@@ -89,6 +92,7 @@ async fn test_issue_runner_create_issue_error_handling() {
         transition: None,
         assignee: None,
         query: None,
+        attachment_file_path: None,
     };
 
     let _result = runner.create_jira_issue(params).await;
@@ -107,6 +111,7 @@ async fn test_issue_runner_delete_issue_error_handling() {
         transition: None,
         assignee: None,
         query: None,
+        attachment_file_path: None,
     };
 
     let result = runner.delete_jira_issue(params).await;
@@ -129,6 +134,7 @@ async fn test_issue_runner_transition_error_handling() {
         transition: Some("2".to_string()),
         assignee: None,
         query: None,
+        attachment_file_path: None,
     };
 
     let result = runner.transition_jira_issue(params).await;
@@ -145,6 +151,7 @@ async fn test_issue_runner_transition_error_handling() {
         transition: None,
         assignee: None,
         query: None,
+        attachment_file_path: None,
     };
 
     let result = runner.transition_jira_issue(params).await;
@@ -170,6 +177,7 @@ async fn test_issue_runner_update_issue_error_handling() {
         transition: None,
         assignee: None,
         query: None,
+        attachment_file_path: None,
     };
 
     let result = runner.update_jira_issue(params).await;
@@ -191,6 +199,7 @@ async fn test_issue_runner_search_with_empty_query() {
         transition: None,
         assignee: None,
         query: None,
+        attachment_file_path: None,
     };
 
     // With no query, it should search with None query which might succeed or fail depending on API
@@ -361,6 +370,7 @@ fn test_runners_with_different_auth_configs() {
         "Resolved".to_string(),
         "Issue resolved".to_string(),
         Table::new(),
+        YaraSection::default(),
     );
 
     // Both configs should work

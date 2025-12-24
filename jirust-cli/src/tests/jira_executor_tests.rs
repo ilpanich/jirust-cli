@@ -5,7 +5,7 @@ mod tests {
         OutputTypes, OutputValues, PaginationArgs, ProjectActionValues, ProjectArgs,
         TransitionActionValues, TransitionArgs, VersionActionValues, VersionArgs,
     };
-    use crate::config::config_file::ConfigFile;
+    use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::executors::jira_commands_executors::{
         ExecJiraCommand, jira_issue_executor::IssueExecutor,
         jira_issue_link_executor::LinkIssueExecutor,
@@ -19,8 +19,8 @@ mod tests {
     use crate::utils::PrintableData;
     use jira_v3_openapi::apis::Error as JiraApiError;
     use jira_v3_openapi::models::{
-        CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition, IssueTypeIssueCreateMetadata,
-        Transitions, Version, VersionRelatedWork, project::Project,
+        CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition,
+        IssueTypeIssueCreateMetadata, Transitions, Version, VersionRelatedWork, project::Project,
         project_identifiers::ProjectIdentifiers,
     };
     use serde_json::json;
@@ -34,6 +34,7 @@ mod tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -50,6 +51,7 @@ mod tests {
             transition_to: None,
             assignee: Some("test.user".to_string()),
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -207,7 +209,9 @@ mod tests {
             IssueExecutor::new(config.clone(), IssueActionValues::Delete, args.clone());
         let _search_executor =
             IssueExecutor::new(config.clone(), IssueActionValues::Search, args.clone());
-        let _assign_executor = IssueExecutor::new(config, IssueActionValues::Assign, args);
+        let _assign_executor =
+            IssueExecutor::new(config.clone(), IssueActionValues::Assign, args.clone());
+        let _attach_executor = IssueExecutor::new(config, IssueActionValues::Attach, args);
 
         // All constructors should work without panicking
         assert!(true);
@@ -230,6 +234,7 @@ mod tests {
             transition_to: None,
             assignee: Some("user@example.com".to_string()),
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -271,6 +276,7 @@ mod tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -330,10 +336,7 @@ mod tests {
         args.issue_key = Some("TEST-123".to_string());
 
         let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Create, args);
-        let result = executor
-            .exec_jira_command()
-            .await
-            .expect("create succeeds");
+        let result = executor.exec_jira_command().await.expect("create succeeds");
 
         match result.first().expect("missing printable data") {
             PrintableData::IssueCreated { issues } => {
@@ -365,21 +368,16 @@ mod tests {
     #[tokio::test]
     async fn test_issue_executor_delete_success() {
         let mut mock_runner = MockIssueCmdRunnerApi::new();
-        mock_runner
-            .expect_delete_jira_issue()
-            .returning(|params| {
-                assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
-                Ok(())
-            });
+        mock_runner.expect_delete_jira_issue().returning(|params| {
+            assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
+            Ok(())
+        });
 
         let mut args = create_test_issue_args();
         args.issue_act = IssueActionValues::Delete;
 
         let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Delete, args);
-        let result = executor
-            .exec_jira_command()
-            .await
-            .expect("delete succeeds");
+        let result = executor.exec_jira_command().await.expect("delete succeeds");
 
         match result.first().expect("missing printable data") {
             PrintableData::Generic { data } => {
@@ -415,24 +413,19 @@ mod tests {
     #[tokio::test]
     async fn test_issue_executor_search_success() {
         let mut mock_runner = MockIssueCmdRunnerApi::new();
-        mock_runner
-            .expect_search_jira_issues()
-            .returning(|params| {
-                assert_eq!(params.project_key.as_deref(), Some("TEST"));
-                let mut issue = IssueBean::default();
-                issue.key = Some("TEST-999".to_string());
-                Ok(vec![issue])
-            });
+        mock_runner.expect_search_jira_issues().returning(|params| {
+            assert_eq!(params.project_key.as_deref(), Some("TEST"));
+            let mut issue = IssueBean::default();
+            issue.key = Some("TEST-999".to_string());
+            Ok(vec![issue])
+        });
 
         let mut args = create_test_issue_args();
         args.issue_act = IssueActionValues::Search;
         args.query = Some("project = TEST".to_string());
 
         let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Search, args);
-        let result = executor
-            .exec_jira_command()
-            .await
-            .expect("search succeeds");
+        let result = executor.exec_jira_command().await.expect("search succeeds");
 
         match result.first().expect("missing printable data") {
             PrintableData::IssueData { issues } => {
@@ -498,8 +491,10 @@ mod tests {
     async fn test_issue_executor_transition_error() {
         let mut mock_runner = MockIssueCmdRunnerApi::new();
         mock_runner.expect_transition_jira_issue().returning(|_| {
-            Err(Box::new(IoError::new(ErrorKind::Other, "cannot transition"))
-                as Box<dyn std::error::Error>)
+            Err(
+                Box::new(IoError::new(ErrorKind::Other, "cannot transition"))
+                    as Box<dyn std::error::Error>,
+            )
         });
 
         let mut args = create_test_issue_args();
@@ -524,10 +519,7 @@ mod tests {
         args.issue_act = IssueActionValues::Update;
 
         let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Update, args);
-        let result = executor
-            .exec_jira_command()
-            .await
-            .expect("update succeeds");
+        let result = executor.exec_jira_command().await.expect("update succeeds");
 
         match result.first().expect("missing printable data") {
             PrintableData::Generic { data } => {
@@ -1155,6 +1147,7 @@ mod tests {
             transition_to: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: None,
                 page_offset: None,
@@ -1181,6 +1174,7 @@ mod tests {
             transition_to: Some("In Progress".to_string()),
             assignee: Some("user@test.com".to_string()),
             query: Some("project = COMP".to_string()),
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: Some(50),
                 page_offset: Some(0),
@@ -1202,6 +1196,7 @@ mod tests {
         // Test all IssueActionValues variants
         let issue_actions = [
             IssueActionValues::Assign,
+            IssueActionValues::Attach,
             IssueActionValues::Create,
             IssueActionValues::Delete,
             IssueActionValues::Get,
@@ -1209,7 +1204,7 @@ mod tests {
             IssueActionValues::Transition,
             IssueActionValues::Update,
         ];
-        assert_eq!(issue_actions.len(), 7);
+        assert_eq!(issue_actions.len(), 8);
 
         // Test all ProjectActionValues variants
         let project_actions = [ProjectActionValues::Create, ProjectActionValues::List];
@@ -1226,6 +1221,115 @@ mod tests {
             VersionActionValues::Update,
         ];
         assert_eq!(version_actions.len(), 7);
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_attach_success() {
+        use jira_v3_openapi::models::Attachment;
+
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner
+            .expect_attach_file_to_jira_issue()
+            .returning(|params| {
+                assert_eq!(params.issue_key.as_deref(), Some("TEST-123"));
+                assert_eq!(
+                    params.attachment_file_path.as_deref(),
+                    Some("/tmp/test.txt")
+                );
+                Ok(vec![Attachment {
+                    id: Some("10001".to_string()),
+                    filename: Some("test.txt".to_string()),
+                    size: Some(100),
+                    ..Default::default()
+                }])
+            });
+
+        let args = IssueArgs {
+            issue_act: IssueActionValues::Attach,
+            project_key: Some("TEST".to_string()),
+            issue_key: Some("TEST-123".to_string()),
+            issue_fields: None,
+            transition_to: None,
+            assignee: None,
+            query: None,
+            attachment_file_path: Some("/tmp/test.txt".to_string()),
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: None,
+                output_type: None,
+            },
+        };
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Attach, args);
+        let result = executor.exec_jira_command().await.expect("attach succeeds");
+        let first = result.first().expect("printable data available");
+        match first {
+            PrintableData::Generic { data } => {
+                assert_eq!(
+                    data,
+                    &vec![serde_json::Value::String(
+                        "File attached successfully".to_string()
+                    )]
+                );
+            }
+            _ => panic!("unexpected printable data variant"),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_issue_executor_attach_error() {
+        let mut mock_runner = MockIssueCmdRunnerApi::new();
+        mock_runner
+            .expect_attach_file_to_jira_issue()
+            .returning(|_| {
+                Err(
+                    Box::new(IoError::new(ErrorKind::NotFound, "File not found"))
+                        as Box<dyn std::error::Error>,
+                )
+            });
+
+        let args = IssueArgs {
+            issue_act: IssueActionValues::Attach,
+            project_key: Some("TEST".to_string()),
+            issue_key: Some("TEST-123".to_string()),
+            issue_fields: None,
+            transition_to: None,
+            assignee: None,
+            query: None,
+            attachment_file_path: Some("/nonexistent/file.txt".to_string()),
+            pagination: PaginationArgs {
+                page_size: None,
+                page_offset: None,
+            },
+            output: OutputArgs {
+                output_format: None,
+                output_type: None,
+            },
+        };
+
+        let executor = IssueExecutor::with_runner(mock_runner, IssueActionValues::Attach, args);
+        let result = executor.exec_jira_command().await;
+
+        assert!(result.is_err());
+        if let Err(e) = result {
+            let error_msg = e.to_string();
+            assert!(error_msg.contains("Error attaching file"));
+        }
+    }
+
+    #[test]
+    fn test_issue_executor_with_attach_action() {
+        let config = create_test_config();
+        let mut args = create_test_issue_args();
+        args.attachment_file_path = Some("/path/to/attachment.pdf".to_string());
+
+        let _attach_executor = IssueExecutor::new(config, IssueActionValues::Attach, args);
+
+        // Constructor should work without panicking
+        assert!(true);
     }
 
     #[test]

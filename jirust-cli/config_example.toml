@@ -8,3 +8,21 @@ standard_resolution_comment = '{"body":{"content":[{"content":[{"text":"Test com
 
 [jira.transitions_names]
 resolve = 'Resolve Issue'
+
+[yara]
+# YARA rules source - can be a git repository or a zip file
+# Git example: "https://github.com/Yara-Rules/rules.git"
+# Zip examples:
+#   - "https://github.com/YARAHQ/yara-forge/releases/latest/download/yara-forge-rules-core.zip"
+#   - "https://github.com/YARAHQ/yara-forge/releases/latest/download/yara-forge-rules-extended.zip"
+#   - "https://github.com/YARAHQ/yara-forge/releases/latest/download/yara-forge-rules-full.zip"
+rules_source = "https://github.com/YARAHQ/yara-forge/releases/latest/download/yara-forge-rules-core.zip"
+
+# Directory for YARA rules (relative to ~/.jirust-cli/)
+rules_directory = "yara-rules"
+
+# Cache file (relative to ~/.jirust-cli/)
+cache_file = "yara_rules.cache"
+
+# Cache version file (relative to ~/.jirust-cli/)
+cache_version_file = "yara_rules.cache.version"

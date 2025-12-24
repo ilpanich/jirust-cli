@@ -2,7 +2,7 @@
 mod tests {
     use crate::{
         args::commands::{Commands, ConfigActionValues, ConfigArgs},
-        config::config_file::{AuthData, ConfigFile},
+        config::config_file::{AuthData, ConfigFile, YaraSection},
         utils::PrintableData,
     };
     use serde_json::json;
@@ -21,6 +21,7 @@ mod tests {
             "Done".to_string(),
             "Won't Do".to_string(),
             transitions,
+            YaraSection::default(),
         )
     }
 

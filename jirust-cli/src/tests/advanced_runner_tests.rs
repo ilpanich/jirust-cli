@@ -1,24 +1,24 @@
 #[cfg(test)]
 mod advanced_runner_tests {
-    use crate::config::config_file::{AuthData, ConfigFile};
-    use crate::runners::jira_cmd_runners::{
-        issue_cmd_runner::{IssueCmdRunner, IssueCmdParams, IssueTransitionCmdParams},
-        project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams},
-        version_cmd_runner::{VersionCmdRunner, VersionCmdParams},
-        link_issue_cmd_runner::{LinkIssueCmdRunner, LinkIssueCmdParams},
-    };
     use crate::args::commands::{
-        IssueArgs, ProjectArgs, VersionArgs, LinkIssueArgs, TransitionArgs,
-        IssueActionValues, ProjectActionValues, VersionActionValues, LinkIssueActionValues, TransitionActionValues,
-        PaginationArgs, OutputArgs, OutputValues, OutputTypes
+        IssueActionValues, IssueArgs, OutputArgs, OutputTypes, OutputValues, PaginationArgs,
+        ProjectActionValues, ProjectArgs, TransitionActionValues, TransitionArgs,
+        VersionActionValues, VersionArgs,
+    };
+    use crate::config::config_file::{AuthData, ConfigFile, YaraSection};
+    use crate::runners::jira_cmd_runners::{
+        issue_cmd_runner::{IssueCmdParams, IssueCmdRunner, IssueTransitionCmdParams},
+        link_issue_cmd_runner::{LinkIssueCmdParams, LinkIssueCmdRunner},
+        project_cmd_runner::{ProjectCmdParams, ProjectCmdRunner},
+        version_cmd_runner::{VersionCmdParams, VersionCmdRunner},
     };
     use base64::Engine;
     use jira_v3_openapi::models::*;
     use serde_json::Value;
     use std::collections::HashMap;
-    use toml::Table;
-    use tempfile::NamedTempFile;
     use std::io::Write;
+    use tempfile::NamedTempFile;
+    use toml::Table;
 
     // Test utilities
     fn create_test_config() -> ConfigFile {
@@ -28,6 +28,7 @@ mod advanced_runner_tests {
             "Done".to_string(),
             "Task completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -36,8 +37,8 @@ mod advanced_runner_tests {
     #[test]
     fn test_issue_runner_all_methods() {
         let config = create_test_config();
-        let runner = IssueCmdRunner::new(&config);
-        
+        let _runner = IssueCmdRunner::new(&config);
+
         // Test that all public methods exist and can be called
         // We can't actually test API calls, but we can test method signatures and error handling
         assert!(true); // Runner was created successfully
@@ -47,15 +48,21 @@ mod advanced_runner_tests {
     async fn test_issue_runner_transition_with_fields() {
         let config = create_test_config();
         let runner = IssueCmdRunner::new(&config);
-        
+
         let mut fields = HashMap::new();
-        fields.insert("resolution".to_string(), Value::Object({
-            let mut obj = serde_json::Map::new();
-            obj.insert("name".to_string(), Value::String("Fixed".to_string()));
-            obj
-        }));
-        fields.insert("comment".to_string(), Value::String("Issue resolved".to_string()));
-        
+        fields.insert(
+            "resolution".to_string(),
+            Value::Object({
+                let mut obj = serde_json::Map::new();
+                obj.insert("name".to_string(), Value::String("Fixed".to_string()));
+                obj
+            }),
+        );
+        fields.insert(
+            "comment".to_string(),
+            Value::String("Issue resolved".to_string()),
+        );
+
         let params = IssueCmdParams {
             issue_key: Some("TEST-123".to_string()),
             project_key: Some("TEST".to_string()),
@@ -63,8 +70,9 @@ mod advanced_runner_tests {
             transition: Some("3".to_string()),
             assignee: None,
             query: None,
+            attachment_file_path: None,
         };
-        
+
         let result = runner.transition_jira_issue(params).await;
         // This will fail with network error since we're not mocking, but we test the code path
         assert!(result.is_err());
@@ -84,6 +92,7 @@ mod advanced_runner_tests {
             transition: None,
             assignee: None,
             query: Some(complex_jql.to_string()),
+            attachment_file_path: None,
         };
 
         let _result = runner.search_jira_issues(params).await;
@@ -99,21 +108,49 @@ mod advanced_runner_tests {
             issue_key: Some("FROM-123".to_string()),
             issue_fields: Some(vec![
                 ("summary".to_string(), r#""Test From Trait""#.to_string()),
-                ("description".to_string(), r#""Testing From trait implementation""#.to_string()),
-                ("issuetype".to_string(), r#"{"name": "Bug", "id": "1"}"#.to_string()),
-                ("priority".to_string(), r#"{"name": "Critical", "id": "1"}"#.to_string()),
-                ("assignee".to_string(), r#"{"accountId": "test123"}"#.to_string()),
-                ("reporter".to_string(), r#"{"accountId": "reporter123"}"#.to_string()),
-                ("labels".to_string(), r#"["critical", "production", "hotfix"]"#.to_string()),
-                ("components".to_string(), r#"[{"id": "10000", "name": "Backend"}]"#.to_string()),
-                ("fixVersions".to_string(), r#"[{"id": "10001", "name": "1.0.1"}]"#.to_string()),
+                (
+                    "description".to_string(),
+                    r#""Testing From trait implementation""#.to_string(),
+                ),
+                (
+                    "issuetype".to_string(),
+                    r#"{"name": "Bug", "id": "1"}"#.to_string(),
+                ),
+                (
+                    "priority".to_string(),
+                    r#"{"name": "Critical", "id": "1"}"#.to_string(),
+                ),
+                (
+                    "assignee".to_string(),
+                    r#"{"accountId": "test123"}"#.to_string(),
+                ),
+                (
+                    "reporter".to_string(),
+                    r#"{"accountId": "reporter123"}"#.to_string(),
+                ),
+                (
+                    "labels".to_string(),
+                    r#"["critical", "production", "hotfix"]"#.to_string(),
+                ),
+                (
+                    "components".to_string(),
+                    r#"[{"id": "10000", "name": "Backend"}]"#.to_string(),
+                ),
+                (
+                    "fixVersions".to_string(),
+                    r#"[{"id": "10001", "name": "1.0.1"}]"#.to_string(),
+                ),
                 ("duedate".to_string(), r#""2024-12-31""#.to_string()),
                 ("environment".to_string(), r#""Production""#.to_string()),
-                ("customfield_10000".to_string(), r#"{"value": "Custom Value"}"#.to_string()),
+                (
+                    "customfield_10000".to_string(),
+                    r#"{"value": "Custom Value"}"#.to_string(),
+                ),
             ]),
             transition_to: Some("In Progress".to_string()),
             assignee: Some("test.user@example.com".to_string()),
             query: Some("project = FROM-TEST AND status != Done".to_string()),
+            attachment_file_path: None,
             pagination: PaginationArgs {
                 page_size: Some(75),
                 page_offset: Some(25),
@@ -123,15 +160,18 @@ mod advanced_runner_tests {
                 output_type: Some(OutputTypes::Full),
             },
         };
-        
+
         let params = IssueCmdParams::from(&issue_args);
-        
+
         assert_eq!(params.project_key, Some("FROM-TEST".to_string()));
         assert_eq!(params.issue_key, Some("FROM-123".to_string()));
         assert_eq!(params.transition, Some("In Progress".to_string()));
         assert_eq!(params.assignee, Some("test.user@example.com".to_string()));
-        assert_eq!(params.query, Some("project = FROM-TEST AND status != Done".to_string()));
-        
+        assert_eq!(
+            params.query,
+            Some("project = FROM-TEST AND status != Done".to_string())
+        );
+
         // Test that issue_fields conversion worked
         assert!(params.issue_fields.is_some());
         let fields = params.issue_fields.unwrap();
@@ -150,14 +190,14 @@ mod advanced_runner_tests {
                 output_type: Some(OutputTypes::Basic),
             },
         };
-        
+
         let params = IssueTransitionCmdParams::from(&transition_args);
         assert_eq!(params.issue_key, "TRANS-456");
-        
+
         // Test Default implementation
         let default_params = IssueTransitionCmdParams::default();
         assert_eq!(default_params.issue_key, "");
-        
+
         // Test new method
         let new_params = IssueTransitionCmdParams::new();
         assert_eq!(new_params.issue_key, "");
@@ -187,7 +227,7 @@ mod advanced_runner_tests {
             projects_page_size: Some(50),
             projects_page_offset: Some(0),
         };
-        
+
         let result = runner.create_jira_project(params).await;
         // This will fail with network error since we're not mocking
         assert!(result.is_err());
@@ -197,7 +237,7 @@ mod advanced_runner_tests {
     async fn test_project_runner_create_with_unassigned_type() {
         let config = create_test_config();
         let runner = ProjectCmdRunner::new(&config);
-        
+
         let params = ProjectCmdParams {
             project_key: Some("UNASSIGN".to_string()),
             project_name: Some("Unassigned Project".to_string()),
@@ -206,7 +246,7 @@ mod advanced_runner_tests {
             project_lead_account_id: Some("lead@example.com".to_string()),
             ..Default::default()
         };
-        
+
         let result = runner.create_jira_project(params).await;
         // This will fail with network error since we're not mocking
         assert!(result.is_err());
@@ -232,13 +272,13 @@ mod advanced_runner_tests {
     async fn test_project_runner_get_issue_types_error() {
         let config = create_test_config();
         let runner = ProjectCmdRunner::new(&config);
-        
+
         // Test with missing project key
         let params = ProjectCmdParams {
             project_key: None,
             ..Default::default()
         };
-        
+
         let result = runner.get_jira_project_issue_types(params).await;
         assert!(result.is_err());
         if let Err(err) = result {
@@ -250,27 +290,27 @@ mod advanced_runner_tests {
     async fn test_project_runner_get_issue_type_fields_errors() {
         let config = create_test_config();
         let runner = ProjectCmdRunner::new(&config);
-        
+
         // Test with missing project key
         let params = ProjectCmdParams {
             project_key: None,
             project_issue_type: Some("Task".to_string()),
             ..Default::default()
         };
-        
+
         let result = runner.get_jira_project_issue_type_id(params).await;
         assert!(result.is_err());
         if let Err(err) = result {
             assert!(err.to_string().contains("Empty project key"));
         }
-        
+
         // Test with missing issue type
         let params = ProjectCmdParams {
             project_key: Some("TEST".to_string()),
             project_issue_type: None,
             ..Default::default()
         };
-        
+
         let result = runner.get_jira_project_issue_type_id(params).await;
         assert!(result.is_err());
         if let Err(err) = result {
@@ -285,7 +325,9 @@ mod advanced_runner_tests {
             project_key: Some("FROMTEST".to_string()),
             project_issue_type: Some("Epic".to_string()),
             project_name: Some("From Trait Test Project".to_string()),
-            project_description: Some("Testing the From trait implementation thoroughly".to_string()),
+            project_description: Some(
+                "Testing the From trait implementation thoroughly".to_string(),
+            ),
             project_field_configuration_id: Some(11111),
             project_issue_security_scheme_id: Some(22222),
             project_issue_type_scheme_id: Some(33333),
@@ -304,13 +346,19 @@ mod advanced_runner_tests {
                 output_type: Some(OutputTypes::Full),
             },
         };
-        
+
         let params = ProjectCmdParams::from(&project_args);
-        
+
         assert_eq!(params.project_key, Some("FROMTEST".to_string()));
         assert_eq!(params.project_issue_type, Some("Epic".to_string()));
-        assert_eq!(params.project_name, Some("From Trait Test Project".to_string()));
-        assert_eq!(params.project_description, Some("Testing the From trait implementation thoroughly".to_string()));
+        assert_eq!(
+            params.project_name,
+            Some("From Trait Test Project".to_string())
+        );
+        assert_eq!(
+            params.project_description,
+            Some("Testing the From trait implementation thoroughly".to_string())
+        );
         assert_eq!(params.project_field_configuration_id, Some(11111));
         assert_eq!(params.project_issue_security_scheme_id, Some(22222));
         assert_eq!(params.project_issue_type_scheme_id, Some(33333));
@@ -318,8 +366,14 @@ mod advanced_runner_tests {
         assert_eq!(params.project_notification_scheme_id, Some(55555));
         assert_eq!(params.project_permission_scheme_id, Some(66666));
         assert_eq!(params.project_workflow_scheme_id, Some(77777));
-        assert_eq!(params.project_lead_account_id, Some("project.lead@from.test".to_string()));
-        assert_eq!(params.project_assignee_type, Some("PROJECT_LEAD".to_string()));
+        assert_eq!(
+            params.project_lead_account_id,
+            Some("project.lead@from.test".to_string())
+        );
+        assert_eq!(
+            params.project_assignee_type,
+            Some("PROJECT_LEAD".to_string())
+        );
         assert_eq!(params.projects_page_size, Some(100));
         assert_eq!(params.projects_page_offset, Some(200));
     }
@@ -350,7 +404,7 @@ mod advanced_runner_tests {
                 output_type: None,
             },
         };
-        
+
         let params = ProjectCmdParams::from(&project_args);
         assert_eq!(params.projects_page_offset, Some(1000000));
     }
@@ -382,7 +436,7 @@ mod advanced_runner_tests {
                 output_type: None,
             },
         };
-        
+
         // This should panic due to expect() in the from implementation
         let _params = ProjectCmdParams::from(&project_args);
     }
@@ -392,7 +446,7 @@ mod advanced_runner_tests {
     #[test]
     fn test_version_params_comprehensive_validation() {
         let mut params = VersionCmdParams::new();
-        
+
         // Test all possible fields
         params.project = "VER-COMPREHENSIVE".to_string();
         params.project_id = Some(99999);
@@ -407,19 +461,34 @@ mod advanced_runner_tests {
         params.transition_assignee = Some("release.team@company.example.com".to_string());
         params.versions_page_size = Some(200);
         params.versions_page_offset = Some(1000);
-        
+
         // Verify all fields are set correctly
         assert_eq!(params.project, "VER-COMPREHENSIVE");
         assert_eq!(params.project_id, Some(99999));
-        assert_eq!(params.version_name, Some("3.5.2-beta.1+build.123".to_string()));
+        assert_eq!(
+            params.version_name,
+            Some("3.5.2-beta.1+build.123".to_string())
+        );
         assert!(params.version_description.as_ref().unwrap().len() > 100);
-        assert_eq!(params.version_start_date, Some("2024-01-01T00:00:00Z".to_string()));
-        assert_eq!(params.version_release_date, Some("2024-12-31T23:59:59Z".to_string()));
+        assert_eq!(
+            params.version_start_date,
+            Some("2024-01-01T00:00:00Z".to_string())
+        );
+        assert_eq!(
+            params.version_release_date,
+            Some("2024-12-31T23:59:59Z".to_string())
+        );
         assert_eq!(params.version_released, Some(false));
         assert_eq!(params.version_archived, Some(false));
-        assert_eq!(params.changelog_file, Some("/path/to/detailed/CHANGELOG.md".to_string()));
+        assert_eq!(
+            params.changelog_file,
+            Some("/path/to/detailed/CHANGELOG.md".to_string())
+        );
         assert_eq!(params.transition_issues, Some(true));
-        assert_eq!(params.transition_assignee, Some("release.team@company.example.com".to_string()));
+        assert_eq!(
+            params.transition_assignee,
+            Some("release.team@company.example.com".to_string())
+        );
         assert_eq!(params.versions_page_size, Some(200));
         assert_eq!(params.versions_page_offset, Some(1000));
     }
@@ -429,30 +498,36 @@ mod advanced_runner_tests {
     #[test]
     fn test_link_issue_params_all_fields() {
         let mut params = LinkIssueCmdParams::new();
-        
+
         // Test with various link types
         params.origin_issue_key = "LINK-ORIGIN-123".to_string();
         params.destination_issue_key = Some("LINK-DEST-456".to_string());
         params.link_type = "Epic-Story".to_string();
         params.project_key = Some("LINKTEST".to_string());
         params.changelog_file = Some("/project/docs/LINK_CHANGELOG.md".to_string());
-        
+
         assert_eq!(params.origin_issue_key, "LINK-ORIGIN-123");
-        assert_eq!(params.destination_issue_key, Some("LINK-DEST-456".to_string()));
+        assert_eq!(
+            params.destination_issue_key,
+            Some("LINK-DEST-456".to_string())
+        );
         assert_eq!(params.link_type, "Epic-Story");
         assert_eq!(params.project_key, Some("LINKTEST".to_string()));
-        assert_eq!(params.changelog_file, Some("/project/docs/LINK_CHANGELOG.md".to_string()));
-        
+        assert_eq!(
+            params.changelog_file,
+            Some("/project/docs/LINK_CHANGELOG.md".to_string())
+        );
+
         // Test different link types
         params.link_type = "Duplicate".to_string();
         assert_eq!(params.link_type, "Duplicate");
-        
+
         params.link_type = "Relates".to_string();
         assert_eq!(params.link_type, "Relates");
-        
+
         params.link_type = "Blocks".to_string();
         assert_eq!(params.link_type, "Blocks");
-        
+
         params.link_type = "Clones".to_string();
         assert_eq!(params.link_type, "Clones");
     }
@@ -466,6 +541,7 @@ mod advanced_runner_tests {
             "{}".to_string(),
             "{}".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         let runner = LinkIssueCmdRunner::new(&config);
@@ -493,6 +569,7 @@ mod advanced_runner_tests {
             "{}".to_string(),
             "{}".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         let runner = LinkIssueCmdRunner::new(&config);
@@ -528,6 +605,7 @@ mod advanced_runner_tests {
             "{}".to_string(),
             "{}".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
 
         let runner = LinkIssueCmdRunner::new(&config);
@@ -539,10 +617,14 @@ mod advanced_runner_tests {
             changelog_file: None,
         };
 
-        let err = runner.link_jira_issues(params).await.expect_err("should fail");
-        assert!(err
-            .to_string()
-            .contains("Error linking issues: Empty project key"));
+        let err = runner
+            .link_jira_issues(params)
+            .await
+            .expect_err("should fail");
+        assert!(
+            err.to_string()
+                .contains("Error linking issues: Empty project key")
+        );
     }
 
     // ===== COMPREHENSIVE DEFAULT AND FROM TRAIT TESTS =====
@@ -553,18 +635,18 @@ mod advanced_runner_tests {
         let issue_params = IssueCmdParams::default();
         assert_eq!(issue_params.project_key, Some("".to_string()));
         assert_eq!(issue_params.issue_key, None);
-        
+
         let issue_transition_params = IssueTransitionCmdParams::default();
         assert_eq!(issue_transition_params.issue_key, "");
-        
+
         let project_params = ProjectCmdParams::default();
         assert_eq!(project_params.project_key, None);
         assert_eq!(project_params.project_name, None);
-        
+
         let version_params = VersionCmdParams::default();
         assert_eq!(version_params.project, "");
         assert_eq!(version_params.version_name, None);
-        
+
         let link_params = LinkIssueCmdParams::default();
         assert_eq!(link_params.origin_issue_key, "");
         assert_eq!(link_params.link_type, "");
@@ -576,18 +658,18 @@ mod advanced_runner_tests {
         let issue_params = IssueCmdParams::new();
         assert_eq!(issue_params.project_key, Some("".to_string()));
         assert_eq!(issue_params.issue_key, None);
-        
+
         let issue_transition_params = IssueTransitionCmdParams::new();
         assert_eq!(issue_transition_params.issue_key, "");
-        
+
         let project_params = ProjectCmdParams::new();
         assert_eq!(project_params.project_key, None);
         assert_eq!(project_params.project_name, None);
-        
+
         let version_params = VersionCmdParams::new();
         assert_eq!(version_params.project, "");
         assert_eq!(version_params.version_name, None);
-        
+
         let link_params = LinkIssueCmdParams::new();
         assert_eq!(link_params.origin_issue_key, "");
         assert_eq!(link_params.link_type, "");
@@ -655,8 +737,14 @@ mod advanced_runner_tests {
             merged_without_args.version_description,
             Some("Current description".to_string())
         );
-        assert_eq!(merged_without_args.version_start_date, Some("2024-01-01".to_string()));
-        assert_eq!(merged_without_args.version_release_date, Some("2024-02-01".to_string()));
+        assert_eq!(
+            merged_without_args.version_start_date,
+            Some("2024-01-01".to_string())
+        );
+        assert_eq!(
+            merged_without_args.version_release_date,
+            Some("2024-02-01".to_string())
+        );
         assert_eq!(merged_without_args.version_archived, Some(false));
         assert_eq!(merged_without_args.version_released, Some(false));
 
@@ -728,13 +816,14 @@ mod advanced_runner_tests {
             "".to_string(), // Empty resolution
             "".to_string(), // Empty comment
             Table::new(),
+            YaraSection::default(),
         );
 
         let _issue_runner = IssueCmdRunner::new(&minimal_config);
         let _project_runner = ProjectCmdRunner::new(&minimal_config);
         let _version_runner = VersionCmdRunner::new(&minimal_config);
         let _link_runner = LinkIssueCmdRunner::new(&minimal_config);
-        
+
         // Test with very long config values
         // Create valid base64 for long username:password (user:pass repeated)
         let long_cred = format!("{}:{}", "user".repeat(100), "pass".repeat(100));
@@ -749,6 +838,7 @@ mod advanced_runner_tests {
             long_resolution,
             long_comment,
             Table::new(),
+            YaraSection::default(),
         );
 
         let _issue_runner = IssueCmdRunner::new(&long_config);
@@ -765,7 +855,7 @@ mod advanced_runner_tests {
     fn test_massive_field_collections() {
         let mut params = IssueCmdParams::new();
         let mut massive_fields = HashMap::new();
-        
+
         // Create 10,000 fields
         for i in 0..10000 {
             massive_fields.insert(
@@ -779,69 +869,122 @@ mod advanced_runner_tests {
                         Value::String(format!("array_item_1_{}", i)),
                         Value::String(format!("array_item_2_{}", i)),
                     ])
-                }
+                },
             );
         }
-        
+
         params.issue_fields = Some(massive_fields);
-        
+
         assert_eq!(params.issue_fields.as_ref().unwrap().len(), 10000);
-        assert!(params.issue_fields.as_ref().unwrap().contains_key("customfield_5000"));
-        assert!(params.issue_fields.as_ref().unwrap().contains_key("customfield_9999"));
+        assert!(
+            params
+                .issue_fields
+                .as_ref()
+                .unwrap()
+                .contains_key("customfield_5000")
+        );
+        assert!(
+            params
+                .issue_fields
+                .as_ref()
+                .unwrap()
+                .contains_key("customfield_9999")
+        );
     }
 
     #[test]
     fn test_unicode_and_special_characters() {
         let config = create_test_config();
-        let runner = IssueCmdRunner::new(&config);
-        
+        let _runner = IssueCmdRunner::new(&config);
+
         // Test with Unicode characters, emojis, and special symbols
         let unicode_params = IssueCmdParams {
             issue_key: Some("UNICODE-🚀🎉".to_string()),
             project_key: Some("测试项目".to_string()),
             assignee: Some("用户@тест.орг".to_string()),
             query: Some("summary ~ \"🐛 Bug with émojis and spëcial chars: àáâãäåæç\"".to_string()),
+            attachment_file_path: None,
             issue_fields: Some(HashMap::from([
-                ("summary".to_string(), Value::String("🎯 Test with émojis: ñáéíóú and symbols ©®™".to_string())),
-                ("description".to_string(), Value::String("Multi-line\n\tDescription\nWith\r\nVarious\u{1F4A9}Newlines".to_string())),
-                ("custom_unicode".to_string(), Value::String("Χαίρετε κόσμε! שלום עולם! مرحبا بالعالم! Здравствуй мир!".to_string())),
+                (
+                    "summary".to_string(),
+                    Value::String("🎯 Test with émojis: ñáéíóú and symbols ©®™".to_string()),
+                ),
+                (
+                    "description".to_string(),
+                    Value::String(
+                        "Multi-line\n\tDescription\nWith\r\nVarious\u{1F4A9}Newlines".to_string(),
+                    ),
+                ),
+                (
+                    "custom_unicode".to_string(),
+                    Value::String(
+                        "Χαίρετε κόσμε! שלום עולם! مرحبا بالعالم! Здравствуй мир!".to_string(),
+                    ),
+                ),
             ])),
             transition: None,
         };
-        
+
         // Test that we can handle Unicode without panicking
         assert_eq!(unicode_params.issue_key, Some("UNICODE-🚀🎉".to_string()));
         assert_eq!(unicode_params.project_key, Some("测试项目".to_string()));
         assert_eq!(unicode_params.assignee, Some("用户@тест.орг".to_string()));
-        
+
         // Test with special JSON escaping characters
         let special_chars_params = IssueCmdParams {
             issue_key: Some("SPECIAL-\"\\'".to_string()),
             project_key: Some("PROJECT'WITH\"QUOTES".to_string()),
             query: Some("summary ~ \"Issue with \\\"quotes\\\" and backslashes\\\\\"".to_string()),
+            attachment_file_path: None,
             issue_fields: Some(HashMap::from([
-                ("summary".to_string(), Value::String("Title with \"quotes\" and \\backslashes\\ and /slashes/".to_string())),
-                ("json_test".to_string(), Value::String("{\"nested\": \"json\", \"array\": [1, 2, 3]}".to_string())),
+                (
+                    "summary".to_string(),
+                    Value::String(
+                        "Title with \"quotes\" and \\backslashes\\ and /slashes/".to_string(),
+                    ),
+                ),
+                (
+                    "json_test".to_string(),
+                    Value::String("{\"nested\": \"json\", \"array\": [1, 2, 3]}".to_string()),
+                ),
             ])),
             assignee: None,
             transition: None,
         };
 
-        assert!(special_chars_params.issue_key.as_ref().unwrap().contains('\"'));
-        assert!(special_chars_params.project_key.as_ref().unwrap().contains('\''));
-        assert!(special_chars_params.query.as_ref().unwrap().contains("\\\""));
+        assert!(
+            special_chars_params
+                .issue_key
+                .as_ref()
+                .unwrap()
+                .contains('\"')
+        );
+        assert!(
+            special_chars_params
+                .project_key
+                .as_ref()
+                .unwrap()
+                .contains('\'')
+        );
+        assert!(
+            special_chars_params
+                .query
+                .as_ref()
+                .unwrap()
+                .contains("\\\"")
+        );
     }
 
     // ===== CONCURRENT ACCESS TESTS =====
 
     #[test]
     fn test_concurrent_runner_creation() {
-        use std::thread;
         use std::sync::Arc;
-        
+        use std::thread;
+
         let config = Arc::new(create_test_config());
         let mut handles = vec![];
-        
+
         // Create 100 threads that all create runners simultaneously
         for i in 0..100 {
             let config_clone = Arc::clone(&config);
@@ -854,7 +997,7 @@ mod advanced_runner_tests {
             });
             handles.push(handle);
         }
-        
+
         // Wait for all threads to complete
         let results: Vec<_> = handles.into_iter().map(|h| h.join().unwrap()).collect();
         assert_eq!(results.len(), 100);
@@ -893,27 +1036,32 @@ mod advanced_runner_tests {
     #[test]
     fn test_runners_with_complex_toml_config() {
         let mut complex_table = Table::new();
-        complex_table.insert("custom_field".to_string(), toml::Value::String("custom_value".to_string()));
+        complex_table.insert(
+            "custom_field".to_string(),
+            toml::Value::String("custom_value".to_string()),
+        );
         complex_table.insert("timeout".to_string(), toml::Value::Integer(30000));
         complex_table.insert("retry_count".to_string(), toml::Value::Integer(3));
-        
+
         let mut nested_table = Table::new();
         nested_table.insert("nested_field".to_string(), toml::Value::Boolean(true));
         complex_table.insert("nested".to_string(), toml::Value::Table(nested_table));
-        
+
         let config = ConfigFile::new(
-            "Y29tcGxleDpjb25maWc=".to_string(), // complex:config
+            "Y29tcGxleDpjb25maWc=".to_string(),
+            // complex:config
             "https://complex.example.com".to_string(),
             "Resolved".to_string(),
             "Automatically resolved by system".to_string(),
             complex_table,
+            YaraSection::default(),
         );
-        
+
         let _issue_runner = IssueCmdRunner::new(&config);
         let _project_runner = ProjectCmdRunner::new(&config);
         let _version_runner = VersionCmdRunner::new(&config);
         let _link_runner = LinkIssueCmdRunner::new(&config);
-        
+
         assert!(true); // All runners created with complex config
     }
 }

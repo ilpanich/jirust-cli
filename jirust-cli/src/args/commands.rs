@@ -535,6 +535,14 @@ pub struct IssueArgs {
         help = "Jira Project issue query"
     )]
     pub query: Option<String>,
+    /// Jira Project issue attachments file path
+    #[clap(
+        long,
+        short = 'p',
+        value_name = "attachment_file_path",
+        help = "Jira Project issue attachment file path"
+    )]
+    pub attachment_file_path: Option<String>,
     /// Jira Project issue pagination
     #[clap(flatten)]
     pub pagination: PaginationArgs,
@@ -546,6 +554,7 @@ pub struct IssueArgs {
 /// Available issue action values
 ///
 /// * Assign: Assign a Jira Project issue
+/// * Attach: Attach a file to a Jira Project issue
 /// * Create: Create a Jira Project issue
 /// * Delete: Delete a Jira Project issue
 /// * Get: Get a specific Jira Project issue
@@ -558,6 +567,9 @@ pub enum IssueActionValues {
     /// Assign a Jira Project issue
     #[value(name = "assign", help = "Assign a Jira Project issue")]
     Assign,
+    /// Attach a file to a Jira Project issue
+    #[value(name = "attach", help = "Attach a file to a Jira Project issue")]
+    Attach,
     /// Create a Jira Project issue
     #[value(name = "create", help = "Create a Jira Project issue")]
     Create,
@@ -716,5 +728,48 @@ fn manage_jira_document_field(value: String) -> String {
         }
     } else {
         value.to_string()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_key_val_success() {
+        let result: Result<(String, String), _> = parse_key_val("key=value");
+        assert!(result.is_ok());
+        let (key, value) = result.unwrap();
+        assert_eq!(key, "key");
+        assert_eq!(value, "value");
+    }
+
+    #[test]
+    fn test_parse_key_val_with_jira_doc_field() {
+        let result: Result<(String, String), _> = parse_key_val("key=normal_value");
+        assert!(result.is_ok());
+        let (key, value) = result.unwrap();
+        assert_eq!(key, "key");
+        assert_eq!(value, "normal_value");
+    }
+
+    #[test]
+    fn test_parse_key_val_missing_equals() {
+        let result: Result<(String, String), _> = parse_key_val("invalid");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_manage_jira_document_field_no_match() {
+        let result = manage_jira_document_field("normal_value".to_string());
+        assert_eq!(result, "normal_value");
+    }
+
+    #[test]
+    fn test_manage_jira_document_field_empty_brackets() {
+        let input = "jira_doc_field[]".to_string();
+        let result = manage_jira_document_field(input.clone());
+        // Should return original value when brackets are empty
+        assert_eq!(result, input);
     }
 }

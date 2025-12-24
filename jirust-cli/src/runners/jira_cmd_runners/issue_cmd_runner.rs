@@ -1,17 +1,25 @@
 use async_trait::async_trait;
+use jira_v3_openapi::additional_apis::issue_attachments_api::add_attachment;
 use jira_v3_openapi::apis::issue_search_api::search_and_reconsile_issues_using_jql_post;
 use jira_v3_openapi::apis::issues_api::*;
 use jira_v3_openapi::models::user::AccountType;
 use jira_v3_openapi::models::{
-    CreatedIssue, IssueBean, IssueTransition, SearchAndReconcileRequestBean, Transitions, User,
+    Attachment, CreatedIssue, IssueBean, IssueTransition, SearchAndReconcileRequestBean,
+    Transitions, User,
 };
 use jira_v3_openapi::{apis::configuration::Configuration, models::IssueUpdateDetails};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::io::Error;
+use std::path::Path;
 
 #[cfg(test)]
 use mockall::automock;
+
+#[cfg(feature = "attachment_scan")]
+use crate::config::config_file::YaraSection;
+#[cfg(feature = "attachment_scan")]
+use crate::utils::cached_scanner::CachedYaraScanner;
 
 use crate::args::commands::TransitionArgs;
 use crate::{
@@ -29,6 +37,8 @@ use crate::{
 pub struct IssueCmdRunner {
     /// Configuration object
     cfg: Configuration,
+    #[cfg(feature = "attachment_scan")]
+    yara_config: YaraSection,
 }
 
 /// Implementation of IssueCmdRunner
@@ -57,11 +67,11 @@ impl IssueCmdRunner {
     /// # Examples
     ///
     /// ```
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::IssueCmdRunner;
     /// use toml::Table;
     ///
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     ///
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// ```
@@ -70,7 +80,11 @@ impl IssueCmdRunner {
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
         config.basic_auth = Some((auth_data.0, Some(auth_data.1)));
-        IssueCmdRunner { cfg: config }
+        IssueCmdRunner {
+            cfg: config,
+            #[cfg(feature = "attachment_scan")]
+            yara_config: cfg_file.get_yara_section().clone(),
+        }
     }
 
     /// Assigns a Jira issue to a user
@@ -87,12 +101,12 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.assignee = Some("assignee".to_string());
@@ -123,6 +137,109 @@ impl IssueCmdRunner {
         Ok(assign_issue(&self.cfg, i_key, user_data).await?)
     }
 
+    /// Attaches a file to a Jira issue
+    ///
+    /// # Arguments
+    ///
+    /// * `params` - Issue command parameters
+    ///
+    /// # Returns
+    ///
+    /// * `Attachment` - Attachment object
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
+    /// use toml::Table;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// # tokio_test::block_on(async {
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
+    /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
+    /// let mut params = IssueCmdParams::new();
+    /// params.issue_key = Some("issue_key".to_string());
+    /// params.attachment_file_path = Some("path/to/file".to_string());
+    ///
+    /// let result = issue_cmd_runner.attach_file_to_jira_issue(params).await?;
+    /// # Ok(())
+    /// # })
+    /// # }
+    /// ```
+    pub async fn attach_file_to_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Vec<Attachment>, Box<dyn std::error::Error>> {
+        let i_key = if let Some(key) = &params.issue_key {
+            key.as_str()
+        } else {
+            return Err(Box::new(Error::other(
+                "Error attaching file to issue: Empty issue key".to_string(),
+            )));
+        };
+
+        if let Some(path) = &params.attachment_file_path {
+            let attachment_bytes = std::fs::read(path)?;
+            let file_name = Path::new(path)
+                .file_name()
+                .and_then(|name| name.to_str())
+                .unwrap_or("attachment")
+                .to_string();
+
+            #[cfg(feature = "attachment_scan")]
+            let _scan_result = self.scan_bytes(&attachment_bytes).await?;
+
+            return Ok(
+                add_attachment(&self.cfg, i_key, attachment_bytes, file_name.as_str()).await?,
+            );
+        } else {
+            Err(Box::new(Error::other(
+                "Error attaching file to issue: Empty attachment file path".to_string(),
+            )))
+        }
+    }
+
+    #[cfg(feature = "attachment_scan")]
+    async fn scan_bytes(&self, bytes: &[u8]) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+        let scanner = CachedYaraScanner::from_config(&self.yara_config).await?;
+        let scan_result = scanner.scan_buffer(bytes).unwrap_or_else(|e| {
+            eprintln!("⚠️ YARA scan failed: {}", e);
+            eprintln!("   Proceeding with attachment upload anyway...");
+            vec![]
+        });
+        if !scan_result.is_empty() {
+            println!(
+                "⚠️ Attachment file triggered the following YARA scanner rules: {:?}",
+                scan_result
+            );
+        } else {
+            println!("✅ No issue found by YARA scanner in the attachment file");
+        }
+
+        Ok(scan_result)
+    }
+
+    #[cfg(all(test, feature = "attachment_scan"))]
+    async fn scan_bytes_with_base_dir(&self, bytes: &[u8], base_dir: std::path::PathBuf) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+        let scanner = CachedYaraScanner::from_config_with_base_dir(&self.yara_config, base_dir).await?;
+        let scan_result = scanner.scan_buffer(bytes).unwrap_or_else(|e| {
+            eprintln!("⚠️ YARA scan failed: {}", e);
+            eprintln!("   Proceeding with attachment upload anyway...");
+            vec![]
+        });
+        if !scan_result.is_empty() {
+            println!(
+                "⚠️ Attachment file triggered the following YARA scanner rules: {:?}",
+                scan_result
+            );
+        } else {
+            println!("✅ No issue found by YARA scanner in the attachment file");
+        }
+
+        Ok(scan_result)
+    }
+
     /// Creates a Jira issue
     ///
     /// # Arguments
@@ -137,12 +254,12 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let params = IssueCmdParams::new();
     ///
@@ -184,12 +301,12 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.issue_key = Some("issue_key".to_string());
@@ -228,12 +345,12 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.issue_key = Some("issue_key".to_string());
@@ -271,12 +388,12 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.query = Some("field=value".to_string());
@@ -321,12 +438,12 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     ///
     /// let mut params = IssueCmdParams::new();
@@ -385,12 +502,12 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let params = IssueCmdParams::new();
     ///
@@ -445,12 +562,12 @@ impl IssueCmdRunner {
     ///
     /// ```no_run
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::{IssueCmdRunner, IssueTransitionCmdParams};
-    /// use jirust_cli::config::config_file::ConfigFile;
+    /// use jirust_cli::config::config_file::{ConfigFile, YaraSection};
     /// use toml::Table;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueTransitionCmdParams::new();
     /// params.issue_key = "issue_key".to_string();
@@ -500,6 +617,8 @@ pub struct IssueCmdParams {
     pub assignee: Option<String>,
     /// Jira issue query
     pub query: Option<String>,
+    /// Jira issue file path for attachment
+    pub attachment_file_path: Option<String>,
 }
 
 /// Implementation of IssueCmdParams struct
@@ -529,6 +648,7 @@ impl IssueCmdParams {
             transition: None,
             assignee: None,
             query: None,
+            attachment_file_path: None,
         }
     }
 }
@@ -563,6 +683,7 @@ impl From<&IssueArgs> for IssueCmdParams {
     ///    transition_to: Some("transition_to".to_string()),
     ///    assignee: Some("assignee".to_string()),
     ///    query: None,
+    ///    attachment_file_path: None,
     ///    pagination: PaginationArgs { page_size: Some(20), page_offset: None },
     ///    output: OutputArgs { output_format: None, output_type: None },
     /// };
@@ -595,6 +716,7 @@ impl From<&IssueArgs> for IssueCmdParams {
             transition: value.transition_to.clone(),
             assignee: value.assignee.clone(),
             query: value.query.clone(),
+            attachment_file_path: value.attachment_file_path.clone(),
         }
     }
 }
@@ -730,6 +852,12 @@ pub trait IssueCmdRunnerApi: Send + Sync {
         params: IssueCmdParams,
     ) -> Result<Value, Box<dyn std::error::Error>>;
 
+    /// Attaches a file to a Jira issue.
+    async fn attach_file_to_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Vec<Attachment>, Box<dyn std::error::Error>>;
+
     /// Creates a Jira issue using the provided parameters.
     async fn create_jira_issue(
         &self,
@@ -782,6 +910,13 @@ impl IssueCmdRunnerApi for IssueCmdRunner {
         IssueCmdRunner::assign_jira_issue(self, params).await
     }
 
+    async fn attach_file_to_jira_issue(
+        &self,
+        params: IssueCmdParams,
+    ) -> Result<Vec<Attachment>, Box<dyn std::error::Error>> {
+        IssueCmdRunner::attach_file_to_jira_issue(self, params).await
+    }
+
     async fn create_jira_issue(
         &self,
         params: IssueCmdParams,
@@ -829,5 +964,103 @@ impl IssueCmdRunnerApi for IssueCmdRunner {
         params: IssueTransitionCmdParams,
     ) -> Result<Transitions, Box<dyn std::error::Error>> {
         IssueCmdRunner::get_issue_available_transitions(self, params).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::config_file::{ConfigFile, YaraSection};
+    use std::sync::Mutex;
+    use std::{env, fs};
+    use tempfile::tempdir;
+    use toml::Table;
+
+    static ENV_MUTEX: Mutex<()> = Mutex::new(());
+
+    fn basic_config() -> ConfigFile {
+        ConfigFile::new(
+            "dGVzdDp0b2tlbg==".to_string(),
+            "https://example.atlassian.net".to_string(),
+            "Done".to_string(),
+            "Completed".to_string(),
+            Table::new(),
+            YaraSection::default(),
+        )
+    }
+
+    #[tokio::test]
+    async fn attach_without_issue_key_returns_error() {
+        let runner = IssueCmdRunner::new(&basic_config());
+        let mut params = IssueCmdParams::new();
+        params.attachment_file_path = Some("/tmp/file.txt".to_string());
+
+        let result = runner.attach_file_to_jira_issue(params).await;
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("Empty issue key"));
+    }
+
+    #[tokio::test]
+    async fn attach_without_file_path_returns_error() {
+        let runner = IssueCmdRunner::new(&basic_config());
+        let mut params = IssueCmdParams::new();
+        params.issue_key = Some("TEST-123".to_string());
+
+        let result = runner.attach_file_to_jira_issue(params).await;
+        assert!(result.is_err());
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("Empty attachment file path")
+        );
+    }
+
+    #[cfg(feature = "attachment_scan")]
+    #[tokio::test]
+    async fn scan_bytes_uses_local_rules() {
+        let _guard = ENV_MUTEX.lock().unwrap();
+        let temp_home = tempdir().expect("temp HOME");
+        let base_dir = temp_home.path().join(".jirust-cli");
+        let rules_dir = base_dir.join("rules");
+        fs::create_dir_all(&rules_dir).expect("create rules dir");
+
+        fs::write(rules_dir.join(".version"), "v1").expect("write version marker");
+        fs::write(
+            rules_dir.join("test_rule.yar"),
+            r#"
+rule TestRule {
+  strings:
+    $a = "hitme"
+  condition:
+    $a
+}
+"#,
+        )
+        .expect("write yara rule");
+
+        let config = ConfigFile::new(
+            "dGVzdDp0b2tlbg==".to_string(),
+            "https://example.atlassian.net".to_string(),
+            "Done".to_string(),
+            "Completed".to_string(),
+            Table::new(),
+            YaraSection::new(
+                "local_rules.zip".to_string(),
+                "rules".to_string(),
+                "yara_rules.cache".to_string(),
+                "yara_rules.cache.version".to_string(),
+            ),
+        );
+
+        let runner = IssueCmdRunner::new(&config);
+        let matches = runner
+            .scan_bytes_with_base_dir(b"hitme", base_dir.clone())
+            .await
+            .expect("scan should succeed");
+
+        assert!(matches.contains(&"TestRule".to_string()));
+        assert!(base_dir.join("yara_rules.cache").exists());
+        assert!(base_dir.join("yara_rules.cache.version").exists());
     }
 }

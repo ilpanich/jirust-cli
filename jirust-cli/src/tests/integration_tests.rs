@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::args::commands::{OutputArgs, OutputTypes, OutputValues, PaginationArgs};
-    use crate::config::config_file::{AuthData, ConfigFile};
+    use crate::config::config_file::{AuthData, ConfigFile, YaraSection};
     use crate::utils::PrintableData;
     use jira_v3_openapi::models::{CreatedIssue, Project, Version};
     use serde_json;
@@ -45,6 +45,7 @@ mod tests {
             "Done".to_string(),
             "Issue has been resolved".to_string(),
             transitions,
+            YaraSection::default(),
         );
 
         // Verify all parts work together
@@ -362,6 +363,7 @@ mod tests {
             "Done".to_string(),
             "Completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
         config
             .write_to_file(config_path.to_str().expect("config path"))
@@ -393,6 +395,7 @@ mod tests {
             "Done".to_string(),
             "Completed".to_string(),
             Table::new(),
+            YaraSection::default(),
         );
         config
             .write_to_file(config_path.to_str().expect("config path"))
