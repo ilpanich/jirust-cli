@@ -44,7 +44,11 @@ impl YaraConfig {
     /// Create from ConfigFile
     fn from_config_file(cfg: &YaraSection) -> Result<Self> {
         let base_dir = Self::get_base_dir()?;
+        Self::from_config_file_with_base_dir(cfg, base_dir)
+    }
 
+    /// Create from ConfigFile with explicit base directory (useful for testing)
+    fn from_config_file_with_base_dir(cfg: &YaraSection, base_dir: PathBuf) -> Result<Self> {
         let rules_dir = base_dir.join(cfg.get_rules_directory());
         let cache_file = base_dir.join(cfg.get_cache_file());
         let cache_version_file = base_dir.join(cfg.get_cache_version_file());
@@ -104,6 +108,14 @@ impl CachedYaraScanner {
     /// Create scanner using configuration from ConfigFile
     pub async fn from_config(cfg: &YaraSection) -> Result<Self> {
         let config = YaraConfig::from_config_file(cfg)?;
+        let rules = Self::load_or_compile_rules(&config).await?;
+        Ok(Self { rules, config })
+    }
+
+    /// Create scanner using configuration with explicit base directory (useful for testing)
+    #[cfg(test)]
+    pub async fn from_config_with_base_dir(cfg: &YaraSection, base_dir: PathBuf) -> Result<Self> {
+        let config = YaraConfig::from_config_file_with_base_dir(cfg, base_dir)?;
         let rules = Self::load_or_compile_rules(&config).await?;
         Ok(Self { rules, config })
     }
@@ -543,9 +555,6 @@ rule CacheRule {
         )
         .expect("write yara rule");
 
-        let previous_home = env::var("HOME").ok();
-        env::set_var("HOME", temp_home.path());
-
         let section = YaraSection::new(
             "local_rules.zip".to_string(),
             "rules".to_string(),
@@ -553,7 +562,7 @@ rule CacheRule {
             "yara_rules.cache.version".to_string(),
         );
 
-        let scanner = CachedYaraScanner::from_config(&section)
+        let scanner = CachedYaraScanner::from_config_with_base_dir(&section, base_dir.clone())
             .await
             .expect("scanner builds");
         let matches = scanner
@@ -565,12 +574,6 @@ rule CacheRule {
         let version = fs::read_to_string(base_dir.join("yara_rules.cache.version"))
             .expect("version cache exists");
         assert_eq!(version, "v1");
-
-        if let Some(prev) = previous_home {
-            env::set_var("HOME", prev);
-        } else {
-            env::remove_var("HOME");
-        }
     }
 
     #[tokio::test]

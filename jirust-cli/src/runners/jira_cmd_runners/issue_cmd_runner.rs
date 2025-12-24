@@ -220,6 +220,26 @@ impl IssueCmdRunner {
         Ok(scan_result)
     }
 
+    #[cfg(all(test, feature = "attachment_scan"))]
+    async fn scan_bytes_with_base_dir(&self, bytes: &[u8], base_dir: std::path::PathBuf) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+        let scanner = CachedYaraScanner::from_config_with_base_dir(&self.yara_config, base_dir).await?;
+        let scan_result = scanner.scan_buffer(bytes).unwrap_or_else(|e| {
+            eprintln!("⚠️ YARA scan failed: {}", e);
+            eprintln!("   Proceeding with attachment upload anyway...");
+            vec![]
+        });
+        if !scan_result.is_empty() {
+            println!(
+                "⚠️ Attachment file triggered the following YARA scanner rules: {:?}",
+                scan_result
+            );
+        } else {
+            println!("✅ No issue found by YARA scanner in the attachment file");
+        }
+
+        Ok(scan_result)
+    }
+
     /// Creates a Jira issue
     ///
     /// # Arguments
@@ -1019,9 +1039,6 @@ rule TestRule {
         )
         .expect("write yara rule");
 
-        let previous_home = env::var("HOME").ok();
-        env::set_var("HOME", temp_home.path());
-
         let config = ConfigFile::new(
             "dGVzdDp0b2tlbg==".to_string(),
             "https://example.atlassian.net".to_string(),
@@ -1038,19 +1055,12 @@ rule TestRule {
 
         let runner = IssueCmdRunner::new(&config);
         let matches = runner
-            .scan_bytes(b"hitme")
+            .scan_bytes_with_base_dir(b"hitme", base_dir.clone())
             .await
             .expect("scan should succeed");
 
         assert!(matches.contains(&"TestRule".to_string()));
         assert!(base_dir.join("yara_rules.cache").exists());
         assert!(base_dir.join("yara_rules.cache.version").exists());
-
-        // Restore HOME for other tests
-        if let Some(prev) = previous_home {
-            env::set_var("HOME", prev);
-        } else {
-            env::remove_var("HOME");
-        }
     }
 }

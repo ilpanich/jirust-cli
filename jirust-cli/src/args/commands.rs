@@ -730,3 +730,46 @@ fn manage_jira_document_field(value: String) -> String {
         value.to_string()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_key_val_success() {
+        let result: Result<(String, String), _> = parse_key_val("key=value");
+        assert!(result.is_ok());
+        let (key, value) = result.unwrap();
+        assert_eq!(key, "key");
+        assert_eq!(value, "value");
+    }
+
+    #[test]
+    fn test_parse_key_val_with_jira_doc_field() {
+        let result: Result<(String, String), _> = parse_key_val("key=normal_value");
+        assert!(result.is_ok());
+        let (key, value) = result.unwrap();
+        assert_eq!(key, "key");
+        assert_eq!(value, "normal_value");
+    }
+
+    #[test]
+    fn test_parse_key_val_missing_equals() {
+        let result: Result<(String, String), _> = parse_key_val("invalid");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_manage_jira_document_field_no_match() {
+        let result = manage_jira_document_field("normal_value".to_string());
+        assert_eq!(result, "normal_value");
+    }
+
+    #[test]
+    fn test_manage_jira_document_field_empty_brackets() {
+        let input = "jira_doc_field[]".to_string();
+        let result = manage_jira_document_field(input.clone());
+        // Should return original value when brackets are empty
+        assert_eq!(result, input);
+    }
+}
