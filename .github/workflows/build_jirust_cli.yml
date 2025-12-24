@@ -125,7 +125,7 @@ jobs:
           RUSTC_WRAPPER: "sccache"
         run: |
           cargo install cargo-sbom
-          cargo sbom --all-features > builds/sbom.spdx.json
+          cargo sbom > builds/sbom.spdx.json
 
       - name: Attest provenance
         uses: actions/attest-build-provenance@v1
