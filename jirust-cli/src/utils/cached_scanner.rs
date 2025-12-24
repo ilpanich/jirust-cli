@@ -1,42 +1,133 @@
 use anyhow::{Context, Result};
 use git2::Repository;
+use std::env;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 use yara_x::{Compiler, Rules, Scanner};
 
-const YARA_RULES_REPO: &str = "https://github.com/Yara-Rules/rules.git";
-const RULES_DIR: &str = "./.jirust-cli/yara-rules";
-const CACHE_FILE: &str = "./.jirust-cli/yara_rules.cache";
-const CACHE_VERSION_FILE: &str = "./.jirust-cli/yara_rules.cache.version";
+use crate::config::config_file::YaraSection;
+
+/// Source type for YARA rules
+#[derive(Debug, Clone, PartialEq)]
+enum SourceType {
+    Git,
+    Zip,
+}
+
+impl SourceType {
+    /// Detect source type from URL
+    fn detect(url: &str) -> Self {
+        if url.ends_with(".git") {
+            SourceType::Git
+        } else if url.ends_with(".zip") {
+            SourceType::Zip
+        } else {
+            // Default to Git for backward compatibility
+            SourceType::Git
+        }
+    }
+}
+
+/// Internal configuration for YARA scanner paths
+struct YaraConfig {
+    rules_source: String,
+    rules_dir: PathBuf,
+    cache_file: PathBuf,
+    cache_version_file: PathBuf,
+    source_type: SourceType,
+}
+
+impl YaraConfig {
+    /// Create from ConfigFile
+    fn from_config_file(cfg: &YaraSection) -> Result<Self> {
+        let base_dir = Self::get_base_dir()?;
+
+        let rules_dir = base_dir.join(cfg.get_rules_directory());
+        let cache_file = base_dir.join(cfg.get_cache_file());
+        let cache_version_file = base_dir.join(cfg.get_cache_version_file());
+
+        let rules_source = cfg.get_rules_source().to_string();
+        let source_type = SourceType::detect(&rules_source);
+
+        Ok(YaraConfig {
+            rules_source,
+            rules_dir,
+            cache_file,
+            cache_version_file,
+            source_type,
+        })
+    }
+
+    /// Create with defaults (for backward compatibility)
+    fn default() -> Result<Self> {
+        let base_dir = Self::get_base_dir()?;
+
+        // Use existing constants as fallback
+        let rules_source = "https://github.com/Yara-Rules/rules.git".to_string();
+        let source_type = SourceType::Git;
+
+        Ok(YaraConfig {
+            rules_source,
+            rules_dir: base_dir.join("yara-rules"),
+            cache_file: base_dir.join("yara_rules.cache"),
+            cache_version_file: base_dir.join("yara_rules.cache.version"),
+            source_type,
+        })
+    }
+
+    /// Get base directory (~/.jirust-cli/)
+    fn get_base_dir() -> Result<PathBuf> {
+        match env::var_os("HOME") {
+            Some(home) => {
+                let base = PathBuf::from(home).join(".jirust-cli");
+                if !base.exists() {
+                    fs::create_dir_all(&base).context("Failed to create .jirust-cli directory")?;
+                }
+                Ok(base)
+            }
+            None => anyhow::bail!("HOME environment variable not set"),
+        }
+    }
+}
 
 /// Structure to manage compiled YARA rules
 pub struct CachedYaraScanner {
     rules: Rules,
+    #[allow(dead_code)]
+    config: YaraConfig,
 }
 
 impl CachedYaraScanner {
-    /// Generate the new scanner:
+    /// Create scanner using configuration from ConfigFile
+    pub async fn from_config(cfg: &YaraSection) -> Result<Self> {
+        let config = YaraConfig::from_config_file(cfg)?;
+        let rules = Self::load_or_compile_rules(&config).await?;
+        Ok(Self { rules, config })
+    }
+
+    /// Generate the new scanner with defaults (backward compatibility):
     /// - If the YARA rules in the repo have not been updated -> load cache (~0.5s)
     /// - If the YARA rules in the repo have been updated -> rebuild & save in cache (~30s)
-    pub fn new() -> Result<Self> {
-        let rules = Self::load_or_compile_rules()?;
-        Ok(Self { rules })
+    pub async fn new() -> Result<Self> {
+        let config = YaraConfig::default()?;
+        let rules = Self::load_or_compile_rules(&config).await?;
+        Ok(Self { rules, config })
     }
 
     /// Load cached rules or rebuilds them if required
-    fn load_or_compile_rules() -> Result<Rules> {
-        let current_version = Self::get_repo_version()?;
-        let cached_version = Self::get_cached_version();
+    async fn load_or_compile_rules(config: &YaraConfig) -> Result<Rules> {
+        let current_version = Self::get_current_version(config)?;
+        let cached_version = Self::get_cached_version(config);
 
         // Check if the cache can be used
         if let (Some(cached), Some(current)) = (cached_version, &current_version) {
-            if cached == *current && Path::new(CACHE_FILE).exists() {
+            if cached == *current && config.cache_file.exists() {
                 println!("📦 Loading cached rules...");
 
-                match Self::load_cached_rules() {
+                match Self::load_cached_rules(config) {
                     Ok(rules) => {
-                        println!("✅ cached rules loaded (commit: {})", &current[..8]);
+                        println!("✅ cached rules loaded (version: {})", &current[..8]);
                         return Ok(rules);
                     }
                     Err(e) => {
@@ -44,15 +135,15 @@ impl CachedYaraScanner {
                     }
                 }
             } else {
-                println!("🔄 Rule repository updated, rebuilding...");
+                println!("🔄 Rules updated, rebuilding...");
             }
         } else {
             println!("🔨 No cache found, building...");
         }
 
-        let rules = Self::compile_all_rules()?;
+        let rules = Self::compile_all_rules(config).await?;
 
-        if let Err(e) = Self::save_to_cache(&rules, &current_version) {
+        if let Err(e) = Self::save_to_cache(config, &rules, &current_version) {
             eprintln!("⚠️  Can't save cache: {}", e);
         } else {
             println!("💾 Compiled rules cached!");
@@ -61,15 +152,21 @@ impl CachedYaraScanner {
         Ok(rules)
     }
 
-    /// Check the current git commit hash in the repository
-    fn get_repo_version() -> Result<Option<String>> {
-        let rules_path = Path::new(RULES_DIR);
+    /// Get current version identifier for the rules
+    fn get_current_version(config: &YaraConfig) -> Result<Option<String>> {
+        match config.source_type {
+            SourceType::Git => Self::get_git_version(config),
+            SourceType::Zip => Self::get_zip_version(config),
+        }
+    }
 
-        if !rules_path.exists() {
+    /// Get git commit hash as version
+    fn get_git_version(config: &YaraConfig) -> Result<Option<String>> {
+        if !config.rules_dir.exists() {
             return Ok(None);
         }
 
-        let repo = Repository::open(rules_path).context("Can't open repository")?;
+        let repo = Repository::open(&config.rules_dir).context("Can't open git repository")?;
 
         let head = repo.head().context("Can't read HEAD")?;
 
@@ -78,14 +175,29 @@ impl CachedYaraScanner {
         Ok(Some(commit.id().to_string()))
     }
 
+    /// Get content hash as version for zip files
+    fn get_zip_version(config: &YaraConfig) -> Result<Option<String>> {
+        if !config.rules_dir.exists() {
+            return Ok(None);
+        }
+
+        // Read version from metadata file if exists
+        let version_marker = config.rules_dir.join(".version");
+        if version_marker.exists() {
+            return Ok(Some(fs::read_to_string(version_marker)?));
+        }
+
+        Ok(None)
+    }
+
     /// Check the cached version
-    fn get_cached_version() -> Option<String> {
-        fs::read_to_string(CACHE_VERSION_FILE).ok()
+    fn get_cached_version(config: &YaraConfig) -> Option<String> {
+        fs::read_to_string(&config.cache_version_file).ok()
     }
 
     /// Load cached rules
-    fn load_cached_rules() -> Result<Rules> {
-        let cache_bytes = fs::read(CACHE_FILE).context("Can't read cache")?;
+    fn load_cached_rules(config: &YaraConfig) -> Result<Rules> {
+        let cache_bytes = fs::read(&config.cache_file).context("Can't read cache")?;
 
         let rules = Rules::deserialize(&cache_bytes).context("Can't read rules")?;
 
@@ -93,24 +205,28 @@ impl CachedYaraScanner {
     }
 
     /// Store compiled rules in cache
-    fn save_to_cache(rules: &Rules, version: &Option<String>) -> Result<()> {
+    fn save_to_cache(config: &YaraConfig, rules: &Rules, version: &Option<String>) -> Result<()> {
         let serialized = rules.serialize()?;
 
-        fs::write(CACHE_FILE, serialized).context("Can't write cache")?;
+        fs::write(&config.cache_file, serialized).context("Can't write cache")?;
 
         if let Some(ver) = version {
-            fs::write(CACHE_VERSION_FILE, ver).context("Can't store cache version")?;
+            fs::write(&config.cache_version_file, ver).context("Can't store cache version")?;
         }
 
         Ok(())
     }
 
     /// Compile all YARA rules
-    fn compile_all_rules() -> Result<Rules> {
-        let rules_path = Path::new(RULES_DIR);
-
-        if !rules_path.exists() {
-            anyhow::bail!("Can't find YARA rules directory ({}).", RULES_DIR);
+    async fn compile_all_rules(config: &YaraConfig) -> Result<Rules> {
+        if !config.rules_dir.exists() {
+            println!(
+                "Can't find YARA rules directory ({}).",
+                config.rules_dir.display()
+            );
+            update_yara_rules_with_config(config)
+                .await
+                .context("Can't download YARA rules")?;
         }
 
         let mut compiler = Compiler::new();
@@ -119,7 +235,7 @@ impl CachedYaraScanner {
 
         println!("🔨 Building YARA rules...");
 
-        for entry in WalkDir::new(rules_path)
+        for entry in WalkDir::new(&config.rules_dir)
             .follow_links(false)
             .into_iter()
             .filter_map(|e| e.ok())
@@ -202,27 +318,38 @@ impl CachedYaraScanner {
         Ok(matches)
     }
 
-    /// Force rules rebuilding (invalidate cache)
+    /// Force rules rebuilding (invalidate cache) - uses default config
     pub fn force_recompile() -> Result<()> {
+        let config = YaraConfig::default()?;
+        Self::force_recompile_internal(&config)
+    }
+
+    /// Force rules rebuilding (invalidate cache) with specific config (internal)
+    fn force_recompile_internal(config: &YaraConfig) -> Result<()> {
         println!("🗑️  Deleting cache...");
 
-        fs::remove_file(CACHE_FILE).ok();
-        fs::remove_file(CACHE_VERSION_FILE).ok();
+        fs::remove_file(&config.cache_file).ok();
+        fs::remove_file(&config.cache_version_file).ok();
 
         println!("✅ Cache deleted");
         Ok(())
     }
 }
 
-/// Update YARA-Rules GitHub repository.
-/// Returns Ok(true) if updated.
-pub fn update_yara_rules() -> Result<bool> {
-    let rules_path = Path::new(RULES_DIR);
+/// Update or download YARA rules based on source type
+async fn update_yara_rules_with_config(config: &YaraConfig) -> Result<bool> {
+    match config.source_type {
+        SourceType::Git => update_git_rules(config),
+        SourceType::Zip => update_zip_rules(config).await,
+    }
+}
 
-    if rules_path.exists() {
-        println!("📦 Repository YARA-Rules already downloaded, checking for updates...");
+/// Update git repository
+fn update_git_rules(config: &YaraConfig) -> Result<bool> {
+    if config.rules_dir.exists() {
+        println!("📦 Git repository exists, checking for updates...");
 
-        let repo = Repository::open(rules_path).context("Can't open local repository")?;
+        let repo = Repository::open(&config.rules_dir).context("Can't open local repository")?;
 
         let mut remote = repo
             .find_remote("origin")
@@ -244,24 +371,122 @@ pub fn update_yara_rules() -> Result<bool> {
 
         println!("✅ Repository updated");
 
-        // Invalida la cache dopo l'aggiornamento
-        fs::remove_file(CACHE_FILE).ok();
-        fs::remove_file(CACHE_VERSION_FILE).ok();
+        // Invalidate cache after update
+        fs::remove_file(&config.cache_file).ok();
+        fs::remove_file(&config.cache_version_file).ok();
 
         Ok(true)
     } else {
-        println!("📥 Cloning YARA-Rules repository (it might take a while)...");
+        println!("📥 Cloning git repository (this might take a while)...");
 
-        Repository::clone(YARA_RULES_REPO, rules_path).context("Cloning error")?;
+        Repository::clone(&config.rules_source, &config.rules_dir).context("Cloning error")?;
 
-        println!("✅ Repository cloned succesfully in {}", RULES_DIR);
+        println!(
+            "✅ Repository cloned successfully to {}",
+            config.rules_dir.display()
+        );
         Ok(true)
     }
 }
 
+/// Download and extract zip rules
+async fn update_zip_rules(config: &YaraConfig) -> Result<bool> {
+    use sha2::{Digest, Sha256};
+    use zip::ZipArchive;
+
+    println!("📥 Downloading YARA rules from {}...", config.rules_source);
+
+    // Download to memory
+    let response = reqwest::get(&config.rules_source)
+        .await
+        .context(format!("Failed to download from {}", config.rules_source))?;
+
+    if !response.status().is_success() {
+        anyhow::bail!("Download failed with status: {}", response.status());
+    }
+
+    // Read response bytes
+    let zip_bytes = response.bytes().await.context("Failed to read response body")?;
+
+    // Calculate hash for version tracking
+    let mut hasher = Sha256::new();
+    hasher.update(&zip_bytes);
+    let new_version = format!("{:x}", hasher.finalize());
+
+    // Check if we already have this version
+    let version_marker = config.rules_dir.join(".version");
+    if version_marker.exists() {
+        let current_version = fs::read_to_string(&version_marker).ok();
+        if current_version.as_deref() == Some(new_version.as_str()) {
+            println!(
+                "✅ Rules already up to date (version: {})",
+                &new_version[..8]
+            );
+            return Ok(false);
+        }
+    }
+
+    // Clean existing rules directory
+    if config.rules_dir.exists() {
+        fs::remove_dir_all(&config.rules_dir)
+            .context("Failed to clean existing rules directory")?;
+    }
+
+    // Create rules directory
+    fs::create_dir_all(&config.rules_dir).context("Failed to create rules directory")?;
+
+    // Extract zip
+    println!("📦 Extracting rules...");
+    let cursor = std::io::Cursor::new(zip_bytes);
+    let mut archive = ZipArchive::new(cursor).context("Failed to read zip archive")?;
+
+    for i in 0..archive.len() {
+        let mut file = archive.by_index(i).context("Failed to read zip entry")?;
+
+        let outpath = match file.enclosed_name() {
+            Some(path) => config.rules_dir.join(path),
+            None => continue,
+        };
+
+        if file.name().ends_with('/') {
+            // Directory
+            fs::create_dir_all(&outpath).context("Failed to create directory")?;
+        } else {
+            // File
+            if let Some(parent) = outpath.parent() {
+                fs::create_dir_all(parent).context("Failed to create parent directory")?;
+            }
+
+            let mut outfile = fs::File::create(&outpath).context("Failed to create file")?;
+            std::io::copy(&mut file, &mut outfile).context("Failed to extract file")?;
+        }
+    }
+
+    // Write version marker
+    fs::write(&version_marker, &new_version).context("Failed to write version marker")?;
+
+    println!(
+        "✅ Rules extracted successfully (version: {})",
+        &new_version[..8]
+    );
+
+    // Invalidate cache
+    fs::remove_file(&config.cache_file).ok();
+    fs::remove_file(&config.cache_version_file).ok();
+
+    Ok(true)
+}
+
+/// Update YARA-Rules with default configuration (backward compatibility).
+/// Returns Ok(true) if updated.
+pub async fn update_yara_rules() -> Result<bool> {
+    let config = YaraConfig::default()?;
+    update_yara_rules_with_config(&config).await
+}
+
 /// Entrypoint
-pub fn scan_file<P: AsRef<Path>>(file_path: P) -> Result<Vec<String>> {
-    let scanner = CachedYaraScanner::new()?;
+pub async fn scan_file<P: AsRef<Path>>(file_path: P) -> Result<Vec<String>> {
+    let scanner = CachedYaraScanner::new().await?;
     scanner.scan_file(file_path)
 }
 

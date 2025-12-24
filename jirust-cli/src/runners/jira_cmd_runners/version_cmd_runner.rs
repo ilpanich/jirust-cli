@@ -69,7 +69,7 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     ///
     /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// ```
@@ -116,7 +116,7 @@ impl VersionCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     ///
     /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
@@ -244,7 +244,7 @@ impl VersionCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     ///
     /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
@@ -485,7 +485,7 @@ impl VersionCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -532,7 +532,7 @@ impl VersionCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -591,7 +591,7 @@ impl VersionCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -653,7 +653,7 @@ impl VersionCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -703,7 +703,7 @@ impl VersionCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let params = VersionCmdParams::new();
     ///
@@ -741,7 +741,7 @@ impl VersionCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::version_cmd_runner::VersionCmdRunner;
     /// use toml::Table;
     ///
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let version_cmd_runner = VersionCmdRunner::new(&cfg_file);
     /// let issue_key = "ABC-123";
     /// let user_data = Some(User::default());

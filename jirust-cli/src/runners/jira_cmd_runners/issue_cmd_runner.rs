@@ -17,6 +17,7 @@ use std::path::Path;
 use mockall::automock;
 
 use crate::args::commands::TransitionArgs;
+use crate::config::config_file::YaraSection;
 use crate::utils::cached_scanner::CachedYaraScanner;
 use crate::{
     args::commands::IssueArgs,
@@ -33,6 +34,7 @@ use crate::{
 pub struct IssueCmdRunner {
     /// Configuration object
     cfg: Configuration,
+    yara_config: YaraSection,
 }
 
 /// Implementation of IssueCmdRunner
@@ -65,7 +67,7 @@ impl IssueCmdRunner {
     /// use jirust_cli::runners::jira_cmd_runners::issue_cmd_runner::IssueCmdRunner;
     /// use toml::Table;
     ///
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     ///
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// ```
@@ -74,7 +76,10 @@ impl IssueCmdRunner {
         let auth_data = AuthData::from_base64(cfg_file.get_auth_key());
         config.base_path = cfg_file.get_jira_url().to_string();
         config.basic_auth = Some((auth_data.0, Some(auth_data.1)));
-        IssueCmdRunner { cfg: config }
+        IssueCmdRunner {
+            cfg: config,
+            yara_config: cfg_file.get_yara_section().clone(),
+        }
     }
 
     /// Assigns a Jira issue to a user
@@ -96,7 +101,7 @@ impl IssueCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.assignee = Some("assignee".to_string());
@@ -146,7 +151,7 @@ impl IssueCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.issue_key = Some("issue_key".to_string());
@@ -168,7 +173,7 @@ impl IssueCmdRunner {
                 "Error attaching file to issue: Empty issue key".to_string(),
             )));
         };
-        let scanner = CachedYaraScanner::new()?;
+        let scanner = CachedYaraScanner::from_config(&self.yara_config).await?;
         if let Some(path) = &params.attachment_file_path {
             let attachment_bytes = std::fs::read(path)?;
             let file_name = Path::new(path)
@@ -179,10 +184,12 @@ impl IssueCmdRunner {
 
             let scan_result = scanner.scan_buffer(&attachment_bytes).unwrap_or(vec![]);
             if !scan_result.is_empty() {
-                return Err(Box::new(Error::other(format!(
-                    "Attachment file '{}' blocked by YARA rules: {:?}",
-                    file_name, scan_result
-                ))));
+                println!(
+                    "⚠️ Attachment file triggered the following YARA scanner rules: {:?}",
+                    scan_result
+                );
+            } else {
+                println!("✅ No issue found by YARA scanner in the attachment file");
             }
 
             return Ok(
@@ -214,7 +221,7 @@ impl IssueCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let params = IssueCmdParams::new();
     ///
@@ -261,7 +268,7 @@ impl IssueCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.issue_key = Some("issue_key".to_string());
@@ -305,7 +312,7 @@ impl IssueCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.issue_key = Some("issue_key".to_string());
@@ -348,7 +355,7 @@ impl IssueCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueCmdParams::new();
     /// params.query = Some("field=value".to_string());
@@ -398,7 +405,7 @@ impl IssueCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     ///
     /// let mut params = IssueCmdParams::new();
@@ -462,7 +469,7 @@ impl IssueCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let params = IssueCmdParams::new();
     ///
@@ -522,7 +529,7 @@ impl IssueCmdRunner {
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// # tokio_test::block_on(async {
-    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new());
+    /// let cfg_file = ConfigFile::new("dXNlcm5hbWU6YXBpX2tleQ==".to_string(), "jira_url".to_string(), "standard_resolution".to_string(), "standard_resolution_comment".to_string(), Table::new(), YaraSection::default());
     /// let issue_cmd_runner = IssueCmdRunner::new(&cfg_file);
     /// let mut params = IssueTransitionCmdParams::new();
     /// params.issue_key = "issue_key".to_string();
