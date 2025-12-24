@@ -15,7 +15,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Improved tests coverage (with the help of Claude Code)
 - Improved docs (with the help of ChatGPT Codex)
 
-## [0.16.3] 2025-12-07
+## [0.16.13] 2025-12-07
 ### Reverted
 - Changes to the github action to build & Release jirust-cli to corectly release on NPM using the `NPM Trusted Publisher` flow (due to some issues found during the release); moved back to the previous behavior
 
