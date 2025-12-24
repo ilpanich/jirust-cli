@@ -73,7 +73,7 @@ jobs:
         run: |
           cargo install wasm-pack
           cd jirust-cli
-          wasm-pack build --all-features --release --target nodejs
+          wasm-pack build --release --target nodejs
           wasm-pack pack pkg
           cd ..
           cp jirust-cli/pkg/jirust-cli-*.tgz dist/jirust-cli-wasm.tgz
