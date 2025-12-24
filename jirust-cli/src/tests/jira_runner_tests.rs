@@ -17,7 +17,8 @@ mod tests {
             "https://test.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         )
     }
 

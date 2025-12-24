@@ -19,7 +19,8 @@ mod coverage_boost_tests {
             "https://test.atlassian.net".to_string(),
             r#"{"name": "Done"}"#.to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -333,7 +334,8 @@ standard_resolution_comment = "Task completed"
             "http://localhost".to_string(),
             "".to_string(),
             "".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         );
         let version_cmd = Commands::Version(VersionArgs {
             version_act: VersionActionValues::List,

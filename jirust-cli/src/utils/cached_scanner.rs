@@ -498,6 +498,80 @@ pub async fn scan_file<P: AsRef<Path>>(file_path: P) -> Result<Vec<String>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::config::config_file::YaraSection;
+    use std::sync::Mutex;
+    use tempfile::tempdir;
+
+    static ENV_MUTEX: Mutex<()> = Mutex::new(());
+
+    #[test]
+    fn detects_source_type() {
+        assert_eq!(
+            SourceType::detect("https://example.com/rules.git"),
+            SourceType::Git
+        );
+        assert_eq!(
+            SourceType::detect("https://example.com/rules.zip"),
+            SourceType::Zip
+        );
+        assert_eq!(
+            SourceType::detect("https://example.com/rules"),
+            SourceType::Git
+        );
+    }
+
+    #[tokio::test]
+    async fn builds_rules_and_writes_cache_version() {
+        let _guard = ENV_MUTEX.lock().unwrap();
+
+        let temp_home = tempdir().expect("temp HOME");
+        let base_dir = temp_home.path().join(".jirust-cli");
+        let rules_dir = base_dir.join("rules");
+        fs::create_dir_all(&rules_dir).expect("create rules dir");
+
+        fs::write(rules_dir.join(".version"), "v1").expect("write version marker");
+        fs::write(
+            rules_dir.join("test_rule.yar"),
+            r#"
+rule CacheRule {
+  strings:
+    $a = "cache-hit"
+  condition:
+    $a
+}
+"#,
+        )
+        .expect("write yara rule");
+
+        let previous_home = env::var("HOME").ok();
+        env::set_var("HOME", temp_home.path());
+
+        let section = YaraSection::new(
+            "local_rules.zip".to_string(),
+            "rules".to_string(),
+            "yara_rules.cache".to_string(),
+            "yara_rules.cache.version".to_string(),
+        );
+
+        let scanner = CachedYaraScanner::from_config(&section)
+            .await
+            .expect("scanner builds");
+        let matches = scanner
+            .scan_buffer(b"cache-hit")
+            .expect("scan buffer succeeds");
+
+        assert!(matches.contains(&"CacheRule".to_string()));
+        assert!(base_dir.join("yara_rules.cache").exists());
+        let version = fs::read_to_string(base_dir.join("yara_rules.cache.version"))
+            .expect("version cache exists");
+        assert_eq!(version, "v1");
+
+        if let Some(prev) = previous_home {
+            env::set_var("HOME", prev);
+        } else {
+            env::remove_var("HOME");
+        }
+    }
 
     #[tokio::test]
     #[ignore]

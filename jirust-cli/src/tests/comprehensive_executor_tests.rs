@@ -24,7 +24,8 @@ mod comprehensive_executor_tests {
             "https://test.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -726,7 +727,8 @@ mod comprehensive_executor_tests {
             "https://another.atlassian.net".to_string(),
             "Resolved".to_string(),
             "Issue resolved".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         );
 
         let config3 = ConfigFile::new(
@@ -734,7 +736,8 @@ mod comprehensive_executor_tests {
             "https://team.atlassian.net".to_string(),
             "Closed".to_string(),
             "Issue closed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         );
 
         // Test that all configs work with all executors

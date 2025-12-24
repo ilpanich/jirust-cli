@@ -3,11 +3,11 @@ mod coverage_improvement_tests {
     use crate::args::commands::OutputValues;
     use crate::config::config_file::{ConfigFile, YaraSection};
     use crate::runners::jira_cmd_runners::{
-        version_cmd_runner::{VersionCmdRunner, VersionCmdParams},
-        link_issue_cmd_runner::{LinkIssueCmdRunner, LinkIssueCmdParams},
-        project_cmd_runner::{ProjectCmdRunner, ProjectCmdParams},
+        link_issue_cmd_runner::{LinkIssueCmdParams, LinkIssueCmdRunner},
+        project_cmd_runner::{ProjectCmdParams, ProjectCmdRunner},
+        version_cmd_runner::{VersionCmdParams, VersionCmdRunner},
     };
-    use crate::utils::{PrintableData, print_data, OutputType};
+    use crate::utils::{OutputType, PrintableData, print_data};
     use jira_v3_openapi::models::Version;
     use std::io::Write;
     use tempfile::NamedTempFile;
@@ -357,7 +357,7 @@ mod coverage_improvement_tests {
             origin_issue_key: "SRC-1".to_string(),
             destination_issue_key: None,
             link_type: "Relates".to_string(),
-            project_key: None,  // Missing project key with changelog
+            project_key: None, // Missing project key with changelog
             changelog_file: Some(changelog.path().display().to_string()),
         };
 
@@ -374,8 +374,7 @@ mod coverage_improvement_tests {
         let runner = LinkIssueCmdRunner::new(&config);
 
         let mut changelog = NamedTempFile::new().expect("create temp file");
-        writeln!(changelog, "## [1.0.0] 2024-01-01\nNo issues here")
-            .expect("write changelog");
+        writeln!(changelog, "## [1.0.0] 2024-01-01\nNo issues here").expect("write changelog");
 
         let params = LinkIssueCmdParams {
             origin_issue_key: "SRC-1".to_string(),
@@ -507,9 +506,12 @@ mod coverage_improvement_tests {
     #[test]
     fn test_print_data_json_transitioned_issue_variant() {
         let data = PrintableData::TransitionedIssue {
-            issues: vec![
-                ("TEST-1".to_string(), "OK".to_string(), "OK".to_string(), "1.0.0".to_string()),
-            ],
+            issues: vec![(
+                "TEST-1".to_string(),
+                "OK".to_string(),
+                "OK".to_string(),
+                "1.0.0".to_string(),
+            )],
         };
 
         print_data(data, OutputValues::Json, OutputType::Full);

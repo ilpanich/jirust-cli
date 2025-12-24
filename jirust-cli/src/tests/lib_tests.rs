@@ -13,7 +13,8 @@ mod tests {
             "https://valid.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         );
 
         // Test valid config validation logic
@@ -28,7 +29,8 @@ mod tests {
             "https://valid.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         );
 
         // This should be considered invalid due to empty auth key
@@ -43,7 +45,8 @@ mod tests {
             "".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         );
 
         // This should be considered invalid due to empty Jira URL
@@ -208,7 +211,8 @@ mod tests {
             "https://valid.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -218,7 +222,8 @@ mod tests {
             "https://valid.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -228,7 +233,8 @@ mod tests {
             "".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         )
     }
 }

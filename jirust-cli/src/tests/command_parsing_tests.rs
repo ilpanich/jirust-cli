@@ -821,13 +821,8 @@ mod tests {
     #[test]
     fn test_issue_attach_without_file_path_fails() {
         // Should fail when attachment file path is missing
-        let result = JirustCliArgs::try_parse_from([
-            "jirust-cli",
-            "issue",
-            "attach",
-            "-i",
-            "TEST-123",
-        ]);
+        let result =
+            JirustCliArgs::try_parse_from(["jirust-cli", "issue", "attach", "-i", "TEST-123"]);
 
         // This should actually succeed in parsing but the validation happens later
         // The field will be None

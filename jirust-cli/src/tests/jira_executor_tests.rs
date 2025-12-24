@@ -33,7 +33,8 @@ mod tests {
             "https://test.atlassian.net".to_string(),
             "Done".to_string(),
             "Task completed".to_string(),
-            Table::new(), YaraSection::default()
+            Table::new(),
+            YaraSection::default(),
         )
     }
 
@@ -1284,10 +1285,10 @@ mod tests {
         mock_runner
             .expect_attach_file_to_jira_issue()
             .returning(|_| {
-                Err(Box::new(IoError::new(
-                    ErrorKind::NotFound,
-                    "File not found",
-                )) as Box<dyn std::error::Error>)
+                Err(
+                    Box::new(IoError::new(ErrorKind::NotFound, "File not found"))
+                        as Box<dyn std::error::Error>,
+                )
             });
 
         let args = IssueArgs {

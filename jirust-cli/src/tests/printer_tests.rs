@@ -6,8 +6,9 @@ mod tests {
         table_printer::{print_table_basic, print_table_full, print_table_single},
     };
     use jira_v3_openapi::models::{
-        CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition, IssueTypeIssueCreateMetadata,
-        JsonTypeBean, Project, ProjectCategory, Version, VersionRelatedWork,
+        CreatedIssue, FieldCreateMetadata, IssueBean, IssueTransition,
+        IssueTypeIssueCreateMetadata, JsonTypeBean, Project, ProjectCategory, Version,
+        VersionRelatedWork,
     };
     use serde_json::json;
     use std::collections::HashMap;
@@ -180,7 +181,9 @@ mod tests {
         print_json(printable_fields);
 
         // Exercise variant again with empty vectors to ensure no panics
-        print_json(PrintableData::IssueType { issue_types: vec![] });
+        print_json(PrintableData::IssueType {
+            issue_types: vec![],
+        });
         print_json(PrintableData::IssueTypeField {
             issue_type_fields: vec![],
         });

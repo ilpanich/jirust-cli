@@ -92,6 +92,7 @@ Currently the basic version management is implemented and you can:
 * Transition an issue
 * Assign an issue
 * Link issues
+* Attach files to an issue (with optional YARA scan when built with the `attachment_scan` feature)
 * List all the transitions available for an issue
 * Search issue using JQL query (basic implementation, as required for my personal use)
 
@@ -128,6 +129,36 @@ Next features to be integrated and supported are:
 
 Those are mandatory for my work and I will prioritize them; other features will be added as needed.
 You can request a feature by opening an issue or you can provide an implementation compliant with what is currently developed in a PR.
+
+### Attachments
+Upload a file to an issue:
+
+```bash
+jirust-cli issue attach -i ISSUE-123 -p /path/to/file.pdf
+```
+
+When built with the `attachment_scan` feature, attachments are scanned with YARA before upload. See the configuration notes below to point the scanner at your local or remote rules.
+
+### Attachment scanning (optional)
+Attachment scanning is disabled by default during builds to avoid pulling extra dependencies. Build with the feature flag to enable it:
+
+```bash
+cargo build -p jirust-cli --features attachment_scan
+```
+
+The BIN version for Windows or Linux distributed via github releases already include this feature enabled by default.
+
+Configure the rules source in `~/.jirust-cli/jirust-cli.toml` (see `jirust-cli/config_example.toml`):
+
+```toml
+[yara]
+rules_source = "https://github.com/YARAHQ/yara-forge/releases/latest/download/yara-forge-rules-core.zip"
+rules_directory = "yara-rules"
+cache_file = "yara_rules.cache"
+cache_version_file = "yara_rules.cache.version"
+```
+
+Rules are downloaded (git or zip) into `~/.jirust-cli/<rules_directory>` and cached locally; subsequent runs reuse the cache unless the source version changes.
 
 ## License
 Apache 2.0

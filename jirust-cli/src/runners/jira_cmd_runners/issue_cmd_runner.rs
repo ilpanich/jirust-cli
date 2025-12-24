@@ -946,3 +946,111 @@ impl IssueCmdRunnerApi for IssueCmdRunner {
         IssueCmdRunner::get_issue_available_transitions(self, params).await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::config_file::{ConfigFile, YaraSection};
+    use std::sync::Mutex;
+    use std::{env, fs};
+    use tempfile::tempdir;
+    use toml::Table;
+
+    static ENV_MUTEX: Mutex<()> = Mutex::new(());
+
+    fn basic_config() -> ConfigFile {
+        ConfigFile::new(
+            "dGVzdDp0b2tlbg==".to_string(),
+            "https://example.atlassian.net".to_string(),
+            "Done".to_string(),
+            "Completed".to_string(),
+            Table::new(),
+            YaraSection::default(),
+        )
+    }
+
+    #[tokio::test]
+    async fn attach_without_issue_key_returns_error() {
+        let runner = IssueCmdRunner::new(&basic_config());
+        let mut params = IssueCmdParams::new();
+        params.attachment_file_path = Some("/tmp/file.txt".to_string());
+
+        let result = runner.attach_file_to_jira_issue(params).await;
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("Empty issue key"));
+    }
+
+    #[tokio::test]
+    async fn attach_without_file_path_returns_error() {
+        let runner = IssueCmdRunner::new(&basic_config());
+        let mut params = IssueCmdParams::new();
+        params.issue_key = Some("TEST-123".to_string());
+
+        let result = runner.attach_file_to_jira_issue(params).await;
+        assert!(result.is_err());
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("Empty attachment file path")
+        );
+    }
+
+    #[cfg(feature = "attachment_scan")]
+    #[tokio::test]
+    async fn scan_bytes_uses_local_rules() {
+        let _guard = ENV_MUTEX.lock().unwrap();
+        let temp_home = tempdir().expect("temp HOME");
+        let base_dir = temp_home.path().join(".jirust-cli");
+        let rules_dir = base_dir.join("rules");
+        fs::create_dir_all(&rules_dir).expect("create rules dir");
+
+        fs::write(rules_dir.join(".version"), "v1").expect("write version marker");
+        fs::write(
+            rules_dir.join("test_rule.yar"),
+            r#"
+rule TestRule {
+  strings:
+    $a = "hitme"
+  condition:
+    $a
+}
+"#,
+        )
+        .expect("write yara rule");
+
+        let previous_home = env::var("HOME").ok();
+        env::set_var("HOME", temp_home.path());
+
+        let config = ConfigFile::new(
+            "dGVzdDp0b2tlbg==".to_string(),
+            "https://example.atlassian.net".to_string(),
+            "Done".to_string(),
+            "Completed".to_string(),
+            Table::new(),
+            YaraSection::new(
+                "local_rules.zip".to_string(),
+                "rules".to_string(),
+                "yara_rules.cache".to_string(),
+                "yara_rules.cache.version".to_string(),
+            ),
+        );
+
+        let runner = IssueCmdRunner::new(&config);
+        let matches = runner
+            .scan_bytes(b"hitme")
+            .await
+            .expect("scan should succeed");
+
+        assert!(matches.contains(&"TestRule".to_string()));
+        assert!(base_dir.join("yara_rules.cache").exists());
+        assert!(base_dir.join("yara_rules.cache.version").exists());
+
+        // Restore HOME for other tests
+        if let Some(prev) = previous_home {
+            env::set_var("HOME", prev);
+        } else {
+            env::remove_var("HOME");
+        }
+    }
+}
