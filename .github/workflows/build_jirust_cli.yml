@@ -46,25 +46,45 @@ jobs:
           cargo install cargo-deny
           cargo deny check
 
-      - name: Build Win64
+      - name: Build Win64 (Complete)
         env:
           SCCACHE_GHA_ENABLED: "true"
           RUSTC_WRAPPER: "sccache"
         run: |
           cargo rustc -p jirust-cli --bin jirust-cli --all-features --release --target=x86_64-pc-windows-gnu -- -C linker=x86_64-w64-mingw32-gcc
-          mkdir builds/jirust-cli-win64
-          cp target/x86_64-pc-windows-gnu/release/jirust-cli.exe builds/jirust-cli-win64
-          tar -C builds -czvf dist/jirust-cli-win64.tar.gz jirust-cli-win64
+          mkdir builds/jirust-cli-win64-full
+          cp target/x86_64-pc-windows-gnu/release/jirust-cli.exe builds/jirust-cli-win64-full
+          tar -C builds -czvf dist/jirust-cli-win64-full.tar.gz jirust-cli-win64-full
 
-      - name: Build Linux
+      - name: Build Win64 (Without YARA scan)
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
+        run: |
+          cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-pc-windows-gnu -- -C linker=x86_64-w64-mingw32-gcc
+          mkdir builds/jirust-cli-win64-basic
+          cp target/x86_64-pc-windows-gnu/release/jirust-cli.exe builds/jirust-cli-win64-basic
+          tar -C builds -czvf dist/jirust-cli-win64-basic.tar.gz jirust-cli-win64-basic
+
+      - name: Build Linux (Complete)
         env:
           SCCACHE_GHA_ENABLED: "true"
           RUSTC_WRAPPER: "sccache"
         run: |
           cargo rustc -p jirust-cli --bin jirust-cli --all-features --release --target=x86_64-unknown-linux-gnu
-          mkdir builds/jirust-cli-linux
-          cp target/x86_64-unknown-linux-gnu/release/jirust-cli builds/jirust-cli-linux
-          tar -C builds -czvf dist/jirust-cli-linux.tar.gz jirust-cli-linux
+          mkdir builds/jirust-cli-linux-full
+          cp target/x86_64-unknown-linux-gnu/release/jirust-cli builds/jirust-cli-linux-full
+          tar -C builds -czvf dist/jirust-cli-linux-full.tar.gz jirust-cli-linux-full
+
+      - name: Build Linux (Without YARA scan)
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
+        run: |
+          cargo rustc -p jirust-cli --bin jirust-cli --release --target=x86_64-unknown-linux-gnu
+          mkdir builds/jirust-cli-linux-basic
+          cp target/x86_64-unknown-linux-gnu/release/jirust-cli builds/jirust-cli-linux-basic
+          tar -C builds -czvf dist/jirust-cli-linux-basic.tar.gz jirust-cli-linux-basic
 
       - name: WASM Pack
         env:
@@ -94,8 +114,10 @@ jobs:
           name: ${{ steps.vars.outputs.final_tag }}
           body: "${{ steps.extract-release-notes.outputs.release_notes }}"
           files: |
-            dist/jirust-cli-win64.tar.gz
-            dist/jirust-cli-linux.tar.gz
+            dist/jirust-cli-win64-basic.tar.gz
+            dist/jirust-cli-win64-full.tar.gz
+            dist/jirust-cli-linux-basic.tar.gz
+            dist/jirust-cli-linux-full.tar.gz
             dist/jirust-cli-wasm.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
