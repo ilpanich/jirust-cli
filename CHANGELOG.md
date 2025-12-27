@@ -6,6 +6,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.17.1] 2025-12-27
+### Changed
+- Updated dependencies
+- Cleanup some dependency crates features too shrink the build size
+- Build both version (wiht & without Yara scan) in Github release
+
 ## [0.17.0] 2025-12-24
 ### Added
 - Support for jire issue attachments
