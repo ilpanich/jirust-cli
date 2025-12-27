@@ -63,7 +63,7 @@ The sample code file is also included in the repository.
 ### Configuration
 To configure the CLI you need to create a configuration file in your home directory called `.jirust-cli/jirust-cli.toml`.
 
-You cangenerate it (if the file doesn't exist the CLI will ask you to configure itself at the first run and the it will store the config in the file) by:
+You can generate it (if the file doesn't exist the CLI will ask you to configure itself at the first run and the it will store the config in the file) by:
 
 ```bash
 jirust-cli config setup
@@ -91,6 +91,7 @@ Currently the basic version management is implemented and you can:
 * Delete an issue
 * Transition an issue
 * Assign an issue
+* Add an attachment to an issue
 * Link issues
 * Attach files to an issue (with optional YARA scan when built with the `attachment_scan` feature)
 * List all the transitions available for an issue
@@ -146,7 +147,7 @@ Attachment scanning is disabled by default during builds to avoid pulling extra 
 cargo build -p jirust-cli --features attachment_scan
 ```
 
-The BIN version for Windows or Linux distributed via github releases already include this feature enabled by default.
+The BIN version for Windows or Linux distributed via github releases already include this feature enabled by default (_full_ version), otherwise it is not included (_basic_ version).
 
 Configure the rules source in `~/.jirust-cli/jirust-cli.toml` (see `jirust-cli/config_example.toml`):
 
