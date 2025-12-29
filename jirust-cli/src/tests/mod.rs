@@ -9,6 +9,7 @@ pub mod config_tests;
 pub mod coverage_boost_tests;
 pub mod coverage_improvement_tests;
 pub mod error_handling_tests;
+pub mod executor_and_printer_tests;
 pub mod executor_tests;
 pub mod integration_tests;
 pub mod jira_executor_tests;
