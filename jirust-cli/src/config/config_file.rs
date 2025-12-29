@@ -664,6 +664,31 @@ impl Default for ConfigFile {
 }
 
 impl YaraSection {
+    /// Creates a new YaraSection with the specified configuration.
+    ///
+    /// # Arguments
+    ///
+    /// * `rules_source` - URL or path to YARA rules source (git repository or zip file)
+    /// * `rules_directory` - Directory name where YARA rules will be stored
+    /// * `cache_file` - Filename for the compiled rules cache
+    /// * `cache_version_file` - Filename for tracking the cache version
+    ///
+    /// # Returns
+    ///
+    /// A new `YaraSection` instance with the provided configuration
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use jirust_cli::config::config_file::YaraSection;
+    ///
+    /// let yara = YaraSection::new(
+    ///     "https://github.com/Yara-Rules/rules.git".to_string(),
+    ///     "yara-rules".to_string(),
+    ///     "yara_rules.cache".to_string(),
+    ///     "yara_rules.cache.version".to_string(),
+    /// );
+    /// ```
     pub fn new(
         rules_source: String,
         rules_directory: String,
@@ -678,18 +703,38 @@ impl YaraSection {
         }
     }
 
+    /// Returns the YARA rules source URL or path.
+    ///
+    /// # Returns
+    ///
+    /// A string slice containing the rules source (git URL or zip file URL)
     pub fn get_rules_source(&self) -> &str {
         &self.rules_source
     }
 
+    /// Returns the directory name where YARA rules are stored.
+    ///
+    /// # Returns
+    ///
+    /// A string slice containing the rules directory name
     pub fn get_rules_directory(&self) -> &str {
         &self.rules_directory
     }
 
+    /// Returns the cache filename for compiled YARA rules.
+    ///
+    /// # Returns
+    ///
+    /// A string slice containing the cache filename
     pub fn get_cache_file(&self) -> &str {
         &self.cache_file
     }
 
+    /// Returns the cache version filename.
+    ///
+    /// # Returns
+    ///
+    /// A string slice containing the cache version filename
     pub fn get_cache_version_file(&self) -> &str {
         &self.cache_version_file
     }
