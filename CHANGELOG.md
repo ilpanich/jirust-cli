@@ -6,6 +6,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.17.2] 2025-12-29
+### Changed
+- Updated dependencies
+- Improved tests coverage (with the help of Claude Code)
+- Improved docs (with the help of Claude Code)
+
 ## [0.17.1] 2025-12-27
 ### Changed
 - Updated dependencies
