@@ -1,5 +1,6 @@
 pub mod advanced_runner_tests;
 pub mod basic_tests;
+pub mod cached_scanner_coverage_tests;
 pub mod changelog_tests;
 pub mod command_parsing_tests;
 pub mod comprehensive_executor_tests;
