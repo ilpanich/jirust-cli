@@ -15,4 +15,5 @@ pub mod jira_runner_tests;
 pub mod lib_tests;
 pub mod printer_tests;
 pub mod serialization_tests;
+pub mod targeted_coverage_tests;
 pub mod utils_tests;
