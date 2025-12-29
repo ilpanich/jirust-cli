@@ -99,3 +99,6 @@ attachment_scan = [
     "dep:tempfile",
     "dep:zip",
 ] # This feature is used to include the attachment scan functionality
+
+[package.metadata.docs.rs]
+all-features = true
