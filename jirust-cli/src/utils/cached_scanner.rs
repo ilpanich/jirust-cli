@@ -1,5 +1,3 @@
-#![cfg(feature = "attachment_scan")]
-
 use anyhow::{Context, Result};
 use git2::Repository;
 use std::env;
