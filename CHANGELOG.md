@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.17.3] 2026-01-28
+### Changed
+- Updated dependencies
+
+### Fixed
+- Duplicate cfg `feature flag` on attachment scan (cargo-clippy suggested fix)
+
 ## [0.17.2] 2025-12-29
 ### Changed
 - Updated dependencies
