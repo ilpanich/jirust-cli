@@ -25,7 +25,7 @@ serde_with = { version = "^3.16", default-features = false, features = [
 serde_json = "^1.0"
 serde_repr = "0.1.20"
 url = "^2.5"
-uuid = { version = "^1.19", default-features = false, features = [
+uuid = { version = "^1.20", default-features = false, features = [
     "serde",
     "v4",
     "js",
@@ -40,6 +40,8 @@ reqwest = { version = "^0.12", default-features = false, features = [
 opt-level = "s"
 lto = true
 codegen-units = 1
+panic = "abort"
+strip = "symbols"
 
 [features]
 default = ["common"] # Default features
