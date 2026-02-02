@@ -4,10 +4,12 @@
 Project is currently being developed and it is in beta phase.
 Only last beta version will be supported, fixes and dependencies upgrade won't be backported to previous releases.
 
-| Version    | Supported             |
-| ---------- | ------------------ |
-| 0.17.x     | :white_check_mark: |
-| < 0.17.0   | :x:                |
+| Crate | Version    | Supported             |
+| --------------- | ---------- | ------------------ |
+| jirust-cli      | 0.17.x     | :white_check_mark: |
+| jirust-cli      | < 0.17.0   | :x:                |
+| jira_v3_openapi | 1.6.x     | :white_check_mark: |
+| jira_v3_openapi | < 1.6.0   | :x:                |
 
 ## Reporting a Vulnerability
 
