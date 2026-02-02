@@ -129,7 +129,7 @@ Name | Type | Description  | Required | Notes
 **properties** | Option<[**Vec<String>**](String.md)> | A list of up to 5 issue properties to include in the results. This parameter accepts a comma-separated list. |  |
 **fields_by_keys** | Option<**bool**> | Reference fields by their key (rather than ID). The default is `false`. |  |[default to false]
 **fail_fast** | Option<**bool**> | Fail this request early if we can't retrieve all field data. |  |[default to false]
-**reconcile_issues** | Option<[**Vec<i64>**](i64.md)> | Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids |  |
+**reconcile_issues** | Option<[**Vec<i64>**](i64.md)> | Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids. This list of ids should be consistent with each paginated request across different pages. |  |
 
 ### Return type
 

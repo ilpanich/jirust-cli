@@ -17,7 +17,7 @@ Method | HTTP request | Description
 
 ## find_assignable_users
 
-> Vec<models::User> find_assignable_users(query, session_id, username, account_id, project, issue_key, issue_id, start_at, max_results, action_descriptor_id, recommend)
+> Vec<models::User> find_assignable_users(query, session_id, username, account_id, project, issue_key, issue_id, start_at, max_results, action_descriptor_id, recommend, account_type, app_type)
 Find users assignable to issues
 
 Returns a list of users that can be assigned to an issue. Use this operation to find the list of users who can be assigned to:   *  a new issue, by providing the `projectKeyOrId`.  *  an updated issue, by providing the `issueKey` or `issueId`.  *  to an issue during a transition (workflow action), by providing the `issueKey` or `issueId` and the transition id in `actionDescriptorId`. You can obtain the IDs of an issue's valid transitions using the `transitions` option in the `expand` parameter of [ Get issue](#api-rest-api-3-issue-issueIdOrKey-get).  In all these cases, you can pass an account ID to determine if a user can be assigned to an issue. The user is returned in the response if they can be assigned to the issue or issue transition.  This operation takes the users in the range defined by `startAt` and `maxResults`, up to the thousandth user, and then returns only the users from that range that can be assigned the issue. This means the operation usually returns fewer users than specified in `maxResults`. To get all the users who can be assigned the issue, use [Get all users](#api-rest-api-3-users-search-get) and filter the records in your code.  Privacy controls are applied to the response based on the users' preferences. This could mean, for example, that the user's email address is hidden. See the [Profile visibility overview](https://developer.atlassian.com/cloud/jira/platform/profile-visibility/) for more details.  **[Permissions](#permissions) required:** *Browse users and groups* [global permission](https://confluence.atlassian.com/x/x4dKLg) or *Assign issues* [project permission](https://confluence.atlassian.com/x/yodKLg)
@@ -38,6 +38,8 @@ Name | Type | Description  | Required | Notes
 **max_results** | Option<**i32**> | The maximum number of items to return. This operation may return less than the maximum number of items even if more are available. The operation fetches users up to the maximum and then, from the fetched users, returns only the users that can be assigned to the issue. |  |[default to 50]
 **action_descriptor_id** | Option<**i32**> | The ID of the transition. |  |
 **recommend** | Option<**bool**> |  |  |[default to false]
+**account_type** | Option<[**Vec<String>**](String.md)> |  |  |
+**app_type** | Option<[**Vec<String>**](String.md)> |  |  |
 
 ### Return type
 

@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 **max_results** | Option<**i32**> | The maximum number of items to return per page. To manage page size, API may return fewer items per page where a large number of fields are requested. The greatest number of items returned per page is achieved when requesting `id` or `key` only. It returns max 5000 issues. | [optional][default to 50]
 **next_page_token** | Option<**String**> | The token for a page to fetch that is not the first page. The first page has a `nextPageToken` of `null`. Use the `nextPageToken` to fetch the next page of issues. | [optional]
 **properties** | Option<**Vec<String>**> | A list of up to 5 issue properties to include in the results. This parameter accepts a comma-separated list. | [optional]
-**reconcile_issues** | Option<**Vec<i64>**> | Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids | [optional]
+**reconcile_issues** | Option<**Vec<i64>**> | Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids. This list of ids should be consistent with each paginated request across different pages. | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

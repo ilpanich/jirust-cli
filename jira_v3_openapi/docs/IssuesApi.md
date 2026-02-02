@@ -289,8 +289,8 @@ Name | Type | Description  | Required | Notes
 **issue_id_or_key** | **String** | The ID or key of the issue. | [required] |
 **issue_update_details** | [**IssueUpdateDetails**](IssueUpdateDetails.md) |  | [required] |
 **notify_users** | Option<**bool**> | Whether a notification email about the issue update is sent to all watchers. To disable the notification, administer Jira or administer project permissions are required. If the user doesn't have the necessary permission the request is ignored. |  |[default to true]
-**override_screen_security** | Option<**bool**> | Whether screen security is overridden to enable hidden fields to be edited. Available to Connect app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
-**override_editable_flag** | Option<**bool**> | Whether screen security is overridden to enable uneditable fields to be edited. Available to Connect app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
+**override_screen_security** | Option<**bool**> | Whether screen security is overridden to enable hidden fields to be edited. Available to Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
+**override_editable_flag** | Option<**bool**> | Whether screen security is overridden to enable uneditable fields to be edited. Available to Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
 **return_issue** | Option<**bool**> | Whether the response should contain the issue with fields edited in this request. The returned issue will have the same format as in the [Get issue API](#api-rest-api-3-issue-issueidorkey-get). |  |[default to false]
 **expand** | Option<**String**> | The Get issue API expand parameter to use in the response if the `returnIssue` parameter is `true`. |  |[default to ]
 
@@ -545,8 +545,8 @@ Returns the edit screen fields for an issue that are visible to and editable by 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **issue_id_or_key** | **String** | The ID or key of the issue. | [required] |
-**override_screen_security** | Option<**bool**> | Whether hidden fields are returned. Available to Connect app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
-**override_editable_flag** | Option<**bool**> | Whether non-editable fields are returned. Available to Connect app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
+**override_screen_security** | Option<**bool**> | Whether hidden fields are returned. Available to Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
+**override_editable_flag** | Option<**bool**> | Whether non-editable fields are returned. Available to Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
 
 ### Return type
 
@@ -672,7 +672,7 @@ Name | Type | Description  | Required | Notes
 **issue_id_or_key** | **String** | The ID or key of the issue. | [required] |
 **expand** | Option<**String**> | Use [expand](#expansion) to include additional information about transitions in the response. This parameter accepts `transitions.fields`, which returns information about the fields in the transition screen for each transition. Fields hidden from the screen are not returned. Use this information to populate the `fields` and `update` fields in [Transition issue](#api-rest-api-3-issue-issueIdOrKey-transitions-post). |  |
 **transition_id** | Option<**String**> | The ID of the transition. |  |
-**skip_remote_only_condition** | Option<**bool**> | Whether transitions with the condition *Hide From User Condition* are included in the response. |  |[default to false]
+**skip_remote_only_condition** | Option<**bool**> | Whether transitions with the condition *Hide From User Condition* are included in the response. Available to Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). |  |[default to false]
 **include_unavailable_transitions** | Option<**bool**> | Whether details of transitions that fail a condition are included in the response |  |[default to false]
 **sort_by_ops_bar_and_status** | Option<**bool**> | Whether the transitions are sorted by ops-bar sequence value first then category order (Todo, In Progress, Done) or only by ops-bar sequence value. |  |[default to false]
 

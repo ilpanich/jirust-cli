@@ -199,7 +199,7 @@ Name | Type | Description  | Required | Notes
 
 ## get_project_role_details
 
-> Vec<models::ProjectRoleDetails> get_project_role_details(project_id_or_key, current_member, exclude_connect_addons)
+> Vec<models::ProjectRoleDetails> get_project_role_details(project_id_or_key, current_member, exclude_connect_addons, exclude_other_service_roles)
 Get project role details
 
 Returns all [project roles](https://support.atlassian.com/jira-cloud-administration/docs/manage-project-roles/) and the details for each role. Note that the list of project roles is common to all projects.  This operation can be accessed anonymously.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) or *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.
@@ -212,6 +212,7 @@ Name | Type | Description  | Required | Notes
 **project_id_or_key** | **String** | The project ID or project key (case sensitive). | [required] |
 **current_member** | Option<**bool**> | Whether the roles should be filtered to include only those the user is assigned to. |  |[default to false]
 **exclude_connect_addons** | Option<**bool**> |  |  |[default to false]
+**exclude_other_service_roles** | Option<**bool**> | Do not return the default JSM company-managed space from CSM spaces, or the default CSM roles from JSM spaces. |  |[default to false]
 
 ### Return type
 

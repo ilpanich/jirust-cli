@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **scope** | Option<[**models::Scope**](Scope.md)> | The scope of the role. Indicated for roles associated with [next-gen projects](https://confluence.atlassian.com/x/loMyO). | [optional][readonly]
 **param_self** | Option<**String**> | The URL the project role details. | [optional][readonly]
 **translated_name** | Option<**String**> | The translated name of the project role. | [optional]
+**r#type** | Option<**String**> | The type of the project role. This is \"DEFAULT\" or \"GUEST\\_ROLE\". | [optional][readonly]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

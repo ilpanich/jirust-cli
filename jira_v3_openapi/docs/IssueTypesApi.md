@@ -20,7 +20,7 @@ Method | HTTP request | Description
 > models::IssueTypeDetails create_issue_type(issue_type_create_bean)
 Create issue type
 
-Creates an issue type and adds it to the default issue type scheme.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Creates an issue type.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 

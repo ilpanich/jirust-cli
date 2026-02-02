@@ -9,6 +9,7 @@ Method | HTTP request | Description
 [**get_contexts_for_field_deprecated**](IssueFieldsApi.md#get_contexts_for_field_deprecated) | **GET** /rest/api/3/field/{fieldId}/contexts | Get contexts for a field
 [**get_fields**](IssueFieldsApi.md#get_fields) | **GET** /rest/api/3/field | Get fields
 [**get_fields_paginated**](IssueFieldsApi.md#get_fields_paginated) | **GET** /rest/api/3/field/search | Get fields paginated
+[**get_project_fields**](IssueFieldsApi.md#get_project_fields) | **GET** /rest/api/3/projects/fields | Get fields for projects
 [**get_trashed_fields_paginated**](IssueFieldsApi.md#get_trashed_fields_paginated) | **GET** /rest/api/3/field/search/trashed | Get fields in trash paginated
 [**restore_custom_field**](IssueFieldsApi.md#restore_custom_field) | **POST** /rest/api/3/field/{id}/restore | Restore custom field from trash
 [**trash_custom_field**](IssueFieldsApi.md#trash_custom_field) | **POST** /rest/api/3/field/{id}/trash | Move custom field to trash
@@ -159,6 +160,40 @@ Name | Type | Description  | Required | Notes
 ### Return type
 
 [**models::PageBeanField**](PageBeanField.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## get_project_fields
+
+> models::PageBean2ProjectFieldBean get_project_fields(project_id, work_type_id, start_at, max_results, field_id)
+Get fields for projects
+
+Returns a [paginated](#pagination) list of fields for the requested projects and work types.  Only fields that are available for the specified combination of projects and work types are returned. This endpoint allows filtering to specific fields if field IDs are provided.  **[Permissions](#permissions) required:** Permission to access Jira.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**project_id** | [**Vec<i64>**](i64.md) | The IDs of projects to return fields for. | [required] |
+**work_type_id** | [**Vec<i64>**](i64.md) | The IDs of work types (issue types) to return fields for. | [required] |
+**start_at** | Option<**u64**> | The index of the first item to return in a page of results (page offset). |  |[default to 0]
+**max_results** | Option<**u32**> | The maximum number of items to return per page. |  |[default to 50]
+**field_id** | Option<[**Vec<String>**](String.md)> | The IDs of fields to return. If not provided, all fields are returned. |  |
+
+### Return type
+
+[**models::PageBean2ProjectFieldBean**](PageBean2ProjectFieldBean.md)
 
 ### Authorization
 

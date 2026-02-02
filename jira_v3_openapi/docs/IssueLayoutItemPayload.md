@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **item_key** | Option<[**models::ProjectCreateResourceIdentifier**](ProjectCreateResourceIdentifier.md)> |  | [optional]
+**properties** | Option<[**std::collections::HashMap<String, serde_json::Value>**](serde_json::Value.md)> | Additional properties for this item. This field is only used when the type is FIELD. | [optional]
 **section_type** | Option<**String**> | The item section type | [optional]
 **r#type** | Option<**String**> | The item type. Currently only support FIELD | [optional]
 

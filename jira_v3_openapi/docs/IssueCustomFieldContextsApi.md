@@ -25,7 +25,7 @@ Method | HTTP request | Description
 > serde_json::Value add_issue_types_to_context(field_id, context_id, issue_type_ids)
 Add issue types to context
 
-Adds issue types to a custom field context, appending the issue types to the issue types list.  A custom field context without any issue types applies to all issue types. Adding issue types to such a custom field context would result in it applying to only the listed issue types.  If any of the issue types exists in the custom field context, the operation fails and no issue types are added.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Adds issue types to a custom field context, appending the issue types to the issue types list.  A custom field context without any issue types applies to all issue types. Adding issue types to such a custom field context would result in it applying to only the listed issue types.  If any of the issue types exists in the custom field context, the operation fails and no issue types are added.  This API will not allow adding issue types to the global context from April 2026. See [CHANGE-3019](https://developer.atlassian.com/changelog/#CHANGE-3019)  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 
@@ -57,7 +57,7 @@ Name | Type | Description  | Required | Notes
 > serde_json::Value assign_projects_to_custom_field_context(field_id, context_id, project_ids)
 Assign custom field context to projects
 
-Assigns a custom field context to projects.  If any project in the request is assigned to any context of the custom field, the operation fails.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Assigns a custom field context to projects.  If any project in the request is assigned to any context of the custom field, the operation fails.  This API will not allow adding projects to the global context from April 2026. See [CHANGE-3019](https://developer.atlassian.com/changelog/#CHANGE-3019)  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 
@@ -120,7 +120,7 @@ Name | Type | Description  | Required | Notes
 > serde_json::Value delete_custom_field_context(field_id, context_id)
 Delete custom field context
 
-Deletes a [ custom field context](https://confluence.atlassian.com/adminjiracloud/what-are-custom-field-contexts-991923859.html).  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Deletes a [ custom field context](https://confluence.atlassian.com/adminjiracloud/what-are-custom-field-contexts-991923859.html).  This API will not allow removing the global context from April 2026. See [CHANGE-3019](https://developer.atlassian.com/changelog/#CHANGE-3019)  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 

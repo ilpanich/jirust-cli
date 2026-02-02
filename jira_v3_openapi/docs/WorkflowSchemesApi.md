@@ -12,16 +12,17 @@ Method | HTTP request | Description
 [**get_all_workflow_schemes**](WorkflowSchemesApi.md#get_all_workflow_schemes) | **GET** /rest/api/3/workflowscheme | Get all workflow schemes
 [**get_default_workflow**](WorkflowSchemesApi.md#get_default_workflow) | **GET** /rest/api/3/workflowscheme/{id}/default | Get default workflow
 [**get_project_usages_for_workflow_scheme**](WorkflowSchemesApi.md#get_project_usages_for_workflow_scheme) | **GET** /rest/api/3/workflowscheme/{workflowSchemeId}/projectUsages | Get projects which are using a given workflow scheme
+[**get_required_workflow_scheme_mappings**](WorkflowSchemesApi.md#get_required_workflow_scheme_mappings) | **POST** /rest/api/3/workflowscheme/update/mappings | Get required status mappings for workflow scheme update
 [**get_workflow**](WorkflowSchemesApi.md#get_workflow) | **GET** /rest/api/3/workflowscheme/{id}/workflow | Get issue types for workflows in workflow scheme
 [**get_workflow_scheme**](WorkflowSchemesApi.md#get_workflow_scheme) | **GET** /rest/api/3/workflowscheme/{id} | Get workflow scheme
 [**get_workflow_scheme_issue_type**](WorkflowSchemesApi.md#get_workflow_scheme_issue_type) | **GET** /rest/api/3/workflowscheme/{id}/issuetype/{issueType} | Get workflow for issue type in workflow scheme
 [**read_workflow_schemes**](WorkflowSchemesApi.md#read_workflow_schemes) | **POST** /rest/api/3/workflowscheme/read | Bulk get workflow schemes
 [**set_workflow_scheme_issue_type**](WorkflowSchemesApi.md#set_workflow_scheme_issue_type) | **PUT** /rest/api/3/workflowscheme/{id}/issuetype/{issueType} | Set workflow for issue type in workflow scheme
+[**switch_workflow_scheme_for_project**](WorkflowSchemesApi.md#switch_workflow_scheme_for_project) | **POST** /rest/api/3/workflowscheme/project/switch | Switch workflow scheme for project
 [**update_default_workflow**](WorkflowSchemesApi.md#update_default_workflow) | **PUT** /rest/api/3/workflowscheme/{id}/default | Update default workflow
 [**update_schemes**](WorkflowSchemesApi.md#update_schemes) | **POST** /rest/api/3/workflowscheme/update | Update workflow scheme
 [**update_workflow_mapping**](WorkflowSchemesApi.md#update_workflow_mapping) | **PUT** /rest/api/3/workflowscheme/{id}/workflow | Set issue types for workflow in workflow scheme
 [**update_workflow_scheme**](WorkflowSchemesApi.md#update_workflow_scheme) | **PUT** /rest/api/3/workflowscheme/{id} | Classic update workflow scheme
-[**update_workflow_scheme_mappings**](WorkflowSchemesApi.md#update_workflow_scheme_mappings) | **POST** /rest/api/3/workflowscheme/update/mappings | Get required status mappings for workflow scheme update
 
 
 
@@ -274,6 +275,36 @@ Name | Type | Description  | Required | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
+## get_required_workflow_scheme_mappings
+
+> models::WorkflowSchemeUpdateRequiredMappingsResponse get_required_workflow_scheme_mappings(workflow_scheme_update_required_mappings_request)
+Get required status mappings for workflow scheme update
+
+Gets the required status mappings for the desired changes to a workflow scheme. The results are provided per issue type and workflow. When updating a workflow scheme, status mappings can be provided per issue type, per workflow, or both.  **[Permissions](#permissions) required:**   *  *Administer Jira* permission to update all, including global-scoped, workflow schemes.  *  *Administer projects* project permission to update project-scoped workflow schemes.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**workflow_scheme_update_required_mappings_request** | [**WorkflowSchemeUpdateRequiredMappingsRequest**](WorkflowSchemeUpdateRequiredMappingsRequest.md) |  | [required] |
+
+### Return type
+
+[**models::WorkflowSchemeUpdateRequiredMappingsResponse**](WorkflowSchemeUpdateRequiredMappingsResponse.md)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
 ## get_workflow
 
 > models::IssueTypesWorkflowMapping get_workflow(id, workflow_name, return_draft_if_exists)
@@ -431,6 +462,36 @@ Name | Type | Description  | Required | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
+## switch_workflow_scheme_for_project
+
+> switch_workflow_scheme_for_project(workflow_scheme_project_switch_bean)
+Switch workflow scheme for project
+
+Switches a workflow scheme for a project.  Workflow schemes can only be assigned to classic projects.  **Calculating required mappings:** If statuses from the current workflow scheme won't exist in the target workflow scheme, you must provide `mappingsByIssueTypeOverride` to specify how issues with those statuses should be migrated. Use [the required workflow scheme mappings API](#api-rest-api-3-workflowscheme-update-mappings-post) to determine which statuses and issue types require mappings.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**workflow_scheme_project_switch_bean** | [**WorkflowSchemeProjectSwitchBean**](WorkflowSchemeProjectSwitchBean.md) | The request containing project ID, target scheme ID, and any issue type mappings. | [required] |
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
 ## update_default_workflow
 
 > models::WorkflowScheme update_default_workflow(id, default_workflow)
@@ -542,36 +603,6 @@ Name | Type | Description  | Required | Notes
 ### Return type
 
 [**models::WorkflowScheme**](WorkflowScheme.md)
-
-### Authorization
-
-[OAuth2](../README.md#OAuth2), [basicAuth](../README.md#basicAuth)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-
-## update_workflow_scheme_mappings
-
-> models::WorkflowSchemeUpdateRequiredMappingsResponse update_workflow_scheme_mappings(workflow_scheme_update_required_mappings_request)
-Get required status mappings for workflow scheme update
-
-Gets the required status mappings for the desired changes to a workflow scheme. The results are provided per issue type and workflow. When updating a workflow scheme, status mappings can be provided per issue type, per workflow, or both.  **[Permissions](#permissions) required:**   *  *Administer Jira* permission to update all, including global-scoped, workflow schemes.  *  *Administer projects* project permission to update project-scoped workflow schemes.
-
-### Parameters
-
-
-Name | Type | Description  | Required | Notes
-------------- | ------------- | ------------- | ------------- | -------------
-**workflow_scheme_update_required_mappings_request** | [**WorkflowSchemeUpdateRequiredMappingsRequest**](WorkflowSchemeUpdateRequiredMappingsRequest.md) |  | [required] |
-
-### Return type
-
-[**models::WorkflowSchemeUpdateRequiredMappingsResponse**](WorkflowSchemeUpdateRequiredMappingsResponse.md)
 
 ### Authorization
 

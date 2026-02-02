@@ -5,7 +5,7 @@ authors = [
     "Atlassian OpenAPI <ecosystem@atlassian.com>",
     "Emanuele Panigati <ilpanich@gmail.com>",
 ]
-description = "Jira Cloud platform REST API lib (OpenAPI document version: 1001.0.0-SNAPSHOT-37416ade0f89f7cb291510843b8a4bbd682b33a1)"
+description = "Jira Cloud platform REST API lib (OpenAPI document version: 1001.0.0-SNAPSHOT-af42c50d50804c2f1b8ad4bb80d52c53890867e2)"
 keywords = ["jira", "openapi"]
 repository = "https://github.com/ilpanich/jirust-cli"
 license = "Apache-2.0"

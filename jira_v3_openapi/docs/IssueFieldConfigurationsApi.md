@@ -57,7 +57,7 @@ Name | Type | Description  | Required | Notes
 > models::FieldConfiguration create_field_configuration(field_configuration_details)
 Create field configuration
 
-Creates a field configuration. The field configuration is created with the same field properties as the default configuration, with all the fields being optional.  This operation can only create configurations for use in company-managed (classic) projects.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Deprecated, use [Field schemes](#api-group-field-schemes) which supports field association schemes.  Creates a field configuration. The field configuration is created with the same field properties as the default configuration, with all the fields being optional.  This operation can only create configurations for use in company-managed (classic) projects.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 
@@ -117,7 +117,7 @@ Name | Type | Description  | Required | Notes
 > serde_json::Value delete_field_configuration(id)
 Delete field configuration
 
-Deletes a field configuration.  This operation can only delete configurations used in company-managed (classic) projects.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Deprecated, use [Field schemes](#api-group-field-schemes) which supports field association schemes.  Deletes a field configuration.  This operation can only delete configurations used in company-managed (classic) projects.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 
@@ -209,7 +209,7 @@ Name | Type | Description  | Required | Notes
 > models::PageBeanFieldConfigurationDetails get_all_field_configurations(start_at, max_results, id, is_default, query)
 Get all field configurations
 
-Returns a [paginated](#pagination) list of field configurations. The list can be for all field configurations or a subset determined by any combination of these criteria:   *  a list of field configuration item IDs.  *  whether the field configuration is a default.  *  whether the field configuration name or description contains a query string.  Only field configurations used in company-managed (classic) projects are returned.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Deprecated, use [Field schemes](#api-group-field-schemes) which supports field association schemes.  Returns a [paginated](#pagination) list of field configurations. The list can be for all field configurations or a subset determined by any combination of these criteria:   *  a list of field configuration item IDs.  *  whether the field configuration is a default.  *  whether the field configuration name or description contains a query string.  Only field configurations used in company-managed (classic) projects are returned.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 
@@ -243,7 +243,7 @@ Name | Type | Description  | Required | Notes
 > models::PageBeanFieldConfigurationItem get_field_configuration_items(id, start_at, max_results)
 Get field configuration items
 
-Returns a [paginated](#pagination) list of all fields for a configuration.  Only the fields from configurations used in company-managed (classic) projects are returned.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Deprecated, use [Field schemes](#api-group-field-schemes) which supports field association schemes.  Returns a [paginated](#pagination) list of all fields for a configuration.  Only the fields from configurations used in company-managed (classic) projects are returned.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 
@@ -401,7 +401,7 @@ Name | Type | Description  | Required | Notes
 > serde_json::Value update_field_configuration(id, field_configuration_details)
 Update field configuration
 
-Updates a field configuration. The name and the description provided in the request override the existing values.  This operation can only update configurations used in company-managed (classic) projects.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Deprecated, use [Field schemes](#api-group-field-schemes) which supports field association schemes.  Updates a field configuration. The name and the description provided in the request override the existing values.  This operation can only update configurations used in company-managed (classic) projects.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 
@@ -432,7 +432,7 @@ Name | Type | Description  | Required | Notes
 > serde_json::Value update_field_configuration_items(id, field_configuration_items_details)
 Update field configuration items
 
-Updates fields in a field configuration. The properties of the field configuration fields provided override the existing values.  This operation can only update field configurations used in company-managed (classic) projects.  The operation can set the renderer for text fields to the default text renderer (`text-renderer`) or wiki style renderer (`wiki-renderer`). However, the renderer cannot be updated for fields using the autocomplete renderer (`autocomplete-renderer`).  Hiding a field deletes it from the field configuration - deleting the required, description and renderer type values as well. As a result, hiding and unhiding will not restore the other values but use their default values.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+Deprecated, use [Field schemes](#api-group-field-schemes) which supports field association schemes.  Updates fields in a field configuration. The properties of the field configuration fields provided override the existing values.  This operation can only update field configurations used in company-managed (classic) projects.  The operation can set the renderer for text fields to the default text renderer (`text-renderer`) or wiki style renderer (`wiki-renderer`). However, the renderer cannot be updated for fields using the autocomplete renderer (`autocomplete-renderer`).  Hiding a field deletes it from the field configuration - deleting the required, description and renderer type values as well. As a result, hiding and unhiding will not restore the other values but use their default values.  **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
 
 ### Parameters
 
