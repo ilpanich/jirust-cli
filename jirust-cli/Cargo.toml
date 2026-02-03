@@ -15,7 +15,7 @@ readme = "../README.md"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-yara-x = { version = "1.10.0", optional = true, default-features = false, features = [
+yara-x = { version = "1.12.0", optional = true, default-features = false, features = [
     "constant-folding",
     "exact-atoms",
     "fast-regexp",
@@ -26,17 +26,17 @@ yara-x = { version = "1.10.0", optional = true, default-features = false, featur
     "string-module",
     "time-module",
     "parallel-compilation",
-    "linkme"
+    "linkme",
 ] }
 anyhow = { version = "1.0.100", optional = true }
-git2 = { version = "0.20.3", optional = true }
+git2 = { version = "0.20.4", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_json = "1.0"
-toml = "0.9.10"
+toml = "0.9.11+spec-1.1.0"
 clap = { version = "4.5", features = ["derive", "wrap_help"] }
 clap_derive = "4.5"
 rpassword = "7.4.0"
-jira_v3_openapi = { version = "1.5.3", default-features = false, features = [
+jira_v3_openapi = { version = "1.6.0", default-features = false, features = [
     "common",
     "issues_api",
     "projects_api",
@@ -44,17 +44,17 @@ jira_v3_openapi = { version = "1.5.3", default-features = false, features = [
     "link_issues_api",
 ] }
 prettytable-rs = "0.10.0"
-chrono = "0.4.42"
+chrono = "0.4.43"
 regex = "1.12.2"
 futures = "0.3.31"
 async-trait = "0.1"
 walkdir = { version = "2.5.0", optional = true }
-zip = { version = "7.0", default-features = false, features = [
+zip = { version = "7.2.0", optional = true, default-features = false, features = [
     "deflate",
-], optional = true }
+] }
 base64 = "0.22.1"
-reqwest = { version = "^0.12", optional = true, default-features = false, features = [
-    "rustls-tls",
+reqwest = { version = "0.13.1", optional = true, default-features = false, features = [
+    "rustls",
 ] }
 sha2 = { version = "0.10", optional = true }
 tempfile = { version = "3.24.0", optional = true }
@@ -70,14 +70,14 @@ tokio = { version = "1.49.0", default-features = false, features = [
     "macros",
     "rt",
 ] }
-wasm-bindgen = "0.2.106"
-wasm-bindgen-futures = "0.4.56"
+wasm-bindgen = "0.2.108"
+wasm-bindgen-futures = "0.4.58"
 serde-wasm-bindgen = "0.6.5"
 console_error_panic_hook = { version = "0.1.7", optional = true }
 
 [dev-dependencies]
 tokio-test = "0.4.5"
-wasm-bindgen-test = "0.3.56"
+wasm-bindgen-test = "0.3.58"
 mockall = "0.14.0"
 
 [profile.release]
