@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.17.5] 2026-02-09
+### Changed
+- Updated dependencies (including fixes to CVE-2026-24116 and CVE-2026-25727)
+
 ## [0.17.4] 2026-02-03
 ### Changed
 - Updated dependencies
